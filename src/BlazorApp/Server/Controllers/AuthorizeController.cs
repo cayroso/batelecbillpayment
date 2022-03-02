@@ -7,6 +7,7 @@ using System.Security.Claims;
 using Blazor.Shared.Security;
 using Data.Identity.DbContext;
 using Data.Constants;
+using Microsoft.EntityFrameworkCore;
 
 namespace Blazor.Server.Controllers
 {
@@ -16,16 +17,20 @@ namespace Blazor.Server.Controllers
     {
         private readonly UserManager<IdentityWebUser> _userManager;
         private readonly SignInManager<IdentityWebUser> _signInManager;
-
-        public AuthorizeController(UserManager<IdentityWebUser> userManager, SignInManager<IdentityWebUser> signInManager)
+        IdentityWebContext _identityWebContext;
+        public AuthorizeController(IdentityWebContext identityWebContext, UserManager<IdentityWebUser> userManager, SignInManager<IdentityWebUser> signInManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _identityWebContext = identityWebContext;
         }
 
         [HttpPost]
         public async Task<IActionResult> Login(LoginModel parameters)
         {
+            var u = await _identityWebContext.Users.FirstOrDefaultAsync(e => e.Email == parameters.Email);
+            var ui = await _identityWebContext.UserInformations.FirstOrDefaultAsync(e => e.UserId == u.Id);
+
             var user = await _userManager.FindByEmailAsync(parameters.Email);
             if (user == null) return BadRequest("User does not exist");
             var singInResult = await _signInManager.CheckPasswordSignInAsync(user, parameters.Password, false);
@@ -44,11 +49,21 @@ namespace Blazor.Server.Controllers
         {
             var user = new IdentityWebUser();
             user.Id = Guid.NewGuid().ToString();
+            user.TenantId = "administrator";
             user.Email = parameters.Email;
             user.UserName = parameters.Email;
+            user.PhoneNumber = "";
 
             var result = await _userManager.CreateAsync(user, parameters.Password);
             if (!result.Succeeded) return BadRequest(result.Errors.FirstOrDefault()?.Description);
+
+            var userInfo = new UserInformation
+            {
+                //UserInformationId = Guid.NewGuid().ToString(),
+                UserId = user.Id,
+                FirstName = "n/a",
+                LastName = "n/a",
+            };
 
             var userRoles = new List<IdentityUserRole<string>>(new[]{
                     new IdentityUserRole<string> {
@@ -65,7 +80,9 @@ namespace Blazor.Server.Controllers
                     },
                 });
 
-            await identityWebContext.AddRangeAsync(userRoles);
+            await _userManager.AddToRolesAsync(user, userRoles.Select(e => e.RoleId));
+            
+            await identityWebContext.AddAsync(userInfo);
 
             await identityWebContext.SaveChangesAsync();
 

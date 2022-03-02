@@ -168,9 +168,11 @@ namespace Data.Identity.DbContext
 
                 //b.Property(e => e.UserInformationId).HasMaxLength(KeyMaxLength).IsRequired();
                 b.Property(e => e.UserId).HasMaxLength(KeyMaxLength).IsRequired();
+                b.Property(e => e.ImageId).HasMaxLength(KeyMaxLength).IsRequired(false);
                 b.Property(e => e.FirstName).HasMaxLength(DescMaxLength).IsRequired();
+                b.Property(e => e.MiddleName).HasMaxLength(DescMaxLength).IsRequired(false);
                 b.Property(e => e.LastName).HasMaxLength(DescMaxLength).IsRequired();
-                //b.Property(e => e.PhoneNumber).HasMaxLength(DescMaxLength).IsRequired();
+                b.Property(e => e.Theme).HasMaxLength(DescMaxLength).IsRequired(false);
                 b.Property(e => e.ConcurrencyToken).HasMaxLength(KeyMaxLength).IsRequired();
             });
 

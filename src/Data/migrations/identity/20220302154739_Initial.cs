@@ -1,6 +1,8 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
+#nullable disable
+
 namespace Data.migrations.identity
 {
     public partial class Initial : Migration
@@ -27,8 +29,8 @@ namespace Data.migrations.identity
                 {
                     TenantId = table.Column<string>(type: "nvarchar(36)", maxLength: 36, nullable: false),
                     Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
-                    Host = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    DatabaseConnectionString = table.Column<string>(type: "nvarchar(2048)", maxLength: 2048, nullable: true),
+                    Host = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
+                    DatabaseConnectionString = table.Column<string>(type: "nvarchar(2048)", maxLength: 2048, nullable: false),
                     PhoneNumber = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
                     Address = table.Column<string>(type: "nvarchar(2048)", maxLength: 2048, nullable: false),
@@ -66,7 +68,7 @@ namespace Data.migrations.identity
                 columns: table => new
                 {
                     UserId = table.Column<string>(type: "nvarchar(36)", maxLength: 36, nullable: false),
-                    TenantId = table.Column<string>(type: "nvarchar(36)", maxLength: 36, nullable: true),
+                    TenantId = table.Column<string>(type: "nvarchar(36)", maxLength: 36, nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
@@ -90,7 +92,7 @@ namespace Data.migrations.identity
                         column: x => x.TenantId,
                         principalTable: "Tenant",
                         principalColumn: "TenantId",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -98,12 +100,12 @@ namespace Data.migrations.identity
                 columns: table => new
                 {
                     FeedbackId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(36)", nullable: true),
+                    UserId = table.Column<string>(type: "nvarchar(36)", nullable: false),
                     FeedbackCategory = table.Column<int>(type: "int", nullable: false),
                     Rating = table.Column<int>(type: "int", nullable: false),
-                    Comment = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Comment = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ConcurrencyToken = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    ConcurrencyToken = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -113,7 +115,7 @@ namespace Data.migrations.identity
                         column: x => x.UserId,
                         principalTable: "User",
                         principalColumn: "UserId",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -185,11 +187,11 @@ namespace Data.migrations.identity
                 columns: table => new
                 {
                     UserId = table.Column<string>(type: "nvarchar(36)", maxLength: 36, nullable: false),
-                    ImageId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ImageId = table.Column<string>(type: "nvarchar(36)", maxLength: 36, nullable: true),
                     FirstName = table.Column<string>(type: "nvarchar(2048)", maxLength: 2048, nullable: false),
-                    MiddleName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    MiddleName = table.Column<string>(type: "nvarchar(2048)", maxLength: 2048, nullable: true),
                     LastName = table.Column<string>(type: "nvarchar(2048)", maxLength: 2048, nullable: false),
-                    Theme = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Theme = table.Column<string>(type: "nvarchar(2048)", maxLength: 2048, nullable: true),
                     ConcurrencyToken = table.Column<string>(type: "nvarchar(36)", maxLength: 36, nullable: false)
                 },
                 constraints: table =>

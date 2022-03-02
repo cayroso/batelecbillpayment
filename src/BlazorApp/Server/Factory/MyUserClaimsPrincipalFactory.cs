@@ -71,23 +71,23 @@ namespace BlazorApp.Server.Factory
             //    //identity.AddClaim(new Claim(ClaimTypes.Name, user..FirstLastName));
             //    identity.AddClaim(new Claim("TenantName", tenant.Name));
             //}
-            //var userInfo = await _identityWebContext.UserInformations.FirstOrDefaultAsync(e => e.UserId == user.Id);
-            //var theme = userInfo.Theme;
-            //if (theme == null)
-            //    theme = string.Empty;
-            //identity.AddClaim(new Claim("Profile:Theme", theme));
+            var userInfo = await _identityWebContext.UserInformations.FirstOrDefaultAsync(e => e.UserId == user.Id);
+            var theme = userInfo.Theme;
+            if (theme == null)
+                theme = string.Empty;
+            identity.AddClaim(new Claim("Profile:Theme", theme));
 
             //var urlProfilePicture = "";
-            //var imageId = "";
+            var imageId = "";
 
-            //if (!string.IsNullOrWhiteSpace(userInfo.ImageId))
-            //{
-            //    imageId = userInfo.ImageId;
-            //    //identity.AddClaim(new Claim("Profile:ImageId", userInfo.ImageId));
-            //    //urlProfilePicture = $"/api/files/{userInfo.ImageId}";
-            //}
+            if (!string.IsNullOrWhiteSpace(userInfo.ImageId))
+            {
+                imageId = userInfo.ImageId;
+                //identity.AddClaim(new Claim("Profile:ImageId", userInfo.ImageId));
+                //urlProfilePicture = $"/api/files/{userInfo.ImageId}";
+            }
 
-            //identity.AddClaim(new Claim("Profile:ImageId", imageId));
+            identity.AddClaim(new Claim("Profile:ImageId", imageId));
             //identity.AddClaim(new Claim("Profile:UrlProfilePicture", urlProfilePicture));
             //_appDbContextFactory.Provision(tenant, _webHostEnvironment.IsDevelopment());
 
