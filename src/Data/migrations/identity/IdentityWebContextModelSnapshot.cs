@@ -22,6 +22,112 @@ namespace Data.migrations.identity
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
+            modelBuilder.Entity("Data.Identity.Models.Account", b =>
+                {
+                    b.Property<string>("AccountId")
+                        .HasMaxLength(36)
+                        .HasColumnType("nvarchar(36)");
+
+                    b.Property<string>("AccountNumber")
+                        .IsRequired()
+                        .HasMaxLength(36)
+                        .HasColumnType("nvarchar(36)");
+
+                    b.Property<string>("Address")
+                        .HasMaxLength(36)
+                        .HasColumnType("nvarchar(36)");
+
+                    b.Property<string>("ConcurrencyToken")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .HasMaxLength(36)
+                        .HasColumnType("nvarchar(36)");
+
+                    b.Property<string>("ConsumerType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MeterNumber")
+                        .IsRequired()
+                        .HasMaxLength(36)
+                        .HasColumnType("nvarchar(36)");
+
+                    b.Property<string>("UserInformationId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(36)");
+
+                    b.HasKey("AccountId");
+
+                    b.HasIndex("UserInformationId");
+
+                    b.ToTable("Account", (string)null);
+                });
+
+            modelBuilder.Entity("Data.Identity.Models.Billing", b =>
+                {
+                    b.Property<string>("BillingId")
+                        .HasMaxLength(36)
+                        .HasColumnType("nvarchar(36)");
+
+                    b.Property<string>("AccountId")
+                        .IsRequired()
+                        .HasMaxLength(36)
+                        .HasColumnType("nvarchar(36)");
+
+                    b.Property<DateTime>("BillDateEnd")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("BillDateStart")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("BillingDateDue")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("BillingMonth")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BillingNumber")
+                        .IsRequired()
+                        .HasMaxLength(36)
+                        .HasColumnType("nvarchar(36)");
+
+                    b.Property<string>("BillingYear")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ConcurrencyToken")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .HasMaxLength(36)
+                        .HasColumnType("nvarchar(36)");
+
+                    b.Property<double>("KilloWattHourUsed")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Multiplier")
+                        .HasColumnType("float");
+
+                    b.Property<double>("PresentReading")
+                        .HasColumnType("float");
+
+                    b.Property<double>("PreviousReading")
+                        .HasColumnType("float");
+
+                    b.Property<string>("Reader")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ReadingTime")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("BillingId");
+
+                    b.HasIndex("AccountId");
+
+                    b.ToTable("Billing", (string)null);
+                });
+
             modelBuilder.Entity("Data.Identity.Models.Feedback", b =>
                 {
                     b.Property<string>("FeedbackId")
@@ -431,6 +537,28 @@ namespace Data.migrations.identity
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("UserToken", (string)null);
+                });
+
+            modelBuilder.Entity("Data.Identity.Models.Account", b =>
+                {
+                    b.HasOne("Data.Identity.Models.Users.UserInformation", "UserInformation")
+                        .WithMany()
+                        .HasForeignKey("UserInformationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("UserInformation");
+                });
+
+            modelBuilder.Entity("Data.Identity.Models.Billing", b =>
+                {
+                    b.HasOne("Data.Identity.Models.Account", "Account")
+                        .WithMany()
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Account");
                 });
 
             modelBuilder.Entity("Data.Identity.Models.Feedback", b =>

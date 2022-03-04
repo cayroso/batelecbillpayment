@@ -51,9 +51,10 @@ namespace Data.Identity.DbContext
 
             };
 
-            var email1 = "user1@rms.com";
             var token1 = Guid.NewGuid().ToString();
-            var customer1 = new IdentityWebUser
+
+            var email1 = "system1@bbp.com";            
+            var user1 = new IdentityWebUser
             {
                 Id = email1,
                 UserName = email1,
@@ -82,14 +83,14 @@ namespace Data.Identity.DbContext
                 }
             };
 
-            var customerRole1 = new IdentityUserRole<string>
+            var userRole1 = new IdentityUserRole<string>
             {
-                UserId = customer1.Id,
+                UserId = user1.Id,
                 RoleId = ApplicationRoles.System.Id
             };
 
-            var email2 = "user2@rms.com";
-            var customer2 = new IdentityWebUser
+            var email2 = "admin1@bbp.com";
+            var user2 = new IdentityWebUser
             {
                 Id = email2,
                 UserName = email2,
@@ -117,13 +118,48 @@ namespace Data.Identity.DbContext
                     Theme = "https://bootswatch.com/4/spacelab/bootstrap.min.css"
                 }
             };
-            var customerRole2 = new IdentityUserRole<string>
+            var userRole2 = new IdentityUserRole<string>
             {
-                UserId = customer2.Id,
-                RoleId = ApplicationRoles.System.Id
+                UserId = user2.Id,
+                RoleId = ApplicationRoles.Administrator.Id
             };
 
-            ctx.AddRange(tenant, customer1, customerRole1, customer2, customerRole2);
+            var email3 = "admin2@bbp.com";
+            var user3 = new IdentityWebUser
+            {
+                Id = email3,
+                UserName = email3,
+                NormalizedUserName = email3.ToUpper(),
+
+                Email = email3,
+                NormalizedEmail = email3.ToUpper(),
+                EmailConfirmed = true,
+                PhoneNumber = "+639198262335",
+                PhoneNumberConfirmed = true,
+
+                LockoutEnabled = false,
+                LockoutEnd = null,
+                PasswordHash = "AQAAAAEAACcQAAAAEKGIieH17t5bYXa5tUfxRwN9UIEwApTKbQBRaUtIHplIUG2OfYxvBS8uvKy5E2Stsg==",
+                SecurityStamp = "6SADCY3NMMLOHA2S26ZJCEWGHWSQUYRM",
+                TwoFactorEnabled = false,
+                AccessFailedCount = 0,
+                TenantId = tenant.TenantId,
+                ConcurrencyStamp = token1,
+                UserInformation = new UserInformation
+                {
+                    FirstName = "Chino",
+                    LastName = "Pacia",
+                    ConcurrencyToken = token1,
+                    Theme = "https://bootswatch.com/4/spacelab/bootstrap.min.css"
+                }
+            };
+            var userRole3 = new IdentityUserRole<string>
+            {
+                UserId = user3.Id,
+                RoleId = ApplicationRoles.Administrator.Id
+            };
+
+            ctx.AddRange(tenant, user1, userRole1, user2, userRole2, user3, userRole3);
         }
 
     }

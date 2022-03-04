@@ -1,22 +1,15 @@
-﻿@page "/counter"
+﻿@page "/consumer"
 @using System.Net.Http.Headers
+@using BlazorApp.Shared.GCash
+@using System.Text.Json
+
 @inject HttpClient Http
 
-<PageTitle>Counter</PageTitle>
+<h3>Index</h3>
 
-<h1>Counter</h1>
-
-<p role="status">Current count: @currentCount</p>
-
-<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
-
+Checkout: <a href="@CheckoutUrl">checkout</a>
 @code {
-    private int currentCount = 0;
-
-    private void IncrementCount()
-    {
-        currentCount++;
-    }
+    string CheckoutUrl;
 
     protected override async Task OnInitializedAsync()
     {
@@ -30,7 +23,7 @@
                 { "Accept", "application/json" },
                 { "Authorization", "Basic cGtfdGVzdF9lbnlCR1VWRUtLRW1qRzRMNVhpazZ4cXk6" },
             },
-            Content = new StringContent("{\"data\":{\"attributes\":{\"amount\":10000,\"redirect\":{\"success\":\"https://mysite.com/gcash/success\",\"failed\":\"https://mysite.com/gcash/failed\"},\"type\":\"gcash\",\"currency\":\"PHP\"}}}")
+            Content = new StringContent("{\"data\":{\"attributes\":{\"amount\":10000,\"redirect\":{\"success\":\"https://localhost:7104/gcash/success\",\"failed\":\"https://localhost:7104/gcash/failed\"},\"type\":\"gcash\",\"currency\":\"PHP\"}}}")
             {
                 Headers =
                 {
@@ -42,6 +35,11 @@
         {
             response.EnsureSuccessStatusCode();
             var body = await response.Content.ReadAsStringAsync();
+
+            var foo = await response.Content.ReadFromJsonAsync<SourceResource>();
+
+            CheckoutUrl = foo.Data.Attributes.Redirect.Checkout_Url;
+
             Console.WriteLine(body);
         }
     }

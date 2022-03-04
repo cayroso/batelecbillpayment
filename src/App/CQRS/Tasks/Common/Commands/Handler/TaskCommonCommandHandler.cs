@@ -44,7 +44,7 @@ namespace App.CQRS.Tasks.Common.Commands.Handler
                 Title = command.Title,
                 Description = command.Description,
                 UserId = command.UserId,
-                RoleId = ApplicationRoles.Member.Id,
+                RoleId = ApplicationRoles.Consumer.Id,
                 DateAssigned = DateTime.UtcNow.Truncate(),
                 DateCreated = DateTime.UtcNow.Truncate(),
 

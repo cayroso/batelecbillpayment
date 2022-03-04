@@ -33,6 +33,9 @@ namespace Data.Identity.DbContext
         public DbSet<UserInformation> UserInformations { get; set; }
         public DbSet<LoginAudit> LoginAudits { get; set; }
 
+        //  app specific
+        public DbSet<Account> Accounts { get; set; }
+        public DbSet<Billing> Billings { get; set; }
 
         public IdentityWebContext(DbContextOptions<IdentityWebContext> options, IConfiguration configuration)
             : base(options)
@@ -187,6 +190,10 @@ namespace Data.Identity.DbContext
                 b.Property(e => e.RemoteIpAddress).HasMaxLength(KeyMaxLength).IsRequired();
                 b.Property(e => e.LoginDate).HasMaxLength(KeyMaxLength).IsRequired();
             });
+
+            //  app specific
+            builder.ApplyConfiguration(new AccountConfiguration());
+            builder.ApplyConfiguration(new BillConfiguration());
         }
     }
 }

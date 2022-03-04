@@ -26,6 +26,15 @@
     <InputText type="password" id="inputPasswordConfirm" class="form-control" placeholder="Password Confirmation" @bind-Value="@registerParameters.ConfirmPassword" />
     <ValidationMessage For="@(() => registerParameters.ConfirmPassword)" />
 
+    <label for="inputRole" class="sr-only">Role</label>
+    <InputSelect @bind-Value="@registerParameters.RoleId">
+        <option value="">Select classification ...</option>
+        <option value="administrator">Administrator</option>
+        <option value="consumer">Consumer</option>        
+    </InputSelect>
+    <InputText id="inputRole" class="form-control" placeholder="Role" @bind-Value="@registerParameters.RoleId" />
+    <ValidationMessage For="@(() => registerParameters.RoleId)" />
+
     <button class="btn btn-lg btn-primary btn-block" type="submit">Create account</button>
 
     <label class="text-danger">@error</label>

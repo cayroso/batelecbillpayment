@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32210.238
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorApp.Server", "src\BlazorApp\Server\BlazorApp.Server.csproj", "{5304BC49-0124-4BE0-B3C8-1EDA2A3CA0C2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorApp.Server", "src\BlazorApp\Server\BlazorApp.Server.csproj", "{5304BC49-0124-4BE0-B3C8-1EDA2A3CA0C2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorApp.Client", "src\BlazorApp\Client\BlazorApp.Client.csproj", "{181B1732-2FDE-4B45-BCD6-1D4538E3A99C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorApp.Client", "src\BlazorApp\Client\BlazorApp.Client.csproj", "{181B1732-2FDE-4B45-BCD6-1D4538E3A99C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorApp.Shared", "src\BlazorApp\Shared\BlazorApp.Shared.csproj", "{C0023ADA-EC92-4963-A0A7-3609D5BCD69B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorApp.Shared", "src\BlazorApp\Shared\BlazorApp.Shared.csproj", "{C0023ADA-EC92-4963-A0A7-3609D5BCD69B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cayent.Core", "src\cayent-core\src\Cayent.Core\Cayent.Core.csproj", "{739264A5-B465-453A-B1E4-31A58B493739}"
 EndProject

@@ -269,6 +269,70 @@ namespace Data.migrations.identity
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Account",
+                columns: table => new
+                {
+                    AccountId = table.Column<string>(type: "nvarchar(36)", maxLength: 36, nullable: false),
+                    AccountNumber = table.Column<string>(type: "nvarchar(36)", maxLength: 36, nullable: false),
+                    MeterNumber = table.Column<string>(type: "nvarchar(36)", maxLength: 36, nullable: false),
+                    ConsumerType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UserInformationId = table.Column<string>(type: "nvarchar(36)", nullable: false),
+                    Address = table.Column<string>(type: "nvarchar(36)", maxLength: 36, nullable: true),
+                    ConcurrencyToken = table.Column<string>(type: "nvarchar(36)", maxLength: 36, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Account", x => x.AccountId);
+                    table.ForeignKey(
+                        name: "FK_Account_UserInformation_UserInformationId",
+                        column: x => x.UserInformationId,
+                        principalTable: "UserInformation",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Billing",
+                columns: table => new
+                {
+                    BillingId = table.Column<string>(type: "nvarchar(36)", maxLength: 36, nullable: false),
+                    AccountId = table.Column<string>(type: "nvarchar(36)", maxLength: 36, nullable: false),
+                    BillingNumber = table.Column<string>(type: "nvarchar(36)", maxLength: 36, nullable: false),
+                    BillingMonth = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    BillingYear = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ReadingTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    BillDateStart = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    BillDateEnd = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    PresentReading = table.Column<double>(type: "float", nullable: false),
+                    PreviousReading = table.Column<double>(type: "float", nullable: false),
+                    Multiplier = table.Column<double>(type: "float", nullable: false),
+                    KilloWattHourUsed = table.Column<double>(type: "float", nullable: false),
+                    BillingDateDue = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Reader = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ConcurrencyToken = table.Column<string>(type: "nvarchar(36)", maxLength: 36, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Billing", x => x.BillingId);
+                    table.ForeignKey(
+                        name: "FK_Billing_Account_AccountId",
+                        column: x => x.AccountId,
+                        principalTable: "Account",
+                        principalColumn: "AccountId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Account_UserInformationId",
+                table: "Account",
+                column: "UserInformationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Billing_AccountId",
+                table: "Billing",
+                column: "AccountId");
+
             migrationBuilder.CreateIndex(
                 name: "IX_Feedback_UserId",
                 table: "Feedback",
@@ -350,6 +414,9 @@ namespace Data.migrations.identity
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "Billing");
+
+            migrationBuilder.DropTable(
                 name: "Feedback");
 
             migrationBuilder.DropTable(
@@ -365,9 +432,6 @@ namespace Data.migrations.identity
                 name: "UserClaim");
 
             migrationBuilder.DropTable(
-                name: "UserInformation");
-
-            migrationBuilder.DropTable(
                 name: "UserLogin");
 
             migrationBuilder.DropTable(
@@ -377,7 +441,13 @@ namespace Data.migrations.identity
                 name: "UserToken");
 
             migrationBuilder.DropTable(
+                name: "Account");
+
+            migrationBuilder.DropTable(
                 name: "Role");
+
+            migrationBuilder.DropTable(
+                name: "UserInformation");
 
             migrationBuilder.DropTable(
                 name: "User");

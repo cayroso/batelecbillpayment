@@ -65,22 +65,7 @@ namespace Blazor.Server.Controllers
                 LastName = "n/a",
             };
 
-            var userRoles = new List<IdentityUserRole<string>>(new[]{
-                    new IdentityUserRole<string> {
-                        UserId = user.Id,
-                        RoleId = ApplicationRoles.Administrator.Id
-                    },
-                    new IdentityUserRole<string> {
-                        UserId = user.Id,
-                        RoleId = ApplicationRoles.Manager.Id
-                    },
-                    new IdentityUserRole<string> {
-                        UserId = user.Id,
-                        RoleId = ApplicationRoles.Member.Id
-                    },
-                });
-
-            await _userManager.AddToRolesAsync(user, userRoles.Select(e => e.RoleId));
+            await _userManager.AddToRoleAsync(user, parameters.RoleId);
             
             await identityWebContext.AddAsync(userInfo);
 
