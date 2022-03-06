@@ -20,6 +20,8 @@ namespace Data.Identity.Models
         public virtual UserInformation UserInformation { get; set; }
         public string Address { get; set; }
 
+        public virtual ICollection<Billing> Billings { get; set; }
+
         public string ConcurrencyToken { get; set; } = Guid.NewGuid().ToString();
         //  userid/userinformationid
         //  consumer name x
@@ -40,6 +42,10 @@ namespace Data.Identity.Models
             b.Property(e => e.AccountNumber).HasMaxLength(KeyMaxLength).IsRequired();
             b.Property(e => e.MeterNumber).HasMaxLength(KeyMaxLength).IsRequired();
             b.Property(e => e.Address).HasMaxLength(KeyMaxLength).IsRequired(false);
+
+            b.HasMany(e => e.Billings)
+                .WithOne(e => e.Account)
+                .IsRequired();
 
             b.Property(e => e.ConcurrencyToken).HasMaxLength(KeyMaxLength).IsRequired().IsConcurrencyToken();
         }

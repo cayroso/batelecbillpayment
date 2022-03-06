@@ -1,7 +1,9 @@
-﻿@page "/gcash/failed"
+﻿@page "/gcash/failed/{billingId}"
 
 <h3>Failed</h3>
-
+@BillingId
 @code {
 
+    [Parameter]
+    public string BillingId { get; set; }
 }

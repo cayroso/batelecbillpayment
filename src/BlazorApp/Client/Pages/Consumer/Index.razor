@@ -1,5 +1,6 @@
 ﻿@page "/consumer"
 @using System.Net.Http.Headers
+@using BlazorApp.Shared.Billing
 @using BlazorApp.Shared.GCash
 @using System.Text.Json
 
@@ -7,40 +8,41 @@
 
 <h3>Index</h3>
 
-Checkout: <a href="@CheckoutUrl">checkout</a>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Bill</th>
+            <th>Due Date</th>
+            <th>Amount</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Billings)
+        {
+            <tr>
+                <td>
+                    <a href="/consumer/checkout/@item.BillingId">
+                        @item.BillingNumber
+                    </a>
+                </td>
+                <td>
+                    @item.BillingDateDue
+                </td>
+                <td>
+                    @item.BillingAmount
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
 @code {
-    string CheckoutUrl;
+
+    List<Billing> Billings = new List<Billing>();
 
     protected override async Task OnInitializedAsync()
     {
-        //var client = new HttpClient();
-        var request = new HttpRequestMessage
-        {
-            Method = HttpMethod.Post,
-            RequestUri = new Uri("https://api.paymongo.com/v1/sources"),
-            Headers =
-            {
-                { "Accept", "application/json" },
-                { "Authorization", "Basic cGtfdGVzdF9lbnlCR1VWRUtLRW1qRzRMNVhpazZ4cXk6" },
-            },
-            Content = new StringContent("{\"data\":{\"attributes\":{\"amount\":10000,\"redirect\":{\"success\":\"https://localhost:7104/gcash/success\",\"failed\":\"https://localhost:7104/gcash/failed\"},\"type\":\"gcash\",\"currency\":\"PHP\"}}}")
-            {
-                Headers =
-                {
-                    ContentType = new MediaTypeHeaderValue("application/json")
-                }
-            }
-        };
-        using (var response = await Http.SendAsync(request))
-        {
-            response.EnsureSuccessStatusCode();
-            var body = await response.Content.ReadAsStringAsync();
+        var foo = await Http.GetFromJsonAsync<List<Billing>>("/api/billing/mybillings");
 
-            var foo = await response.Content.ReadFromJsonAsync<SourceResource>();
-
-            CheckoutUrl = foo.Data.Attributes.Redirect.Checkout_Url;
-
-            Console.WriteLine(body);
-        }
+        Billings = foo;
     }
 }

@@ -1,0 +1,203 @@
+﻿@page "/consumer/checkout/{billingId}"
+@using System.Net.Http.Headers
+@using BlazorApp.Shared.Billing
+@using BlazorApp.Shared.GCash
+
+@inject HttpClient Http
+
+<h3>Checkout</h3>
+
+@if (BillingInfo == null)
+{
+    <div>
+        Loading
+    </div>
+}
+else
+{
+    <div>
+        <table class="table table-responsive border">
+
+            <tbody>
+                <tr>
+                    <th>
+                        Amount
+                    </th>
+                    <td>
+                        @BillingInfo.BillingAmount.ToString("C")
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        Billing Date From/To
+                    </th>
+                    <td>
+                        @BillingInfo.BillDateStart to @BillingInfo.BillDateEnd
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        Due Date
+                    </th>
+                    <td>
+                        @BillingInfo.BillingDateDue
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        Present Reading
+                    </th>
+                    <td>
+                        @BillingInfo.PresentReading
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        Previous Reading
+                    </th>
+                    <td>
+                        @BillingInfo.PreviousReading
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        kWH Used
+                    </th>
+                    <td>
+                        @(BillingInfo.KilloWattHourUsed * @BillingInfo.Multiplier)
+                    </td>
+                </tr>
+
+
+
+
+                @if (!string.IsNullOrWhiteSpace(BillingInfo.Payment.GcashPaymentId))
+                {
+                    <tr>
+                        <th></th>
+                        <td>
+                            <a href="@BillingInfo.Resource.CheckoutUrl">View in GCash</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            Paid Amount
+                        </th>
+                        <td>
+                            @BillingInfo.Payment.Amount.ToString("C")
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            Fee
+                        </th>
+                        <td>
+                            - @BillingInfo.Payment.Fee.ToString("C")
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            Net Amount
+                        </th>
+                        <td>
+                            @BillingInfo.Payment.NetAmount.ToString("C")
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    <tr>
+                        <th></th>
+                        <td>
+                            <a href="@BillingInfo.Resource.CheckoutUrl">Pay with GCash via PayMongo</a>
+                        </td>
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+
+    </div>
+}
+
+@code {
+
+    [Parameter]
+    public string BillingId { get; set; }
+
+    Billing BillingInfo { get; set; }
+
+    //BlazorApp.Shared.GCash.SourceResource SourceResourceInfo { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetBilling(BillingId);
+
+        if (string.IsNullOrWhiteSpace(BillingInfo.GCashSourceResourceId))
+        {
+
+            var source = await CreateSourceResource();
+
+            // update billing resource id
+            var dataAttributes = source.Data.Attributes;
+
+            await AddBillingResource(BillingId, source.Data.Id, dataAttributes.Redirect.Checkout_Url, dataAttributes.Amount, dataAttributes.Status);
+
+            //  get updated
+            await GetBilling(BillingId);
+        }
+    }
+
+    async Task GetBilling(string billingId)
+    {
+        var foo = await Http.GetFromJsonAsync<Billing>($"/api/billing/get/{billingId}");
+
+        BillingInfo = foo;
+    }
+
+    async Task<BlazorApp.Shared.GCash.SourceResource> CreateSourceResource()
+    {
+        //var client = new HttpClient();
+        var request = new HttpRequestMessage
+            {
+                Method = HttpMethod.Post,
+                RequestUri = new Uri("https://api.paymongo.com/v1/sources"),
+                Headers =
+            {
+                { "Accept", "application/json" },
+                { "Authorization", "Basic cGtfdGVzdF9lbnlCR1VWRUtLRW1qRzRMNVhpazZ4cXk6" },
+            },
+                Content = new StringContent("{\"data\":{\"attributes\":{\"amount\":" + (BillingInfo.BillingAmount * 100).ToString() + ",\"redirect\":{\"success\":\"https://localhost:7104/gcash/success/" + BillingInfo.BillingId + "\",\"failed\":\"https://localhost:7104/gcash/failed/" + BillingInfo.BillingId + "\"},\"type\":\"gcash\",\"currency\":\"PHP\"}}}")
+                {
+                    Headers =
+                {
+                    ContentType = new MediaTypeHeaderValue("application/json")
+                }
+                }
+            };
+        using (var response = await Http.SendAsync(request))
+        {
+            response.EnsureSuccessStatusCode();
+            var body = await response.Content.ReadAsStringAsync();
+
+            var foo = await response.Content.ReadFromJsonAsync<BlazorApp.Shared.GCash.SourceResource>();
+
+            return foo;
+        }
+    }
+
+    async Task AddBillingResource(string billingId, string sourceId, string checkoutUrl, double amount, string status)
+    {
+        var info = new AddBillingSourceInfo
+            {
+                BillingId = billingId,
+                SourceId = sourceId,
+                CheckoutUrl = checkoutUrl,
+                Amount = amount,
+                Status = status
+
+            };
+
+        await Http.PostAsJsonAsync<AddBillingSourceInfo>("/api/billing/AddBillingResource", info);
+    }
+}

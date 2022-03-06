@@ -21,9 +21,5 @@
   <ItemGroup>
     <ProjectReference Include="..\cayent-core\src\Cayent.Core\Cayent.Core.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="migrations\" />
-  </ItemGroup>
   
 </Project>

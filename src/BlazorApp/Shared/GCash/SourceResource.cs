@@ -18,7 +18,9 @@ namespace BlazorApp.Shared.GCash
             public class AttributesInfo
             {
                 public double Amount { get; set; }
-                public RedirectInfo Redirect { get; set; }                
+                public string Description { get; set; }
+                public string Status { get; set; }
+                public RedirectInfo Redirect { get; set; }
             }
 
             public class RedirectInfo
@@ -31,5 +33,5 @@ namespace BlazorApp.Shared.GCash
         }
     }
 
-    
+
 }

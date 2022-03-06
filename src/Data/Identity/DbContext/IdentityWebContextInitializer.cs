@@ -53,7 +53,7 @@ namespace Data.Identity.DbContext
 
             var token1 = Guid.NewGuid().ToString();
 
-            var email1 = "system1@bbp.com";            
+            var email1 = "system1@bbp.com";
             var user1 = new IdentityWebUser
             {
                 Id = email1,
@@ -160,6 +160,109 @@ namespace Data.Identity.DbContext
             };
 
             ctx.AddRange(tenant, user1, userRole1, user2, userRole2, user3, userRole3);
+
+            //  sample consumer
+            var consumerEmail = "consumer1@bbp.com";
+            var consumer1 = new IdentityWebUser
+            {
+                Id = consumerEmail,
+                UserName = consumerEmail,
+                NormalizedUserName = consumerEmail.ToUpper(),
+
+                Email = consumerEmail,
+                NormalizedEmail = consumerEmail.ToUpper(),
+                EmailConfirmed = true,
+                PhoneNumber = "+639198262335",
+                PhoneNumberConfirmed = true,
+
+                LockoutEnabled = false,
+                LockoutEnd = null,
+                PasswordHash = "AQAAAAEAACcQAAAAEKGIieH17t5bYXa5tUfxRwN9UIEwApTKbQBRaUtIHplIUG2OfYxvBS8uvKy5E2Stsg==",
+                SecurityStamp = "6SADCY3NMMLOHA2S26ZJCEWGHWSQUYRM",
+                TwoFactorEnabled = false,
+                AccessFailedCount = 0,
+                TenantId = tenant.TenantId,
+                ConcurrencyStamp = token1,
+                UserInformation = new UserInformation
+                {
+                    FirstName = "Chino",
+                    LastName = "Pacia",
+                    ConcurrencyToken = token1,
+                    Theme = "https://bootswatch.com/4/spacelab/bootstrap.min.css"
+                }
+            };
+            var consumerRole1 = new IdentityUserRole<string>
+            {
+                UserId = consumer1.Id,
+                RoleId = ApplicationRoles.Consumer.Id
+            };
+
+            var account1 = new Account
+            {
+                AccountId = consumer1.Id,
+                UserInformationId = consumer1.Id,
+                AccountNumber = "Account 001",
+                Address = "123 Main Street",
+                ConsumerType = "ConsumerTYpe",
+                MeterNumber = "Meter #001",
+            };
+
+            var now = DateTime.UtcNow;
+            var dateStart = DateTime.UtcNow.AddDays(now.Day);
+            var dateEnd = dateStart.AddMonths(1);
+
+            var account1Billings = new[] {
+                new Billing
+                {
+                    BillingId = Guid.NewGuid().ToString(),
+                    AccountId = account1.AccountId,
+                    BillingAmount = 1000,
+                    BillDateStart = dateStart,
+                    BillDateEnd = dateEnd,
+                    BillingDateDue = dateEnd.AddDays(5),
+                    BillingMonth = now.Month.ToString(),
+                    BillingYear = now.Year.ToString(),
+                    BillingNumber = Guid.NewGuid().ToString(),
+                    KilloWattHourUsed = 102, Multiplier = 1,
+                    PresentReading = 100, PreviousReading = 50,
+                    Reader = "Reader#001", ReadingTime = now,
+                },
+                new Billing
+                {
+                    BillingId = Guid.NewGuid().ToString(),
+                    AccountId = account1.AccountId,
+                    BillingAmount = 2000,
+                    BillDateStart = dateStart,
+                    BillDateEnd = dateEnd,
+                    BillingDateDue = dateEnd.AddDays(5),
+                    BillingMonth = now.Month.ToString(),
+                    BillingYear = now.Year.ToString(),
+                    BillingNumber = Guid.NewGuid().ToString(),
+                    KilloWattHourUsed = 102, Multiplier = 1,
+                    PresentReading = 100, PreviousReading = 50,
+                    Reader = "Reader#001", ReadingTime = now,
+                },
+                new Billing
+                {
+                    BillingId = Guid.NewGuid().ToString(),
+                    AccountId = account1.AccountId,
+                    BillingAmount = 500,
+                    BillDateStart = dateStart,
+                    BillDateEnd = dateEnd,
+                    BillingDateDue = dateEnd.AddDays(5),
+                    BillingMonth = now.Month.ToString(),
+                    BillingYear = now.Year.ToString(),
+                    BillingNumber = Guid.NewGuid().ToString(),
+                    KilloWattHourUsed = 102, Multiplier = 1,
+                    PresentReading = 100, PreviousReading = 50,
+                    Reader = "Reader#002", ReadingTime = now,
+                }
+
+            };
+
+            ctx.AddRange(consumer1, consumerRole1, account1);
+
+            ctx.AddRange(account1Billings);
         }
 
     }

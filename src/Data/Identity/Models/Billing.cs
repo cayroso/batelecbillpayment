@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,9 +13,12 @@ namespace Data.Identity.Models
     {
         public string BillingId { get; set; }
 
+        //public string GCashSourceResourceId { get; set; }
+        //public string GCashCheckoutUrl { get; set; }
         public string AccountId { get; set; }
         public virtual Account Account { get; set; }
 
+        public double BillingAmount { get; set; }
         public string BillingNumber { get; set; }
         public string BillingMonth { get; set; }
         public string BillingYear { get; set; }
@@ -56,6 +60,13 @@ namespace Data.Identity.Models
         public string Reader { get; set; }
 
         public string ConcurrencyToken { get; set; } = Guid.NewGuid().ToString();
+
+        public string GcashResourceId { get; set; }
+        public virtual GcashResource GcashResource { get; set; }
+
+        public string GcashPaymentId { get; set; }
+        public virtual GcashPayment GcashPayment { get; set; }
+
         //  bill month
         //  amount
         //  reading date
@@ -83,6 +94,19 @@ namespace Data.Identity.Models
             b.Property(e => e.BillingId).HasMaxLength(KeyMaxLength).IsRequired();
             b.Property(e => e.AccountId).HasMaxLength(KeyMaxLength).IsRequired();
             b.Property(e => e.BillingNumber).HasMaxLength(KeyMaxLength).IsRequired();
+            b.Property(e => e.GcashResourceId).HasMaxLength(KeyMaxLength).IsRequired(false);
+            b.Property(e => e.GcashPaymentId).HasMaxLength(KeyMaxLength).IsRequired(false);
+
+            b.HasOne(e => e.Account);
+
+            b.HasOne(e => e.GcashResource)
+                .WithOne(d => d.Billing)
+                .HasForeignKey<GcashResource>(d => d.BillingId);
+
+            b.HasOne(e => e.GcashPayment)
+                .WithOne(d => d.Billing)
+                .HasForeignKey<GcashPayment>(d => d.BillingId);
+
 
             b.Property(e => e.ConcurrencyToken).HasMaxLength(KeyMaxLength).IsRequired().IsConcurrencyToken();
         }

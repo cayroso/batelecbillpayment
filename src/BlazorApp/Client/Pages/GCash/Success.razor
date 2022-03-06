@@ -1,7 +1,15 @@
-﻿@page "/gcash/success"
+﻿@page "/gcash/success/{billingId}"
+
+@inject HttpClient Http
 
 <h3>Success</h3>
 
 @code {
+    [Parameter]
+    public string BillingId { get; set; }
 
+    //protected override Task OnInitializedAsync()
+    //{
+        //var billing = await Http.PostAsync($"/api/billing/setgcashid/{}")
+    //}
 }

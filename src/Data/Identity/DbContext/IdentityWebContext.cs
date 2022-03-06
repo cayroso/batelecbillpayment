@@ -36,6 +36,9 @@ namespace Data.Identity.DbContext
         //  app specific
         public DbSet<Account> Accounts { get; set; }
         public DbSet<Billing> Billings { get; set; }
+        public DbSet<GcashResource> GcashResources { get; set; }
+        public DbSet<GcashPayment> GcashPayments { get; set; }
+
 
         public IdentityWebContext(DbContextOptions<IdentityWebContext> options, IConfiguration configuration)
             : base(options)
@@ -194,6 +197,8 @@ namespace Data.Identity.DbContext
             //  app specific
             builder.ApplyConfiguration(new AccountConfiguration());
             builder.ApplyConfiguration(new BillConfiguration());
+            builder.ApplyConfiguration(new GcashResourceConfiguration());
+            builder.ApplyConfiguration(new GcashPaymentConfiguration());
         }
     }
 }
