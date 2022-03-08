@@ -1,4 +1,4 @@
-﻿@page "/consumer"
+﻿@page "/consumers"
 @using System.Net.Http.Headers
 @using BlazorApp.Shared.Billing
 @using BlazorApp.Shared.GCash
@@ -6,9 +6,8 @@
 
 @inject HttpClient Http
 
-<h3>Index</h3>
-
-<table class="table">
+<h3>My Bills</h3>
+<table class="table border">
     <thead>
         <tr>
             <th>Bill</th>
@@ -22,14 +21,14 @@
             <tr>
                 <td>
                     <a href="/consumer/checkout/@item.BillingId">
-                        @item.BillingNumber
+                       Bill # @item.BillingNumber
                     </a>
                 </td>
                 <td>
                     @item.BillingDateDue
                 </td>
                 <td>
-                    @item.BillingAmount
+                    @item.BillingAmount.ToString("C")
                 </td>
             </tr>
         }

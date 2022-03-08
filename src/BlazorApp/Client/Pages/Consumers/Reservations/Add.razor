@@ -1,0 +1,88 @@
+﻿@page "/consumers/reservations/add"
+
+@using BlazorApp.Shared.Branches
+@using BlazorApp.Shared.Reservations
+@inject HttpClient Http
+
+<h3>Reservations Add</h3>
+
+<EditForm class="form-signin container col-md-6 col-lg-4" OnValidSubmit="OnSubmit" Model="Parameters">
+
+    <DataAnnotationsValidator />
+
+
+    <div class="form-group">
+        <label for="inputUsername" class="sr-only">Date</label>
+        <input id="dateReservation" type="date" class="form-control" @bind-value="Parameters.DateReservation" />
+        <ValidationMessage For="@(() => Parameters.DateReservation)" />
+    </div>
+    <div class="form-group">
+        <label for="branchId" class="sr-only">Time Slot</label>
+        <InputSelect @bind-Value="@Parameters.TimeSlot" class="form-control">
+            <option value="">- Select Time Slot -</option>
+            @foreach (var opt in TimeSlots)
+            {
+                <option value="@opt">@opt</option>
+            }
+        </InputSelect>
+        <ValidationMessage For="@(() => Parameters.TimeSlot)" />
+    </div>
+
+    <div class="form-group">
+        <label for="branchId" class="sr-only">Branch</label>
+        <InputSelect @bind-Value="@Parameters.BranchId" class="form-control">
+            <option value="">- Select branch -</option>
+            @foreach (var opt in Branches.OrderBy(e => e.Name))
+            {
+                <option value="@opt.BranchId">@opt.Name</option>
+            }
+        </InputSelect>
+        <ValidationMessage For="@(() => Parameters.BranchId)" />
+    </div>
+
+    <label class="text-danger">@error</label>
+
+    <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+
+</EditForm>
+
+@code {
+
+    AddReservationInfo Parameters { get; set; } = new AddReservationInfo();
+    string error { get; set; }
+
+    List<BranchInfo> Branches = new List<BranchInfo>();
+
+    List<string> TimeSlots = new List<string>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Parameters.DateReservation = DateTime.UtcNow;
+
+        var items = await Http.GetFromJsonAsync<List<BranchInfo>>("/api/branch/lookup");
+
+        Branches = items;
+
+        var now = DateTime.Now.Date.AddHours(9);
+        var end = now.AddHours(8);
+
+        for (; now < end; now = now.AddMinutes(15))
+        {
+            TimeSlots.Add(now.ToString("hh:mm tt"));
+        }
+
+    }
+
+    async Task OnSubmit()
+    {
+        error = null;
+        try
+        {
+            await Http.PostAsJsonAsync<AddReservationInfo>("/api/reservation", Parameters);
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+        }
+    }
+}

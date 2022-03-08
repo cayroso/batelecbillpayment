@@ -11,8 +11,8 @@
 </h1>
 
 
-<EditForm class="form-signin container col-md-6 col-lg-3" OnValidSubmit="OnSubmit" Model="loginParameters">    
-    
+<EditForm class="form-signin container col-md-6 col-lg-3" OnValidSubmit="OnSubmit" Model="loginParameters">
+
     <DataAnnotationsValidator />
     <h4 class="font-weight-normal text-center">Login</h4>
 
@@ -38,7 +38,55 @@
     </NavLink>
 </EditForm>
 
-@code{
+<div class="col-4 offset-4 mt-5">    
+    <table class="table border">
+        <caption>Test Accounts</caption>
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Password</th>
+                <th>Role(s)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    consumer1@bbp.com
+                </td>
+                <td>
+                    123456
+                </td>
+                <td>
+                    Consumer
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    admin1@bbp.com
+                </td>
+                <td>
+                    123456
+                </td>
+                <td>
+                    Administrator
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    system1@bbp.com
+                </td>
+                <td>
+                    123456
+                </td>
+                <td>
+                    System
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+@code {
     LoginModel loginParameters { get; set; } = new LoginModel();
     string error { get; set; }
 

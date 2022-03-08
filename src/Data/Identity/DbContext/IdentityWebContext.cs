@@ -1,5 +1,6 @@
 ﻿
 using Data.Identity.Models;
+using Data.Identity.Models.Reservations;
 using Data.Identity.Models.Users;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -36,8 +37,11 @@ namespace Data.Identity.DbContext
         //  app specific
         public DbSet<Account> Accounts { get; set; }
         public DbSet<Billing> Billings { get; set; }
+        public DbSet<Branch> Branches { get; set; }
         public DbSet<GcashResource> GcashResources { get; set; }
         public DbSet<GcashPayment> GcashPayments { get; set; }
+
+        public DbSet<Reservation> Reservations { get; set; }
 
 
         public IdentityWebContext(DbContextOptions<IdentityWebContext> options, IConfiguration configuration)
@@ -196,9 +200,11 @@ namespace Data.Identity.DbContext
 
             //  app specific
             builder.ApplyConfiguration(new AccountConfiguration());
-            builder.ApplyConfiguration(new BillConfiguration());
+            builder.ApplyConfiguration(new BillingConfiguration());
+            builder.ApplyConfiguration(new BranchConfiguration());
             builder.ApplyConfiguration(new GcashResourceConfiguration());
             builder.ApplyConfiguration(new GcashPaymentConfiguration());
+            builder.ApplyConfiguration(new ReservationConfiguration());
         }
     }
 }

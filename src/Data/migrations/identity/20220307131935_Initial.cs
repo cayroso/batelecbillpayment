@@ -10,6 +10,19 @@ namespace Data.migrations.identity
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "Branch",
+                columns: table => new
+                {
+                    BranchId = table.Column<string>(type: "TEXT", nullable: false),
+                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    ConcurrencyToken = table.Column<string>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Branch", x => x.BranchId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Role",
                 columns: table => new
                 {
@@ -327,6 +340,33 @@ namespace Data.migrations.identity
                 });
 
             migrationBuilder.CreateTable(
+                name: "Reservation",
+                columns: table => new
+                {
+                    ReservationId = table.Column<string>(type: "TEXT", maxLength: 36, nullable: false),
+                    BranchId = table.Column<string>(type: "TEXT", maxLength: 36, nullable: false),
+                    AccountId = table.Column<string>(type: "TEXT", maxLength: 36, nullable: false),
+                    DateReservation = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ConcurrencyToken = table.Column<string>(type: "TEXT", maxLength: 36, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Reservation", x => x.ReservationId);
+                    table.ForeignKey(
+                        name: "FK_Reservation_Account_AccountId",
+                        column: x => x.AccountId,
+                        principalTable: "Account",
+                        principalColumn: "AccountId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Reservation_Branch_BranchId",
+                        column: x => x.BranchId,
+                        principalTable: "Branch",
+                        principalColumn: "BranchId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "GcashPayment",
                 columns: table => new
                 {
@@ -415,6 +455,16 @@ namespace Data.migrations.identity
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Reservation_AccountId",
+                table: "Reservation",
+                column: "AccountId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Reservation_BranchId",
+                table: "Reservation",
+                column: "BranchId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Role_Name",
                 table: "Role",
                 column: "Name",
@@ -495,6 +545,9 @@ namespace Data.migrations.identity
                 name: "LoginAudit");
 
             migrationBuilder.DropTable(
+                name: "Reservation");
+
+            migrationBuilder.DropTable(
                 name: "RoleClaim");
 
             migrationBuilder.DropTable(
@@ -514,6 +567,9 @@ namespace Data.migrations.identity
 
             migrationBuilder.DropTable(
                 name: "Billing");
+
+            migrationBuilder.DropTable(
+                name: "Branch");
 
             migrationBuilder.DropTable(
                 name: "Role");

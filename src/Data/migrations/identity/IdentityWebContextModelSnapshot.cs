@@ -134,6 +134,24 @@ namespace Data.migrations.identity
                     b.ToTable("Billing", (string)null);
                 });
 
+            modelBuilder.Entity("Data.Identity.Models.Branch", b =>
+                {
+                    b.Property<string>("BranchId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ConcurrencyToken")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("BranchId");
+
+                    b.ToTable("Branch");
+                });
+
             modelBuilder.Entity("Data.Identity.Models.Feedback", b =>
                 {
                     b.Property<string>("FeedbackId")
@@ -303,6 +321,40 @@ namespace Data.migrations.identity
                     b.HasIndex("UserId");
 
                     b.ToTable("LoginAudit", (string)null);
+                });
+
+            modelBuilder.Entity("Data.Identity.Models.Reservations.Reservation", b =>
+                {
+                    b.Property<string>("ReservationId")
+                        .HasMaxLength(36)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("AccountId")
+                        .IsRequired()
+                        .HasMaxLength(36)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("BranchId")
+                        .IsRequired()
+                        .HasMaxLength(36)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ConcurrencyToken")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .HasMaxLength(36)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("DateReservation")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("ReservationId");
+
+                    b.HasIndex("AccountId");
+
+                    b.HasIndex("BranchId");
+
+                    b.ToTable("Reservation", (string)null);
                 });
 
             modelBuilder.Entity("Data.Identity.Models.Tenant", b =>
@@ -714,6 +766,25 @@ namespace Data.migrations.identity
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Data.Identity.Models.Reservations.Reservation", b =>
+                {
+                    b.HasOne("Data.Identity.Models.Account", "Account")
+                        .WithMany()
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Data.Identity.Models.Branch", "Branch")
+                        .WithMany("Reservations")
+                        .HasForeignKey("BranchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Account");
+
+                    b.Navigation("Branch");
+                });
+
             modelBuilder.Entity("Data.Identity.Models.Users.IdentityWebUser", b =>
                 {
                     b.HasOne("Data.Identity.Models.Tenant", "Tenant")
@@ -810,6 +881,11 @@ namespace Data.migrations.identity
 
                     b.Navigation("GcashResource")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Data.Identity.Models.Branch", b =>
+                {
+                    b.Navigation("Reservations");
                 });
 
             modelBuilder.Entity("Data.Identity.Models.Tenant", b =>

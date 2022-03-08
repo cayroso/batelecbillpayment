@@ -1,0 +1,42 @@
+﻿@page "/consumers/reservations"
+@using BlazorApp.Shared.Reservations
+@inject HttpClient Http
+
+<h3>Reservations</h3>
+
+<a href="/consumers/reservations/add" class="btn btn-primary">
+    Add New
+</a>
+
+<table class="table border">
+    <thead>
+        <tr>
+            <th>Date of Reservation</th>
+            <th>Branch Name</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Items.OrderByDescending(e => e.DateReservation))
+        {
+            <tr>
+                <td>
+                    @item.DateReservation
+                </td>
+                <td>
+                    @item.BranchName
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    List<ReservationInfo> Items = new List<ReservationInfo>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var items = await Http.GetFromJsonAsync<List<ReservationInfo>>("/api/reservation");
+
+        Items = items;
+    }
+}

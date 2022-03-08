@@ -1,4 +1,6 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿@using System.Security.Claims
+
+<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">Batelec Bills Payment</a>
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
@@ -9,26 +11,82 @@
 
 <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
     <nav class="flex-column">
-        <div class="nav-item px-3">
+        @*<div class="nav-item px-3">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Home
+            <span class="oi oi-home" aria-hidden="true"></span> Home
             </NavLink>
-        </div>
-        <div class="nav-item px-3">
+            </div>
+            <div class="nav-item px-3">
             <NavLink class="nav-link" href="counter">
-                <span class="oi oi-plus" aria-hidden="true"></span> Counter
+            <span class="oi oi-plus" aria-hidden="true"></span> Counter
             </NavLink>
-        </div>
-        <div class="nav-item px-3">
+            </div>
+            <div class="nav-item px-3">
             <NavLink class="nav-link" href="fetchdata">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Fetch data
+            <span class="oi oi-list-rich" aria-hidden="true"></span> Fetch data
             </NavLink>
-        </div>
-        <div class="nav-item px-3">
+            </div>
+            <div class="nav-item px-3">
             <NavLink class="nav-link" href="/consumer" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Consumer
+            <span class="oi oi-home" aria-hidden="true"></span> Consumer
             </NavLink>
-        </div>
+            </div>*@
+        @if (user.IsInRole("System"))
+        {
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="/systems" Match="NavLinkMatch.All">
+                    <span class="oi oi-home" aria-hidden="true"></span> Home
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="/systems/administrators" Match="NavLinkMatch.All">
+                    <span class="oi oi-home" aria-hidden="true"></span> Administrators
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="/systems/consumers" Match="NavLinkMatch.All">
+                    <span class="oi oi-home" aria-hidden="true"></span> Consumers
+                </NavLink>
+            </div>
+        }
+
+        @if (user.IsInRole("Administrator"))
+        {
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="/administrators" Match="NavLinkMatch.All">
+                    <span class="oi oi-home" aria-hidden="true"></span> Home
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="/administrators/billings" Match="NavLinkMatch.All">
+                    <span class="oi oi-home" aria-hidden="true"></span> Billings
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="/administrators/consumers" Match="NavLinkMatch.All">
+                    <span class="oi oi-home" aria-hidden="true"></span> Consumers
+                </NavLink>
+            </div>
+        }
+
+        @if (user.IsInRole("Consumer"))
+        {
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="/consumers" Match="NavLinkMatch.All">
+                    <span class="oi oi-home" aria-hidden="true"></span> Home
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="/consumers/billings" Match="NavLinkMatch.All">
+                    <span class="oi oi-home" aria-hidden="true"></span> Billings
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="/consumers/reservations" Match="NavLinkMatch.All">
+                    <span class="oi oi-home" aria-hidden="true"></span> Reservations
+                </NavLink>
+            </div>
+        }
     </nav>
 </div>
 
@@ -37,8 +95,22 @@
 
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
 
+    [CascadingParameter] private Task<AuthenticationState> authenticationStateTask { get; set; }
+    ClaimsPrincipal user;
+
     private void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;
+    }
+
+    protected async override Task OnInitializedAsync()
+    {
+        var authState = await authenticationStateTask;
+        user = authState.User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            Console.WriteLine($"{user.Identity.Name} is authenticated.");
+        }
     }
 }

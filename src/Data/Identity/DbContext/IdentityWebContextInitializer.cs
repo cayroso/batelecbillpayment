@@ -1,6 +1,7 @@
 ﻿using Cayent.Core.Data.Identity.Models.Users;
 using Data.Constants;
 using Data.Identity.Models;
+using Data.Identity.Models.Reservations;
 using Data.Identity.Models.Users;
 using Microsoft.AspNetCore.Identity;
 using System;
@@ -21,6 +22,8 @@ namespace Data.Identity.DbContext
             CreateRoles(ctx);
 
             CreateAdministrator(ctx);
+
+            CreateBrances(ctx);
 
             ctx.SaveChanges();
         }
@@ -260,10 +263,53 @@ namespace Data.Identity.DbContext
 
             };
 
+            // sample reservations
+            var reservations = new[]
+            {
+                new Reservation
+                {
+                    ReservationId = Guid.NewGuid().ToString(),
+                    AccountId = consumer1.Id, 
+                    BranchId = "ermita-balayan", 
+                    DateReservation = now.AddDays(4)
+                },
+                new Reservation
+                {
+                    ReservationId = Guid.NewGuid().ToString(),
+                    AccountId = consumer1.Id,
+                    BranchId = "ermita-balayan",
+                    DateReservation = now.AddDays(6)
+                },
+                new Reservation
+                {
+                    ReservationId = Guid.NewGuid().ToString(),
+                    AccountId = consumer1.Id,
+                    BranchId = "calaca",
+                    DateReservation = now.AddDays(7)
+                }
+            };
+
             ctx.AddRange(consumer1, consumerRole1, account1);
 
             ctx.AddRange(account1Billings);
+            ctx.AddRange(reservations);
         }
 
+        static void CreateBrances(IdentityWebContext ctx)
+        {
+            var branches = new[]
+            {
+                new Branch{ BranchId = "butong-taal", Name = "Butong, Taal" },
+                new Branch{ BranchId = "mataas-na-bayan-lemery", Name = "Mataas na Bayan, Lemery" },
+                new Branch{ BranchId = "palanas-lemery", Name = "Palanas, Lemery" },
+                new Branch{ BranchId = "gulod-calatagan", Name = "Gulod, Calatagan" },
+                new Branch{ BranchId = "ermita-balayan", Name = "Ermita, Balayan" },
+                new Branch{ BranchId = "camp-avejar-nasugbu", Name = "Camp Avejar, Nasugbu" },
+                new Branch{ BranchId = "natipuan", Name = "Natipuan" },
+                new Branch{ BranchId = "calaca", Name = "Calaca" },
+            };
+
+            ctx.AddRange(branches);
+        }
     }
 }

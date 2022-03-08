@@ -84,7 +84,7 @@ namespace Data.Identity.Models
         //  reader
     }
 
-    internal class BillConfiguration : Cayent.Core.Data.Components.EntityBaseConfiguration<Billing>
+    internal class BillingConfiguration : Cayent.Core.Data.Components.EntityBaseConfiguration<Billing>
     {
         public override void Configure(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<Billing> b)
         {
