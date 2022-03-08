@@ -16,9 +16,9 @@ namespace BlazorApp.Shared.Billing
         public string BillingMonth { get; set; }
         public string BillingYear { get; set; }
 
-        public DateTime ReadingTime { get; set; }
-        public DateTime BillDateStart { get; set; }
-        public DateTime BillDateEnd { get; set; }
+        public DateTime ReadingDate { get; set; }
+        public DateTime BillingDateStart { get; set; }
+        public DateTime BillingDateEnd { get; set; }
 
         public double PresentReading { get; set; }
         public double PreviousReading { get; set; }

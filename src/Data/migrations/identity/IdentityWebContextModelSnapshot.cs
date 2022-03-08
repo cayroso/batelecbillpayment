@@ -47,13 +47,7 @@ namespace Data.migrations.identity
                         .HasMaxLength(36)
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("UserInformationId")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
                     b.HasKey("AccountId");
-
-                    b.HasIndex("UserInformationId");
 
                     b.ToTable("Account", (string)null);
                 });
@@ -69,16 +63,16 @@ namespace Data.migrations.identity
                         .HasMaxLength(36)
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("BillDateEnd")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("BillDateStart")
-                        .HasColumnType("TEXT");
-
                     b.Property<double>("BillingAmount")
                         .HasColumnType("REAL");
 
                     b.Property<DateTime>("BillingDateDue")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("BillingDateEnd")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("BillingDateStart")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("BillingMonth")
@@ -124,7 +118,7 @@ namespace Data.migrations.identity
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("ReadingTime")
+                    b.Property<DateTime>("ReadingDate")
                         .HasColumnType("TEXT");
 
                     b.HasKey("BillingId");
@@ -137,19 +131,23 @@ namespace Data.migrations.identity
             modelBuilder.Entity("Data.Identity.Models.Branch", b =>
                 {
                     b.Property<string>("BranchId")
+                        .HasMaxLength(36)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("ConcurrencyToken")
+                        .IsConcurrencyToken()
                         .IsRequired()
+                        .HasMaxLength(36)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
                         .IsRequired()
+                        .HasMaxLength(256)
                         .HasColumnType("TEXT");
 
                     b.HasKey("BranchId");
 
-                    b.ToTable("Branch");
+                    b.ToTable("Branch", (string)null);
                 });
 
             modelBuilder.Entity("Data.Identity.Models.Feedback", b =>
@@ -703,8 +701,8 @@ namespace Data.migrations.identity
             modelBuilder.Entity("Data.Identity.Models.Account", b =>
                 {
                     b.HasOne("Data.Identity.Models.Users.UserInformation", "UserInformation")
-                        .WithMany()
-                        .HasForeignKey("UserInformationId")
+                        .WithOne()
+                        .HasForeignKey("Data.Identity.Models.Account", "AccountId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

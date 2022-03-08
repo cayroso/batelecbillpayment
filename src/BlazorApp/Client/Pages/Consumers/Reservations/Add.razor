@@ -3,6 +3,7 @@
 @using BlazorApp.Shared.Branches
 @using BlazorApp.Shared.Reservations
 @inject HttpClient Http
+@inject NavigationManager navigationManager
 
 <h3>Reservations Add</h3>
 
@@ -71,14 +72,25 @@
             TimeSlots.Add(now.ToString("hh:mm tt"));
         }
 
+        //await GetOpenTimeSlots();
     }
+
 
     async Task OnSubmit()
     {
         error = null;
         try
         {
-            await Http.PostAsJsonAsync<AddReservationInfo>("/api/reservation", Parameters);
+            var result = await Http.PostAsJsonAsync<AddReservationInfo>("/api/reservation", Parameters);
+
+            if (!result.IsSuccessStatusCode)
+            {
+                var foo = await result.Content.ReadAsStringAsync();
+
+                error = foo;
+            }
+            else
+                navigationManager.NavigateTo("/consumers/reservations");
         }
         catch (Exception ex)
         {

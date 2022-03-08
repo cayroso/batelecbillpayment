@@ -1,18 +1,15 @@
-﻿@page "/consumers/reservations"
+﻿@page "/administrators/reservations"
 @using BlazorApp.Shared.Reservations
 @inject HttpClient Http
 
-<h3>Reservations</h3>
-
-<a href="/consumers/reservations/add" class="btn btn-primary">
-    Add New
-</a>
+<h3>Index</h3>
 
 <table class="table border">
     <thead>
         <tr>
             <th>Date of Reservation</th>
             <th>Branch Name</th>
+            <th>Account</th>
             <th>Action</th>
         </tr>
     </thead>
@@ -27,9 +24,13 @@
                     @item.BranchName
                 </td>
                 <td>
+                    @item.AccountName
+                </td>
+                <td>
                     <button @onclick="@(async ()=> await DeleteReservation(item.ReservationId))">
                         <i class="fa fa-fw fa-trash"></i>
-                        Delete</button>
+                        Delete
+                    </button>
                 </td>
             </tr>
         }
@@ -46,7 +47,7 @@
 
     async Task GetMyReservations()
     {
-        var items = await Http.GetFromJsonAsync<List<ReservationInfo>>("/api/reservation/my-reservations");
+        var items = await Http.GetFromJsonAsync<List<ReservationInfo>>("/api/reservation");
 
         Items = items;
     }

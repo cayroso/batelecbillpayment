@@ -14,7 +14,7 @@ using Data.Identity.Models;
 
 namespace Blazor.Server.Controllers
 {
-    [Route("api/[controller]/[action]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class BillingController : BaseController
     {
@@ -24,7 +24,7 @@ namespace Blazor.Server.Controllers
             _identityWebContext = identityWebContext;
         }
 
-        [HttpGet("{billingId}")]
+        [HttpGet("my-billings/{billingId}")]
         public async Task<IActionResult> Get(string billingId)
         {
             var dto = await _identityWebContext.Billings
@@ -34,8 +34,8 @@ namespace Blazor.Server.Controllers
                 {
                     GCashSourceResourceId = e.GcashResource!.GcashResourceId,
                     GCashCheckoutUrl = e.GcashResource!.CheckoutUrl,
-                    BillDateEnd = e.BillDateEnd,
-                    BillDateStart = e.BillingDateDue,
+                    BillingDateEnd = e.BillingDateEnd,
+                    BillingDateStart = e.BillingDateDue,
                     BillingDateDue = e.BillingDateDue,
                     BillingAmount = e.BillingAmount,
                     BillingId = e.BillingId,
@@ -47,7 +47,7 @@ namespace Blazor.Server.Controllers
                     PresentReading = e.PresentReading,
                     PreviousReading = e.PreviousReading,
                     Reader = e.Reader,
-                    ReadingTime = e.ReadingTime,
+                    ReadingDate = e.ReadingDate,
                     Token = e.ConcurrencyToken,
                     Resource = new BlazorApp.Shared.Billing.SourceResource
                     {
@@ -69,7 +69,7 @@ namespace Blazor.Server.Controllers
             return Ok(dto);
         }
 
-        [HttpGet]
+        [HttpGet("my-billings")]
         public async Task<IActionResult> MyBillings()
         {
             var dto = await _identityWebContext.Billings
@@ -79,8 +79,8 @@ namespace Blazor.Server.Controllers
                 {
                     GCashSourceResourceId = e.GcashResource!.GcashResourceId,
                     GCashCheckoutUrl = e.GcashResource!.CheckoutUrl,
-                    BillDateEnd = e.BillDateEnd,
-                    BillDateStart = e.BillingDateDue,
+                    BillingDateEnd = e.BillingDateEnd,
+                    BillingDateStart = e.BillingDateDue,
                     BillingDateDue = e.BillingDateDue,
                     BillingAmount = e.BillingAmount,
                     BillingId = e.BillingId,
@@ -92,7 +92,7 @@ namespace Blazor.Server.Controllers
                     PresentReading = e.PresentReading,
                     PreviousReading = e.PreviousReading,
                     Reader = e.Reader,
-                    ReadingTime = e.ReadingTime,
+                    ReadingDate = e.ReadingDate,
                     Token = e.ConcurrencyToken,
                     Resource = new BlazorApp.Shared.Billing.SourceResource
                     {
@@ -115,14 +115,43 @@ namespace Blazor.Server.Controllers
             return Ok(dto);
         }
 
-        [HttpPost]
+        [HttpPost("add-billing")]
+        public async Task<IActionResult> AddBilling(AddBillingInfo info)
+        {
+            var data = new Data.Identity.Models.Billing
+            {
+                BillingId = GuidStr(),
+                AccountId = info.AccountId,
+                BillingAmount = info.BillingAmount,
+                BillingDateDue = info.BillingDateDue,
+                BillingDateEnd = info.BillingDateEnd,
+                BillingDateStart = info.BillingDateStart,
+                BillingMonth = info.BillingMonth,
+                BillingNumber = info.BillingNumber,
+                BillingYear = info.BillingYear,
+                KilloWattHourUsed = info.KilloWattHourUsed,
+                PresentReading = info.PresentReading,
+                PreviousReading = info.PreviousReading,
+                Multiplier = info.Multiplier,
+                Reader = info.Reader,
+                ReadingDate = info.ReadingDate,
+            };
+
+            await _identityWebContext.AddAsync(data);
+
+            await _identityWebContext.SaveChangesAsync();
+
+            return Ok();
+        }
+
+        [HttpPost("add-billing-resource")]
         public async Task<IActionResult> AddBillingResource(AddBillingSourceInfo info)
         {
             var data = await _identityWebContext.Billings
                 .FirstOrDefaultAsync(e => e.BillingId == info.BillingId);
 
             if (data == null)
-                return NotFound();
+                return NotFound("Billing not found.");
 
             var gcashResource = new GcashResource
             {

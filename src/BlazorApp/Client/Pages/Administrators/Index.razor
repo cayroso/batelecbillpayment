@@ -1,7 +1,66 @@
 ﻿@page "/administrators"
+@using BlazorApp.Shared.Reservations
+@inject HttpClient Http
 
 <h3>Index</h3>
 
-@code {
+<table class="table border">
+    <thead>
+        <tr>
+            <th>Date of Reservation</th>
+            <th>Branch Name</th>
+            <th>Account</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Items.OrderByDescending(e => e.DateReservation))
+        {
+            <tr>
+                <td>
+                    @item.DateReservation
+                </td>
+                <td>
+                    @item.BranchName
+                </td>
+                <td>
+                    @item.AccountName
+                </td>
+                <td>
+                    <button @onclick="@(async ()=> await DeleteReservation(item.ReservationId))">
+                        <i class="fa fa-fw fa-trash"></i>
+                        Delete
+                    </button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
 
+@code {
+    List<ReservationInfo> Items = new List<ReservationInfo>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetMyReservations();
+    }
+
+    async Task GetMyReservations()
+    {
+        var items = await Http.GetFromJsonAsync<List<ReservationInfo>>("/api/reservation");
+
+        Items = items;
+    }
+
+    async Task DeleteReservation(string reservationId)
+    {
+        var result = await Http.DeleteAsync($"/api/reservation/{reservationId}");
+
+        if (!result.IsSuccessStatusCode)
+        {
+            var error = await result.Content.ReadAsStringAsync();
+        }
+
+        await GetMyReservations();
+    }
 }

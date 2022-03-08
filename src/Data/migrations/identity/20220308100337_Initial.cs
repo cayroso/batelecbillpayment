@@ -13,9 +13,9 @@ namespace Data.migrations.identity
                 name: "Branch",
                 columns: table => new
                 {
-                    BranchId = table.Column<string>(type: "TEXT", nullable: false),
-                    Name = table.Column<string>(type: "TEXT", nullable: false),
-                    ConcurrencyToken = table.Column<string>(type: "TEXT", nullable: false)
+                    BranchId = table.Column<string>(type: "TEXT", maxLength: 36, nullable: false),
+                    Name = table.Column<string>(type: "TEXT", maxLength: 256, nullable: false),
+                    ConcurrencyToken = table.Column<string>(type: "TEXT", maxLength: 36, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -290,7 +290,6 @@ namespace Data.migrations.identity
                     AccountNumber = table.Column<string>(type: "TEXT", maxLength: 36, nullable: false),
                     MeterNumber = table.Column<string>(type: "TEXT", maxLength: 36, nullable: false),
                     ConsumerType = table.Column<string>(type: "TEXT", nullable: false),
-                    UserInformationId = table.Column<string>(type: "TEXT", nullable: false),
                     Address = table.Column<string>(type: "TEXT", maxLength: 36, nullable: true),
                     ConcurrencyToken = table.Column<string>(type: "TEXT", maxLength: 36, nullable: false)
                 },
@@ -298,8 +297,8 @@ namespace Data.migrations.identity
                 {
                     table.PrimaryKey("PK_Account", x => x.AccountId);
                     table.ForeignKey(
-                        name: "FK_Account_UserInformation_UserInformationId",
-                        column: x => x.UserInformationId,
+                        name: "FK_Account_UserInformation_AccountId",
+                        column: x => x.AccountId,
                         principalTable: "UserInformation",
                         principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
@@ -315,9 +314,9 @@ namespace Data.migrations.identity
                     BillingNumber = table.Column<string>(type: "TEXT", maxLength: 36, nullable: false),
                     BillingMonth = table.Column<string>(type: "TEXT", nullable: false),
                     BillingYear = table.Column<string>(type: "TEXT", nullable: false),
-                    ReadingTime = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    BillDateStart = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    BillDateEnd = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ReadingDate = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    BillingDateStart = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    BillingDateEnd = table.Column<DateTime>(type: "TEXT", nullable: false),
                     PresentReading = table.Column<double>(type: "REAL", nullable: false),
                     PreviousReading = table.Column<double>(type: "REAL", nullable: false),
                     Multiplier = table.Column<double>(type: "REAL", nullable: false),
@@ -421,11 +420,6 @@ namespace Data.migrations.identity
                         principalColumn: "BillingId",
                         onDelete: ReferentialAction.Cascade);
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Account_UserInformationId",
-                table: "Account",
-                column: "UserInformationId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Billing_AccountId",

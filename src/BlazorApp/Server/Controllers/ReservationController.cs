@@ -49,8 +49,8 @@ namespace Blazor.Server.Controllers
 
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Get()
+        [HttpGet("my-reservations")]
+        public async Task<IActionResult> GetMyReservations()
         {
             var dto = await _identityWebContext.Reservations
                 .Where(e => e.AccountId == UserId)
@@ -67,6 +67,54 @@ namespace Blazor.Server.Controllers
 
             return Ok(dto);
         }
+
+        [Authorize(Roles = "Administrator")]
+        [HttpGet]
+        public async Task<IActionResult> GetReservations()
+        {
+            var dto = await _identityWebContext.Reservations
+                .Select(e => new ReservationInfo
+                {
+                    ReservationId = e.ReservationId,
+                    DateReservation = e.DateReservation,
+                    BranchId = e.BranchId,
+                    BranchName = e.Branch.Name,
+                    AccountId = e.AccountId,
+                    AccountName = $"{e.Account.UserInformation.FirstLastName}"
+                })
+                .ToListAsync();
+
+            return Ok(dto);
+        }
+        //[HttpGet("DateTimeSlots/{dateTicks}")]
+        //public async Task<IActionResult> GetTimeSlotsForDate(long dateTicks)
+        //{
+        //    var dateUtc = new DateTime(dateTicks).AsUtc().Truncate();
+
+        //    var reservedTimeSpans = await _identityWebContext.Reservations
+        //        .Where(e => e.DateReservation.Date == dateUtc.Date)
+        //        .Select(e => e.DateReservation.ToString("hh:mm tt"))
+        //        .ToListAsync();
+
+        //    var now = DateTime.Now.Date.AddHours(9);
+        //    var end = now.AddHours(9);
+
+        //    var timeSlots = new List<TimeSlot>();
+
+        //    for (; now < end; now = now.AddMinutes(15))
+        //    {
+        //        var slot = now.ToString("hh:mm tt");
+        //        timeSlots.Add(new TimeSlot
+        //        {
+        //            Slot = slot,
+        //            Reserved = reservedTimeSpans.Any(e => e == slot)
+        //        });
+
+
+        //    }
+
+        //    return Ok(timeSlots);
+        //}
 
         [HttpPost]
         public async Task<IActionResult> Post(AddReservationInfo info)
@@ -102,6 +150,23 @@ namespace Blazor.Server.Controllers
             return Ok();
         }
 
+        [HttpDelete("{reservationId}")]
+        public async Task<IActionResult> Delete(string reservationId)
+        {
+
+            var data = await _identityWebContext.Reservations.FirstOrDefaultAsync(e => e.ReservationId == reservationId);
+
+            if (data == null || data.AccountId == UserId || !User.IsInRole("Administrator"))
+            {
+                return BadRequest("Reservation not found.");
+            }
+
+            _identityWebContext.Remove(data);
+
+            await _identityWebContext.SaveChangesAsync();
+
+            return Ok();
+        }
     }
 
 

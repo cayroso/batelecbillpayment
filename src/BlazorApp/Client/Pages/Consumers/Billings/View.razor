@@ -1,0 +1,30 @@
+﻿@page "/consumers/billings/{billingId}"
+@using BlazorApp.Shared.Billing
+
+@inject HttpClient Http
+
+<h3>View</h3>
+
+<div>
+    @BillingInfo.BillingNumber
+</div>
+@code {
+
+    [Parameter]
+    public string BillingId { get; set; }
+
+    Billing BillingInfo { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetBilling(BillingId);
+    }
+
+    async Task GetBilling(string billingId)
+    {
+        var foo = await Http.GetFromJsonAsync<Billing>($"/api/billing/my-billings/{billingId}");
+
+        BillingInfo = foo;
+    }
+}

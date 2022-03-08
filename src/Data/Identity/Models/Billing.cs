@@ -25,24 +25,24 @@ namespace Data.Identity.Models
 
 
         DateTime _readingDate;
-        public DateTime ReadingTime
+        public DateTime ReadingDate
         {
             get => _readingDate.AsUtc();
             set => _readingDate = value.Truncate();
         }
 
-        DateTime _billDateStart;
-        public DateTime BillDateStart
+        DateTime _billingDateStart;
+        public DateTime BillingDateStart
         {
-            get => _billDateStart.AsUtc();
-            set => _billDateStart = value.Truncate();
+            get => _billingDateStart.AsUtc();
+            set => _billingDateStart = value.Truncate();
         }
 
-        DateTime _billDateEnd;
-        public DateTime BillDateEnd
+        DateTime _billingDateEnd;
+        public DateTime BillingDateEnd
         {
-            get => _billDateEnd.AsUtc();
-            set => _billDateEnd = value.Truncate();
+            get => _billingDateEnd.AsUtc();
+            set => _billingDateEnd = value.Truncate();
         }
 
         public double PresentReading { get; set; }

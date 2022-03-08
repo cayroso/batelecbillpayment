@@ -8,12 +8,13 @@ using Blazor.Shared.Security;
 using Data.Identity.DbContext;
 using Data.Constants;
 using Microsoft.EntityFrameworkCore;
+using Data.Identity.Models;
 
 namespace Blazor.Server.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    public class AuthorizeController : ControllerBase
+    public class AuthorizeController : BaseController
     {
         private readonly UserManager<IdentityWebUser> _userManager;
         private readonly SignInManager<IdentityWebUser> _signInManager;
@@ -44,11 +45,11 @@ namespace Blazor.Server.Controllers
 
         [HttpPost]
         public async Task<IActionResult> Register(
-            [FromServices] IdentityWebContext identityWebContext, 
+            [FromServices] IdentityWebContext identityWebContext,
             RegisterModel parameters)
         {
             var user = new IdentityWebUser();
-            user.Id = Guid.NewGuid().ToString();
+            user.Id = GuidStr();
             user.TenantId = "administrator";
             user.Email = parameters.Email;
             user.UserName = parameters.Email;
@@ -65,9 +66,18 @@ namespace Blazor.Server.Controllers
                 LastName = "n/a",
             };
 
+            var account = new Account
+            {
+                AccountId = user.Id,
+                AccountNumber = "ACC#-" + GuidStr(),
+                ConsumerType = "Residential",
+                MeterNumber = "METER #" + GuidStr(),
+                Address = "",
+            };
+
             await _userManager.AddToRoleAsync(user, parameters.RoleId);
-            
-            await identityWebContext.AddAsync(userInfo);
+
+            await identityWebContext.AddRangeAsync(userInfo, account);
 
             await identityWebContext.SaveChangesAsync();
 

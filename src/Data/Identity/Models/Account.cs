@@ -16,7 +16,7 @@ namespace Data.Identity.Models
         public string MeterNumber { get; set; }
         public string ConsumerType { get; set; }
 
-        public string UserInformationId { get; set; }
+        //'public string UserInformationId { get; set; }
         public virtual UserInformation UserInformation { get; set; }
         public string Address { get; set; }
 
@@ -42,6 +42,10 @@ namespace Data.Identity.Models
             b.Property(e => e.AccountNumber).HasMaxLength(KeyMaxLength).IsRequired();
             b.Property(e => e.MeterNumber).HasMaxLength(KeyMaxLength).IsRequired();
             b.Property(e => e.Address).HasMaxLength(KeyMaxLength).IsRequired(false);
+
+            b.HasOne(e => e.UserInformation)
+                .WithOne()
+                .HasForeignKey<Account>(d => d.AccountId);
 
             b.HasMany(e => e.Billings)
                 .WithOne(e => e.Account)
