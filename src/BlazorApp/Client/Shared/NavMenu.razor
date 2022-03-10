@@ -34,17 +34,17 @@
         @if (user.IsInRole("System"))
         {
             <div class="nav-item px-3">
-                <NavLink class="nav-link" href="/systems" Match="NavLinkMatch.All">
+                <NavLink class="nav-link" href="/system" Match="NavLinkMatch.All">
                     <span class="oi oi-home" aria-hidden="true"></span> Home
                 </NavLink>
             </div>
             <div class="nav-item px-3">
-                <NavLink class="nav-link" href="/systems/administrators" Match="NavLinkMatch.All">
+                <NavLink class="nav-link" href="/system/administrators" Match="NavLinkMatch.All">
                     <span class="oi oi-home" aria-hidden="true"></span> Administrators
                 </NavLink>
             </div>
             <div class="nav-item px-3">
-                <NavLink class="nav-link" href="/systems/consumers" Match="NavLinkMatch.All">
+                <NavLink class="nav-link" href="/system/consumers" Match="NavLinkMatch.All">
                     <span class="oi oi-home" aria-hidden="true"></span> Consumers
                 </NavLink>
             </div>
@@ -53,22 +53,22 @@
         @if (user.IsInRole("Administrator"))
         {
             <div class="nav-item px-3">
-                <NavLink class="nav-link" href="/administrators" Match="NavLinkMatch.All">
+                <NavLink class="nav-link" href="/administrator" Match="NavLinkMatch.All">
                     <span class="oi oi-home" aria-hidden="true"></span> Home
                 </NavLink>
             </div>
             <div class="nav-item px-3">
-                <NavLink class="nav-link" href="/administrators/billings" Match="NavLinkMatch.All">
+                <NavLink class="nav-link" href="/administrator/billings" Match="NavLinkMatch.All">
                     <span class="oi oi-home" aria-hidden="true"></span> Billings
                 </NavLink>
             </div>
             <div class="nav-item px-3">
-                <NavLink class="nav-link" href="/administrators/reservations" Match="NavLinkMatch.All">
+                <NavLink class="nav-link" href="/administrator/reservations" Match="NavLinkMatch.All">
                     <span class="oi oi-home" aria-hidden="true"></span> Reservations
                 </NavLink>
             </div>
             <div class="nav-item px-3">
-                <NavLink class="nav-link" href="/administrators/consumers" Match="NavLinkMatch.All">
+                <NavLink class="nav-link" href="/administrator/consumers" Match="NavLinkMatch.All">
                     <span class="oi oi-home" aria-hidden="true"></span> Consumers
                 </NavLink>
             </div>
@@ -77,17 +77,17 @@
         @if (user.IsInRole("Consumer"))
         {
             <div class="nav-item px-3">
-                <NavLink class="nav-link" href="/consumers" Match="NavLinkMatch.All">
+                <NavLink class="nav-link" href="/consumer" Match="NavLinkMatch.All">
                     <span class="oi oi-home" aria-hidden="true"></span> Home
                 </NavLink>
             </div>
             <div class="nav-item px-3">
-                <NavLink class="nav-link" href="/consumers/billings" Match="NavLinkMatch.All">
+                <NavLink class="nav-link" href="/consumer/billings" Match="NavLinkMatch.All">
                     <span class="oi oi-home" aria-hidden="true"></span> Billings
                 </NavLink>
             </div>
             <div class="nav-item px-3">
-                <NavLink class="nav-link" href="/consumers/reservations" Match="NavLinkMatch.All">
+                <NavLink class="nav-link" href="/consumer/reservations" Match="NavLinkMatch.All">
                     <span class="oi oi-home" aria-hidden="true"></span> Reservations
                 </NavLink>
             </div>
