@@ -13,10 +13,11 @@ using BlazorApp.Shared.Billing;
 using Data.Identity.Models;
 using BlazorApp.Shared.Accounts;
 
-namespace Blazor.Server.Controllers
+namespace BlazorApp.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class AccountController : BaseController
     {
         IdentityWebContext _identityWebContext;

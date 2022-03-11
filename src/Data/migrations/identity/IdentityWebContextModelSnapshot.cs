@@ -321,6 +321,59 @@ namespace Data.migrations.identity
                     b.ToTable("LoginAudit", (string)null);
                 });
 
+            modelBuilder.Entity("Data.Identity.Models.Notifications.Notification", b =>
+                {
+                    b.Property<string>("NotificationId")
+                        .HasMaxLength(36)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("DateSent")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("IconClass")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("RefLink")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Subject")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("NotificationId");
+
+                    b.ToTable("Notification", (string)null);
+                });
+
+            modelBuilder.Entity("Data.Identity.Models.Notifications.NotificationReceiver", b =>
+                {
+                    b.Property<string>("NotificationId")
+                        .HasMaxLength(36)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ReceiverId")
+                        .HasMaxLength(36)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("DateRead")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("DateReceived")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("NotificationId", "ReceiverId");
+
+                    b.HasIndex("ReceiverId");
+
+                    b.ToTable("NotificationReceiver", (string)null);
+                });
+
             modelBuilder.Entity("Data.Identity.Models.Reservations.Reservation", b =>
                 {
                     b.Property<string>("ReservationId")
@@ -764,6 +817,25 @@ namespace Data.migrations.identity
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Data.Identity.Models.Notifications.NotificationReceiver", b =>
+                {
+                    b.HasOne("Data.Identity.Models.Notifications.Notification", "Notification")
+                        .WithMany("Receivers")
+                        .HasForeignKey("NotificationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Data.Identity.Models.Account", "Receiver")
+                        .WithMany()
+                        .HasForeignKey("ReceiverId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Notification");
+
+                    b.Navigation("Receiver");
+                });
+
             modelBuilder.Entity("Data.Identity.Models.Reservations.Reservation", b =>
                 {
                     b.HasOne("Data.Identity.Models.Account", "Account")
@@ -884,6 +956,11 @@ namespace Data.migrations.identity
             modelBuilder.Entity("Data.Identity.Models.Branch", b =>
                 {
                     b.Navigation("Reservations");
+                });
+
+            modelBuilder.Entity("Data.Identity.Models.Notifications.Notification", b =>
+                {
+                    b.Navigation("Receivers");
                 });
 
             modelBuilder.Entity("Data.Identity.Models.Tenant", b =>

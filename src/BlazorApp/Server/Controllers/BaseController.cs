@@ -5,7 +5,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace Blazor.Server.Controllers
+namespace BlazorApp.Server.Controllers
 {
     public class BaseController : ControllerBase
     {

@@ -10,7 +10,7 @@ using Data.Constants;
 using Microsoft.EntityFrameworkCore;
 using Data.Identity.Models;
 
-namespace Blazor.Server.Controllers
+namespace BlazorApp.Server.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
@@ -46,24 +46,25 @@ namespace Blazor.Server.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(
             [FromServices] IdentityWebContext identityWebContext,
-            RegisterModel parameters)
+            RegisterModel info)
         {
             var user = new IdentityWebUser();
             user.Id = GuidStr();
             user.TenantId = "administrator";
-            user.Email = parameters.Email;
-            user.UserName = parameters.Email;
-            user.PhoneNumber = "";
+            user.Email = info.Email;
+            user.UserName = info.Email;
+            user.PhoneNumber = info.PhoneNumber;
 
-            var result = await _userManager.CreateAsync(user, parameters.Password);
+            var result = await _userManager.CreateAsync(user, info.Password);
             if (!result.Succeeded) return BadRequest(result.Errors.FirstOrDefault()?.Description);
 
             var userInfo = new UserInformation
             {
                 //UserInformationId = Guid.NewGuid().ToString(),
                 UserId = user.Id,
-                FirstName = "n/a",
-                LastName = "n/a",
+                FirstName = info.FirstName,
+                MiddleName = info.MiddleName,
+                LastName = info.LastName,
             };
 
             var account = new Account
@@ -71,11 +72,11 @@ namespace Blazor.Server.Controllers
                 AccountId = user.Id,
                 AccountNumber = "ACC#-" + GuidStr(),
                 ConsumerType = "Residential",
-                MeterNumber = "METER #" + GuidStr(),
-                Address = "",
+                MeterNumber = info.MeterNumber,
+                Address = info.Address,
             };
 
-            await _userManager.AddToRoleAsync(user, parameters.RoleId);
+            await _userManager.AddToRoleAsync(user, "Consumer");
 
             await identityWebContext.AddRangeAsync(userInfo, account);
 
@@ -83,8 +84,8 @@ namespace Blazor.Server.Controllers
 
             return await Login(new LoginModel
             {
-                Email = parameters.Email,
-                Password = parameters.Password
+                Email = info.Email,
+                Password = info.Password
             });
         }
 

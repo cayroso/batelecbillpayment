@@ -1,5 +1,6 @@
 ﻿
 using Data.Identity.Models;
+using Data.Identity.Models.Notifications;
 using Data.Identity.Models.Reservations;
 using Data.Identity.Models.Users;
 using Microsoft.AspNetCore.Identity;
@@ -41,6 +42,8 @@ namespace Data.Identity.DbContext
         public DbSet<GcashResource> GcashResources { get; set; }
         public DbSet<GcashPayment> GcashPayments { get; set; }
 
+        public DbSet<Notification> Notifications { get; set; }
+        public DbSet<NotificationReceiver> NotificationReceivers { get; set; }
         public DbSet<Reservation> Reservations { get; set; }
 
 
@@ -204,6 +207,8 @@ namespace Data.Identity.DbContext
             builder.ApplyConfiguration(new BranchConfiguration());
             builder.ApplyConfiguration(new GcashResourceConfiguration());
             builder.ApplyConfiguration(new GcashPaymentConfiguration());
+            builder.ApplyConfiguration(new NotificationConfiguration());
+            builder.ApplyConfiguration(new NotificationReceiverConfiguration());
             builder.ApplyConfiguration(new ReservationConfiguration());
         }
     }

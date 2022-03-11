@@ -23,6 +23,22 @@ namespace Data.migrations.identity
                 });
 
             migrationBuilder.CreateTable(
+                name: "Notification",
+                columns: table => new
+                {
+                    NotificationId = table.Column<string>(type: "TEXT", maxLength: 36, nullable: false),
+                    IconClass = table.Column<string>(type: "TEXT", nullable: false),
+                    Subject = table.Column<string>(type: "TEXT", nullable: false),
+                    Content = table.Column<string>(type: "TEXT", nullable: false),
+                    RefLink = table.Column<string>(type: "TEXT", nullable: false),
+                    DateSent = table.Column<DateTime>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Notification", x => x.NotificationId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Role",
                 columns: table => new
                 {
@@ -339,6 +355,32 @@ namespace Data.migrations.identity
                 });
 
             migrationBuilder.CreateTable(
+                name: "NotificationReceiver",
+                columns: table => new
+                {
+                    NotificationId = table.Column<string>(type: "TEXT", maxLength: 36, nullable: false),
+                    ReceiverId = table.Column<string>(type: "TEXT", maxLength: 36, nullable: false),
+                    DateReceived = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    DateRead = table.Column<DateTime>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_NotificationReceiver", x => new { x.NotificationId, x.ReceiverId });
+                    table.ForeignKey(
+                        name: "FK_NotificationReceiver_Account_ReceiverId",
+                        column: x => x.ReceiverId,
+                        principalTable: "Account",
+                        principalColumn: "AccountId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_NotificationReceiver_Notification_NotificationId",
+                        column: x => x.NotificationId,
+                        principalTable: "Notification",
+                        principalColumn: "NotificationId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Reservation",
                 columns: table => new
                 {
@@ -449,6 +491,11 @@ namespace Data.migrations.identity
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_NotificationReceiver_ReceiverId",
+                table: "NotificationReceiver",
+                column: "ReceiverId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Reservation_AccountId",
                 table: "Reservation",
                 column: "AccountId");
@@ -539,6 +586,9 @@ namespace Data.migrations.identity
                 name: "LoginAudit");
 
             migrationBuilder.DropTable(
+                name: "NotificationReceiver");
+
+            migrationBuilder.DropTable(
                 name: "Reservation");
 
             migrationBuilder.DropTable(
@@ -561,6 +611,9 @@ namespace Data.migrations.identity
 
             migrationBuilder.DropTable(
                 name: "Billing");
+
+            migrationBuilder.DropTable(
+                name: "Notification");
 
             migrationBuilder.DropTable(
                 name: "Branch");

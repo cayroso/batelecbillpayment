@@ -12,7 +12,7 @@ using BlazorApp.Shared.GCash;
 using BlazorApp.Shared.Billing;
 using Data.Identity.Models;
 
-namespace Blazor.Server.Controllers
+namespace BlazorApp.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

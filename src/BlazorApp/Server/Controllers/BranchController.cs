@@ -15,7 +15,7 @@ using BlazorApp.Shared.Reservations;
 using Data.Identity.Models.Reservations;
 using BlazorApp.Shared.Branches;
 
-namespace Blazor.Server.Controllers
+namespace BlazorApp.Server.Controllers
 {
     [Route("api/[controller]")]
     [Authorize]

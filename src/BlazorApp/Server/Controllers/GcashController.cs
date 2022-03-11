@@ -13,7 +13,7 @@ using Data.Identity.Models;
 using System.Net.Http;
 using System.Net.Http.Headers;
 
-namespace Blazor.Server.Controllers
+namespace BlazorApp.Server.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]

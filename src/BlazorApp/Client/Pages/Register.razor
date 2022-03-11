@@ -5,39 +5,99 @@
 @inject IdentityAuthenticationStateProvider authStateProvider
 
 <PageTitle>Register</PageTitle>
+<h3 class="font-weight-normal text-center mt-5">Register</h3>
 
-<h1 class="h2 font-weight-normal login-title">
-    Blazor with Identity Sample
-</h1>
-
-<EditForm class="form-signin" OnValidSubmit="OnSubmit" Model="registerParameters">
+<EditForm class="container" OnValidSubmit="OnSubmit" Model="Parameters">
     <DataAnnotationsValidator />
-    <h4 class="font-weight-normal text-center">Create Account</h4>
 
-    <label for="inputUsername" class="sr-only">User Name</label>
-    <InputText id="inputUsername" class="form-control" placeholder="Username" autofocus @bind-Value="@registerParameters.Email" />
-    <ValidationMessage For="@(() => registerParameters.Email)" />
 
-    <label for="inputPassword" class="sr-only">Password</label>
-    <InputText type="password" id="inputPassword" class="form-control" placeholder="Password" @bind-Value="@registerParameters.Password" />
-    <ValidationMessage For="@(() => registerParameters.Password)" />
 
-    <label for="inputPasswordConfirm" class="sr-only">Password Confirmation</label>
-    <InputText type="password" id="inputPasswordConfirm" class="form-control" placeholder="Password Confirmation" @bind-Value="@registerParameters.ConfirmPassword" />
-    <ValidationMessage For="@(() => registerParameters.ConfirmPassword)" />
+    <div class="row">
+        <div class="col-lg-6 offset-lg-3">
+            <div class="row mb-3">
+                <label class="col-lg-4 col-form-label text-lg-end">Email</label>
+                <div class="col">
+                    <InputText type="email" class="form-control" @bind-Value="Parameters.Email" />
+                    <ValidationMessage For="@(() => Parameters.Email)" />
+                </div>
+            </div>
 
-    <label for="inputRole" class="sr-only">Role</label>
-    <InputSelect @bind-Value="@registerParameters.RoleId">
-        <option value="">Select classification ...</option>
-        <option value="administrator">Administrator</option>
-        <option value="consumer">Consumer</option>        
-    </InputSelect>
-    <InputText id="inputRole" class="form-control" placeholder="Role" @bind-Value="@registerParameters.RoleId" />
-    <ValidationMessage For="@(() => registerParameters.RoleId)" />
+            <div class="row mb-3">
+                <label class="col-lg-4 col-form-label text-lg-end">Password</label>
+                <div class="col">
+                    <InputText type="password" id="inputPassword" class="form-control" @bind-Value="@Parameters.Password" />
+                    <ValidationMessage For="@(() => Parameters.Password)" />
+                </div>
+            </div>
 
-    <button class="btn btn-lg btn-primary btn-block" type="submit">Create account</button>
+            <div class="row mb-3">
+                <label class="col-lg-4 col-form-label text-lg-end">Confirm Password</label>
+                <div class="col">
+                    <InputText type="password" id="inputPasswordConfirm" class="form-control" @bind-Value="@Parameters.ConfirmPassword" />
+                    <ValidationMessage For="@(() => Parameters.ConfirmPassword)" />
+                </div>
+            </div>
+            <br />
+            <div class="row mb-3">
+                <label class="col-lg-4 col-form-label text-lg-end">First Name</label>
+                <div class="col">
+                    <InputText class="form-control" @bind-Value="Parameters.FirstName" />
+                    <ValidationMessage For="@(() => Parameters.FirstName)" />
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <label class="col-lg-4 col-form-label text-lg-end">Middle Name</label>
+                <div class="col">
+                    <InputText class="form-control" @bind-Value="Parameters.MiddleName" />
+                    <ValidationMessage For="@(() => Parameters.MiddleName)" />
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <label class="col-lg-4 col-form-label text-lg-end">Last Name</label>
+                <div class="col">
+                    <InputText class="form-control" @bind-Value="Parameters.LastName" />
+                    <ValidationMessage For="@(() => Parameters.LastName)" />
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <label class="col-lg-4 col-form-label text-lg-end">Phone Number</label>
+                <div class="col">
+                    <InputText type="phone" class="form-control" @bind-Value="Parameters.PhoneNumber" />
+                    <ValidationMessage For="@(() => Parameters.PhoneNumber)" />
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <label class="col-lg-4 col-form-label text-lg-end">Address</label>
+                <div class="col">
+                    <InputTextArea class="form-control" @bind-Value="Parameters.Address" />
+                    <ValidationMessage For="@(() => Parameters.Address)" />
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <label class="col-lg-4 col-form-label text-lg-end">Meter Number</label>
+                <div class="col">
+                    <InputText type="phone" class="form-control" @bind-Value="Parameters.MeterNumber" />
+                    <ValidationMessage For="@(() => Parameters.MeterNumber)" />
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <label class="text-danger">@error</label>
+
+    <div class="row">
+        <div class="col-lg-6 offset-lg-5">
+            <button class="btn btn-primary" type="submit">Create account</button>
+        </div>
+    </div>
+
+    <br />
     <NavLink href="login">
         <h6 class="font-weight-normal text-center">Already have an account? Click here to login</h6>
     </NavLink>
@@ -45,7 +105,7 @@
 
 @functions {
 
-    RegisterModel registerParameters { get; set; } = new RegisterModel();
+    RegisterModel Parameters { get; set; } = new RegisterModel();
     string error { get; set; }
 
     async Task OnSubmit()
@@ -53,7 +113,7 @@
         error = null;
         try
         {
-            await authStateProvider.Register(registerParameters);
+            await authStateProvider.Register(Parameters);
             navigationManager.NavigateTo("");
         }
         catch (Exception ex)
