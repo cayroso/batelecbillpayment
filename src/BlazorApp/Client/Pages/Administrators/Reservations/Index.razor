@@ -1,5 +1,8 @@
 ﻿@page "/administrator/reservations"
 @using BlazorApp.Shared.Reservations
+
+@attribute [Authorize]
+
 @inject HttpClient Http
 
 <PageTitle>Reservations</PageTitle>

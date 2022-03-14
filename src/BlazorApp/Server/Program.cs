@@ -28,8 +28,11 @@ builder.Services.AddSignalR().AddNewtonsoftJsonProtocol(options =>
 });
 
 builder.Services.AddScoped<App.Services.ChatService>();
+builder.Services.AddScoped<App.Services.NotificationService>();
 
-builder.Services.AddTransient<ChatHub>();
+//builder.Services.AddTransient<ChatHub>();
+//builder.Services.AddTransient<NotificationHub>();
+
 
 StartupExtension.RegisterCQRS(builder.Services, builder.Configuration);
 
@@ -57,8 +60,19 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapRazorPages();
-app.MapControllers();
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapRazorPages();
+    endpoints.MapControllers();
+
+    endpoints.MapHub<NotificationHub>("/notificationHub");
+    //endpoints.MapHub<JobHub>("/jobHub");
+    //endpoints.MapHub<ChatHub>("/chatHub");
+});
+
+
+//app.MapRazorPages();
+//app.MapControllers();
 app.MapFallbackToFile("index.html");
 
 using (var scope = app.Services.CreateScope())

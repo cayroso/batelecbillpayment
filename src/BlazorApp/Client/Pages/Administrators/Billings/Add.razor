@@ -1,4 +1,5 @@
 ﻿@page "/administrator/billings/add"
+@using BlazorApp.Client.Components.Toaster
 @using BlazorApp.Shared.Accounts
 @using BlazorApp.Shared.Billing
 
@@ -163,6 +164,9 @@
 </EditForm>
 
 @code {
+    [Inject] private ToasterService? _toasterService {get; set;}    
+    private ToasterService toasterService => _toasterService!;
+
     string error { get; set; }
 
     AddBillingInfo Parameters { get; set; } = new AddBillingInfo
@@ -195,6 +199,12 @@
         if (!result.IsSuccessStatusCode)
         {
             error = await result.Content.ReadAsStringAsync();
+
+            return;
         }
+
+        toasterService.AddToast(Toast.NewToast("Add New Billing", "New Billing successfully created.", MessageColour.Info, 10));
+
+        navigationManager.NavigateTo("/administrator/billings");
     }
 }

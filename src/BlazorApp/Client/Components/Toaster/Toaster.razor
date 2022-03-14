@@ -1,0 +1,57 @@
+﻿@implements IDisposable
+
+@if (this.toasterService.HasToasts)
+{
+    <div class="">
+        <div class="toast-container position-absolute top-0 end-0 mt-5 pt-5 pe-2">
+            @foreach (var toast in this.toasterService.GetToasts())
+            {
+                var _toastCss = toastCss(toast);
+                <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="toast-header @_toastCss">
+                        <strong class="me-auto">@toast.Title</strong>
+                        <small class="@_toastCss">@toast.ElapsedTimeText</small>
+                        <button type="button" class="btn-close btn-close-white" aria-label="Close" @onclick="() => this.ClearToast(toast)"></button>
+                    </div>
+                    <div class="toast-body">
+                        @toast.Message
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+@code {
+    [Inject] private ToasterService? _toasterService { get; set; }
+
+    private ToasterService toasterService => _toasterService!;
+
+    protected override void OnInitialized()
+    { 
+        this.toasterService.ToasterChanged += ToastChanged;
+        this.toasterService.ToasterTimerElapsed += ToastChanged;
+    }
+
+    private void ClearToast(Toast toast)
+        => toasterService.ClearToast(toast);
+
+    private void ToastChanged(object? sender, EventArgs e)
+        => this.InvokeAsync(this.StateHasChanged);
+
+    public void Dispose()
+    { 
+        this.toasterService.ToasterChanged -= ToastChanged;
+        this.toasterService.ToasterTimerElapsed -= ToastChanged;
+    }
+
+    private string toastCss(Toast toast)
+    {
+        var colour = Enum.GetName(typeof(MessageColour), toast.MessageColour)?.ToLower();
+        return toast.MessageColour switch
+        {
+            MessageColour.Light => "bg-light",
+            _ => $"bg-{colour} text-white"
+        };
+    }
+}

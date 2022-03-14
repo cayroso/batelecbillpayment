@@ -8,13 +8,33 @@ using System.Threading.Tasks;
 
 namespace Data.Identity.Models.Notifications
 {
+    public enum EnumNotificationType
+    {
+        Unknown = 0,
+        Primary,
+        Secondary,
+        Success,
+        Info,
+        Warning,
+        Error
+    }
+
+    public enum EnumNotificationEntityClass
+    {
+        Unknown = 0,
+        Account = 1,
+        Job = 2,
+    }
+
     public class Notification
     {
         public string NotificationId { get; set; }
+        public EnumNotificationType NotificationType { get; set; }
+        public EnumNotificationEntityClass NotificationEntityClass { get; set; }
         public string IconClass { get; set; }
         public string Subject { get; set; }
         public string Content { get; set; }
-        public string RefLink { get; set; }
+        public string ReferenceId { get; set; }
 
         DateTime _dateSent;
         public DateTime DateSent

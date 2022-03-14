@@ -1,0 +1,85 @@
+﻿@page "/administrator/notifications"
+@attribute [Authorize]
+
+@using BlazorApp.Client.Components.Toaster
+@using BlazorApp.Shared.Notifications
+
+@inject HttpClient Http
+@inject IJSRuntime JSRuntime
+
+<PageTitle>Notifications</PageTitle>
+<h3>Notifications</h3>
+
+<a href="/administrator/notifications/add">Add New</a>
+
+<table class="table border">
+    <thead>
+        <tr>
+            <th>Subject</th>
+            <th>Content</th>
+            <th>Date</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Items)
+        {
+            <tr>
+                <td>
+                    @item.Subject
+                </td>
+                <td>
+                    @item.Content
+                </td>
+                <td>
+                    @item.DateSent.ToLocalTime()
+                </td>
+                <td>
+                    <button @onclick="@(async ()=> await DeleteItem(item.NotificationId))">
+                        <i class="fa fa-fw fa-trash"></i>
+                        Delete
+                    </button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    [Inject] private ToasterService? _toasterService { get; set; }
+    private ToasterService toasterService => _toasterService!;
+
+    List<ViewNotificationInfo> Items = new List<ViewNotificationInfo>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetItems();
+    }
+
+    async Task GetItems()
+    {
+        var items = await Http.GetFromJsonAsync<List<ViewNotificationInfo>>("/api/notification/");
+
+        Items = items;
+    }
+
+    async Task DeleteItem(string id)
+    {
+        if (!await JSRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to delete the notification?"))
+            return;
+
+        var result = await Http.DeleteAsync($"/api/notification/remove/{id}");
+
+        if (!result.IsSuccessStatusCode)
+        {
+            var error = await result.Content.ReadAsStringAsync();
+
+            toasterService.AddToast(Toast.NewToast("Unhandled Error", error, MessageColour.Danger, 10));
+            return;
+        }
+
+        toasterService.AddToast(Toast.NewToast("Delete Notification", "Notification successfully deleted. <b>bold</b>", MessageColour.Warning, 20));
+
+        await GetItems();
+    }
+}

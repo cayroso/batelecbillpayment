@@ -1,8 +1,12 @@
 ﻿@page "/login"
 
 @layout LoginLayout
+
+@attribute [AllowAnonymous]
+
 @inject NavigationManager navigationManager
 @inject IdentityAuthenticationStateProvider authStateProvider
+
 
 <PageTitle>Login</PageTitle>
 
