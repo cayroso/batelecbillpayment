@@ -20,6 +20,8 @@ namespace App.Hubs
         Task ChatReceiverRemoved(ChatReceiverRemovedInfo info);
 
         Task ChatDeleted(string chatId);
+
+        Task OnMessageReceived(string user, string message);
     }
 
     [Authorize]
@@ -33,6 +35,11 @@ namespace App.Hubs
         public async Task LeaveChat(string chatId)
         {
             await Groups.RemoveFromGroupAsync(Context.ConnectionId, chatId);
+        }
+
+        public async Task SendMessage(string user, string message)
+        {
+            await Clients.All.OnMessageReceived(user, message);
         }
     }
 }

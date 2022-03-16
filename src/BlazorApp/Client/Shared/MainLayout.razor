@@ -1,9 +1,12 @@
 ﻿@using BlazorApp.Client.Pages
+@using BlazorApp.Client.Components.Toaster
+
 @inherits LayoutComponentBase
 
 <div class="page">
     <AuthorizeView>
         <Authorized>
+            
             <div class="sidebar">
                 <NavMenu />
             </div>
@@ -18,9 +21,10 @@
                 <article class="content px-4">
                     @Body
                 </article>
+                <BlazorApp.Client.Components.Notification.Notification />
             </main>
         </Authorized>
-        <NotAuthorized>            
+        <NotAuthorized>
             @*Just render the body so that RedirectToLogin works*@
             @Body
         </NotAuthorized>

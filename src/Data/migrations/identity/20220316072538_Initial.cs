@@ -27,10 +27,12 @@ namespace Data.migrations.identity
                 columns: table => new
                 {
                     NotificationId = table.Column<string>(type: "TEXT", maxLength: 36, nullable: false),
+                    NotificationType = table.Column<int>(type: "INTEGER", nullable: false),
+                    NotificationEntityClass = table.Column<int>(type: "INTEGER", nullable: false),
                     IconClass = table.Column<string>(type: "TEXT", nullable: false),
                     Subject = table.Column<string>(type: "TEXT", nullable: false),
                     Content = table.Column<string>(type: "TEXT", nullable: false),
-                    RefLink = table.Column<string>(type: "TEXT", nullable: false),
+                    ReferenceId = table.Column<string>(type: "TEXT", nullable: false),
                     DateSent = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>

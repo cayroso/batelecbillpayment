@@ -11,8 +11,14 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddDbContext<AppDbContext>(opt => { });
 
+builder.Services.AddSignalR();
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+builder.Services.AddResponseCompression(opts =>
+{
+    opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
+        new[] { "application/octet-stream" });
+});
 builder.Services.Configure<RouteOptions>(opt =>
 {
     opt.LowercaseUrls = true;
@@ -27,7 +33,7 @@ builder.Services.AddSignalR().AddNewtonsoftJsonProtocol(options =>
     //options.PayloadSerializerSettings.Culture = cultureInfo;
 });
 
-builder.Services.AddScoped<App.Services.ChatService>();
+//builder.Services.AddScoped<App.Services.ChatService>();
 builder.Services.AddScoped<App.Services.NotificationService>();
 
 //builder.Services.AddTransient<ChatHub>();

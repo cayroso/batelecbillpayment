@@ -22,7 +22,7 @@ namespace Data.Identity.Models.Notifications
     public enum EnumNotificationEntityClass
     {
         Unknown = 0,
-        Account = 1,
+        Notification = 1,
         Job = 2,
     }
 

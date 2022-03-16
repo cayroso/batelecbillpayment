@@ -338,7 +338,13 @@ namespace Data.migrations.identity
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("RefLink")
+                    b.Property<int>("NotificationEntityClass")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("NotificationType")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("ReferenceId")
                         .IsRequired()
                         .HasColumnType("TEXT");
 

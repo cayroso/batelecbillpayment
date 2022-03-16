@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.migrations.identity
 {
     [DbContext(typeof(IdentityWebContext))]
-    [Migration("20220311080552_Initial")]
+    [Migration("20220316072538_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -340,7 +340,13 @@ namespace Data.migrations.identity
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("RefLink")
+                    b.Property<int>("NotificationEntityClass")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("NotificationType")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("ReferenceId")
                         .IsRequired()
                         .HasColumnType("TEXT");
 

@@ -9,14 +9,32 @@ using System.Threading.Tasks;
 
 namespace App.Hubs
 {
+    public class NotificationResponse
+    {
+        public string NotificationId { get; set; }
+        public EnumNotificationType NotificationType { get; set; }
+        public EnumNotificationEntityClass NotificationEntityClass { get; set; }
+        public string IconClass { get; set; }
+        public string Subject { get; set; }
+        public string Content { get; set; }
+        public string ReferenceId { get; set; }
+        public DateTime DateSent { get; set; }
+    }
+
     public interface INotificationClient
     {
-        Task Received(Notification notification);        
+        Task OnNotificationCreated(NotificationResponse response);
+
+        Task OnReservationCreated(Notification notification);
+        Task OnReservationDeleted(Notification notification);
+
+        Task OnBillingCreated(Notification notification);
+        Task OnBillingPaid(Notification notification);
     }
 
     [Authorize]
     public class NotificationHub : Hub<INotificationClient>
-    {        
+    {
         public override Task OnConnectedAsync()
         {
             var identity = Context.User;
@@ -30,5 +48,29 @@ namespace App.Hubs
 
             return base.OnConnectedAsync();
         }
+
+        //public async Task SendNotificationCreated(string group, Notification notification)
+        //{
+        //    await Clients.GroupExcept(group, Context.ConnectionId).OnNotificationCreated(notification);
+        //}
+
+        //public async Task SendReservationCreated(string group, Notification notification)
+        //{
+        //    await Clients.GroupExcept(group, Context.ConnectionId).OnReservationCreated(notification);
+        //}
+
+        //public async Task SendReservationDeleted(string group, Notification notification)
+        //{
+        //    await Clients.GroupExcept(group, Context.ConnectionId).OnReservationDeleted(notification);
+        //}
+
+        //public async Task SendBillingCreated(string userId, Notification notification)
+        //{
+        //    await Clients.Users(userId).OnBillingCreated(notification);
+        //}
+        //public async Task SendBillingPaid(string group, Notification notification)
+        //{
+        //    await Clients.GroupExcept(group, Context.ConnectionId).OnBillingPaid(notification);
+        //}
     }
 }
