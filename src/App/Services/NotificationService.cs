@@ -24,7 +24,7 @@ namespace App.Services
 
         #region Notification
 
-        public async Task AddNotification(string referenceId, string iconClass, string subject, string content, EnumNotificationType notificationType, EnumNotificationEntityClass notificationEntityClass, string[] userIds, string[] roleNames, CancellationToken cancellationToken, bool saveOnly = false)
+        public async Task AddNotification(string referenceId, string iconClass, string subject, string content, DateTime dateSent, EnumNotificationType notificationType, EnumNotificationEntityClass notificationEntityClass, string[] userIds, string[] roleNames, CancellationToken cancellationToken, bool saveOnly = false)
         {
             if ((userIds == null || !userIds.Any()) && (roleNames == null || !roleNames.Any()))
             {
@@ -40,7 +40,7 @@ namespace App.Services
                 Subject = subject,
                 Content = content,
                 ReferenceId = referenceId,
-                DateSent = DateTime.UtcNow,
+                DateSent = dateSent,
                 NotificationType = notificationType,
                 NotificationEntityClass = notificationEntityClass
             };
@@ -105,7 +105,7 @@ namespace App.Services
                     NotificationEntityClass = notification.NotificationEntityClass,
                     NotificationType = notification.NotificationType,
                     ReferenceId = notification.ReferenceId,
-                    Subject = $"Notification: {notification.Subject}",
+                    Subject = notification.Subject,
                     Content = notification.Content,
                 };
                 await _hubContext.Clients.Users(combinedUserIds).OnNotificationCreated(notifResponse);

@@ -1,4 +1,4 @@
-﻿@page "/consumer/billings/{billingId}"
+﻿@page "/administrator/billings/{billingId}"
 @using BlazorApp.Shared.Billing
 
 @inject HttpClient Http
@@ -10,10 +10,8 @@
     <div>
         @BillingInfo.BillingNumber
     </div>
-    <a href="/consumer/checkout/@BillingInfo.BillingId">
-        Bill # @BillingInfo.BillingNumber
-    </a>
 }
+
 @code {
 
     [Parameter]
@@ -29,8 +27,15 @@
 
     async Task GetBilling(string billingId)
     {
-        var foo = await Http.GetFromJsonAsync<Billing>($"/api/billing/{billingId}");
+        try
+        {
+            var result = await Http.GetFromJsonAsync<Billing>($"/api/billing/{billingId}");
 
-        BillingInfo = foo;
+            BillingInfo = result;
+        }
+        catch (Exception ex)
+        {
+
+        }
     }
 }

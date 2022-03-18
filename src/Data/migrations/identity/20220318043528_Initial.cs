@@ -323,6 +323,32 @@ namespace Data.migrations.identity
                 });
 
             migrationBuilder.CreateTable(
+                name: "NotificationReceiver",
+                columns: table => new
+                {
+                    NotificationId = table.Column<string>(type: "TEXT", maxLength: 36, nullable: false),
+                    ReceiverId = table.Column<string>(type: "TEXT", maxLength: 36, nullable: false),
+                    DateReceived = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    DateRead = table.Column<DateTime>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_NotificationReceiver", x => new { x.NotificationId, x.ReceiverId });
+                    table.ForeignKey(
+                        name: "FK_NotificationReceiver_Notification_NotificationId",
+                        column: x => x.NotificationId,
+                        principalTable: "Notification",
+                        principalColumn: "NotificationId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_NotificationReceiver_UserInformation_ReceiverId",
+                        column: x => x.ReceiverId,
+                        principalTable: "UserInformation",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Billing",
                 columns: table => new
                 {
@@ -353,32 +379,6 @@ namespace Data.migrations.identity
                         column: x => x.AccountId,
                         principalTable: "Account",
                         principalColumn: "AccountId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "NotificationReceiver",
-                columns: table => new
-                {
-                    NotificationId = table.Column<string>(type: "TEXT", maxLength: 36, nullable: false),
-                    ReceiverId = table.Column<string>(type: "TEXT", maxLength: 36, nullable: false),
-                    DateReceived = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    DateRead = table.Column<DateTime>(type: "TEXT", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_NotificationReceiver", x => new { x.NotificationId, x.ReceiverId });
-                    table.ForeignKey(
-                        name: "FK_NotificationReceiver_Account_ReceiverId",
-                        column: x => x.ReceiverId,
-                        principalTable: "Account",
-                        principalColumn: "AccountId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_NotificationReceiver_Notification_NotificationId",
-                        column: x => x.NotificationId,
-                        principalTable: "Notification",
-                        principalColumn: "NotificationId",
                         onDelete: ReferentialAction.Cascade);
                 });
 

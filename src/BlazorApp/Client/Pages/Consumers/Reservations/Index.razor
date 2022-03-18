@@ -1,42 +1,62 @@
 ﻿@page "/consumer/reservations"
+@using BlazorApp.Client.Components.Toaster
 @using BlazorApp.Shared.Reservations
+
 @inject HttpClient Http
+@inject IJSRuntime JSRuntime
 
-<h3>Reservations</h3>
+<PageTitle>Reservations</PageTitle>
 
-<a href="/consumer/reservations/add" class="btn btn-primary">
-    Add New
-</a>
+<div class="row">
+    <div class="col">
+        <h3>Reservations</h3>
+    </div>
+    <div class="col-auto">
+        <button class="btn btn-secondary" @onclick="@(async ()=> await GetMyReservations())">
+            <i class="oi oi-reload"></i>
+            Refresh
+        </button>
+        <a href="/consumer/reservations/add" class="btn btn-primary">
+            Add New
+        </a>
+    </div>
+</div>
 
-<table class="table border">
-    <thead>
-        <tr>
-            <th>Date of Reservation</th>
-            <th>Branch Name</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Items.OrderByDescending(e => e.DateReservation))
-        {
-            <tr>
-                <td>
-                    @item.DateReservation
-                </td>
-                <td>
-                    @item.BranchName
-                </td>
-                <td>
-                    <button @onclick="@(async ()=> await DeleteReservation(item.ReservationId))">
-                        <i class="fa fa-fw fa-trash"></i>
-                        Delete</button>
-                </td>
+<div class="table-responsive">
+    <table class="table table-bordered">
+        <thead>
+            <tr class="table-primary">
+                <th>Date of Reservation</th>
+                <th>Branch Name</th>
+                <th>Action</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var item in Items.OrderByDescending(e => e.DateReservation))
+            {
+                <tr>
+                    <td>
+                        @item.DateReservation
+                    </td>
+                    <td>
+                        @item.BranchName
+                    </td>
+                    <td>                        
+                        <button @onclick="@(async ()=> await DeleteReservation(item.ReservationId))" class="btn btn-sm btn-warning">
+                            <i class="oi oi-trash"></i>
+                            Delete
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
 
 @code {
+    [Inject] private ToasterService? _toasterService { get; set; }
+    private ToasterService toasterService => _toasterService!;
+
     List<ReservationInfo> Items = new List<ReservationInfo>();
 
     protected override async Task OnInitializedAsync()
@@ -51,14 +71,38 @@
         Items = items;
     }
 
+    //async Task DeleteReservation(string reservationId)
+    //{
+    //    var result = await Http.DeleteAsync($"/api/reservation/{reservationId}");
+
+    //    if (!result.IsSuccessStatusCode)
+    //    {
+    //        var error = await result.Content.ReadAsStringAsync();
+    //    }
+
+    //    await GetMyReservations();
+    //}
+
     async Task DeleteReservation(string reservationId)
     {
-        var result = await Http.DeleteAsync($"/api/reservation/{reservationId}");
+        var prompt = await JSRuntime.InvokeAsync<string>("prompt", "Enter reason for deleting this reservation?");
+
+        if (string.IsNullOrWhiteSpace(prompt))
+            //if (!await JSRuntime.InvokeAsync<bool>("prompt", "Are you sure you want to delete the reservation?"))
+            return;
+
+        var result = await Http.DeleteAsync($"/api/reservation/{reservationId}/{prompt}");
 
         if (!result.IsSuccessStatusCode)
         {
             var error = await result.Content.ReadAsStringAsync();
+
+            toasterService.AddToast(Toast.NewToast("Error", error, MessageColour.Danger, 10));
+
+            return;
         }
+        else
+            toasterService.AddToast(Toast.NewToast("Delete Reservation", "Reservation successfully deleted.", MessageColour.Warning, 10));
 
         await GetMyReservations();
     }

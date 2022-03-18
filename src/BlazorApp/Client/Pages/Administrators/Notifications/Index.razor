@@ -4,46 +4,59 @@
 @using BlazorApp.Client.Components.Toaster
 @using BlazorApp.Shared.Notifications
 
+@attribute [Authorize(Roles = "Administrator")]
+
 @inject HttpClient Http
 @inject IJSRuntime JSRuntime
 
 <PageTitle>Notifications</PageTitle>
-<h3>Notifications</h3>
 
-<a href="/administrator/notifications/add">Add New</a>
+<div class="row">
+    <div class="col">
+        <h3>Notifications</h3>
+    </div>
+    <div class="col-auto">
+        <a href="/administrator/notifications/add" class="btn btn-primary">
+            <i class="oi oi-plus me-1"></i>Add
+        </a>
+    </div>
+</div>
 
-<table class="table border">
-    <thead>
-        <tr>
-            <th>Subject</th>
-            <th>Content</th>
-            <th>Date</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Items)
-        {
+<div class="table-responsive pt-2">
+
+    <table class="table table-bordered">
+        <thead>
             <tr>
-                <td>
-                    @item.Subject
-                </td>
-                <td>
-                    @item.Content
-                </td>
-                <td>
-                    @item.DateSent.ToLocalTime()
-                </td>
-                <td>
-                    <button @onclick="@(async ()=> await DeleteItem(item.NotificationId))">
-                        <i class="fa fa-fw fa-trash"></i>
-                        Delete
-                    </button>
-                </td>
+                <th>Subject</th>
+                <th>Content</th>
+                <th>Date</th>
+                <th>Action</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var item in Items)
+            {
+                <tr>
+                    <td>
+                        @item.Subject
+                    </td>
+                    <td>
+                        @item.Content
+                    </td>
+                    <td>
+                        @item.DateSent.ToLocalTime()
+                    </td>
+                    <td>
+                        <button @onclick="@(async ()=> await DeleteItem(item.NotificationId))" class="btn btn-sm btn-warning">
+                            <i class="oi oi-trash"></i>
+                            Delete
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
 
 @code {
     [Inject] private ToasterService? _toasterService { get; set; }
@@ -68,7 +81,7 @@
         if (!await JSRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to delete the notification?"))
             return;
 
-        var result = await Http.DeleteAsync($"/api/notification/remove/{id}");
+        var result = await Http.DeleteAsync($"/api/notification/{id}/delete");
 
         if (!result.IsSuccessStatusCode)
         {
@@ -78,7 +91,7 @@
             return;
         }
 
-        toasterService.AddToast(Toast.NewToast("Delete Notification", "Notification successfully deleted. <b>bold</b>", MessageColour.Warning, 20));
+        toasterService.AddToast(Toast.NewToast("Delete Notification", "Notification successfully deleted.", MessageColour.Warning, 10));
 
         await GetItems();
     }

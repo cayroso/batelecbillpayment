@@ -831,7 +831,7 @@ namespace Data.migrations.identity
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Data.Identity.Models.Account", "Receiver")
+                    b.HasOne("Data.Identity.Models.Users.UserInformation", "Receiver")
                         .WithMany()
                         .HasForeignKey("ReceiverId")
                         .OnDelete(DeleteBehavior.Cascade)

@@ -14,6 +14,7 @@ using Data.Identity.Models;
 using BlazorApp.Shared.Reservations;
 using Data.Identity.Models.Reservations;
 using Cayent.Core.Common.Extensions;
+using App.Services;
 
 namespace BlazorApp.Server.Controllers
 {
@@ -23,9 +24,11 @@ namespace BlazorApp.Server.Controllers
     public class ReservationController : BaseController
     {
         IdentityWebContext _identityWebContext;
-        public ReservationController(IdentityWebContext identityWebContext)
+        readonly NotificationService _notificationService;
+        public ReservationController(IdentityWebContext identityWebContext, NotificationService notificationService)
         {
             _identityWebContext = identityWebContext;
+            _notificationService = notificationService;
         }
 
         [HttpGet("{reservationId}")]
@@ -117,7 +120,8 @@ namespace BlazorApp.Server.Controllers
         //}
 
         [HttpPost]
-        public async Task<IActionResult> Post(AddReservationInfo info)
+        [Authorize]
+        public async Task<IActionResult> Post(AddReservationInfo info, CancellationToken cancellationToken)
         {
             var ts = DateTime.Parse(info.TimeSlot);
             var dateReservation = info.DateReservation.Date.AddHours(ts.Hour).AddMinutes(ts.Minute).Truncate();
@@ -130,7 +134,7 @@ namespace BlazorApp.Server.Controllers
                 return BadRequest("Cannot place reservation in the past.");
 
             //  check if the existing            
-            var exists = await _identityWebContext.Reservations.AnyAsync(e => e.BranchId == info.BranchId && e.DateReservation == dateReservation);
+            var exists = await _identityWebContext.Reservations.AnyAsync(e => e.BranchId == info.BranchId && e.DateReservation == dateReservation, cancellationToken);
 
             if (exists)
                 return BadRequest("Time slot already reserved.");
@@ -143,27 +147,56 @@ namespace BlazorApp.Server.Controllers
                 DateReservation = dateReservation,
             };
 
-            await _identityWebContext.AddAsync(data);
+            await _identityWebContext.AddAsync(data, cancellationToken);
 
-            await _identityWebContext.SaveChangesAsync();
+            await _identityWebContext.SaveChangesAsync(cancellationToken);
+
+            //  send notif to admins
+            var branch = await _identityWebContext.Branches.FirstAsync(e => e.BranchId == info.BranchId, cancellationToken);
+
+            await _notificationService.AddNotification(data.ReservationId, "info", "Reservation was created",
+                $"New reservation in {branch.Name} at {data.DateReservation} was created by consumer: {User.Identity.Name}", DateTime.UtcNow,
+                Data.Identity.Models.Notifications.EnumNotificationType.Info, Data.Identity.Models.Notifications.EnumNotificationEntityClass.Reservation,
+                Array.Empty<string>(), new[] { ApplicationRoles.Administrator.Name }, cancellationToken);
 
             return Ok();
         }
 
-        [HttpDelete("{reservationId}")]
-        public async Task<IActionResult> Delete(string reservationId)
+        [HttpDelete("{reservationId}/{reason}")]
+        public async Task<IActionResult> Delete(string reservationId, string reason, CancellationToken cancellationToken)
         {
 
-            var data = await _identityWebContext.Reservations.FirstOrDefaultAsync(e => e.ReservationId == reservationId);
+            var data = await _identityWebContext.Reservations
+                .Include(e => e.Branch)
+                .FirstOrDefaultAsync(e => e.ReservationId == reservationId, cancellationToken);
 
-            if (data == null || data.AccountId == UserId || !User.IsInRole("Administrator"))
+            if (data == null)
             {
                 return BadRequest("Reservation not found.");
             }
 
+            if (data.AccountId != UserId && !User.IsInRole("Administrator"))
+            {
+                return BadRequest("Only administrator can delete this reservation.");
+            }
+
             _identityWebContext.Remove(data);
 
-            await _identityWebContext.SaveChangesAsync();
+            await _identityWebContext.SaveChangesAsync(cancellationToken);
+
+            var isAdmin = User.IsInRole("Administrator");
+            var users = isAdmin ? new[] { data.AccountId } : Array.Empty<string>();
+            var roles = isAdmin ? Array.Empty<string>() : new[] { "Administrator" };
+
+            var content = isAdmin ?
+                $"Your reservation in {data.Branch.Name} at {data.DateReservation} was deleted by Administrator[{User.Identity.Name}]. Reason: {reason}"
+                : $"Consumer[{User.Identity.Name}] reservation in {data.Branch.Name} at {data.DateReservation} was deleted. Reason: {reason}";
+
+            //  send notif to consumer
+            await _notificationService.AddNotification(reservationId, "danger", "Reservation was deleted",
+                content, DateTime.UtcNow,
+                Data.Identity.Models.Notifications.EnumNotificationType.Info, Data.Identity.Models.Notifications.EnumNotificationEntityClass.Reservation,
+                users, roles, cancellationToken);
 
             return Ok();
         }

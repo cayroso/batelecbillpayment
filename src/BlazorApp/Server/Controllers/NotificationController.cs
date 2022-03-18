@@ -71,37 +71,10 @@ namespace BlazorApp.Server.Controllers
 
         [HttpPost("add")]
         public async Task<IActionResult> Post([FromBody] AddNotificationInfo info, CancellationToken cancellationToken)
-        {
-            var data = new Notification
-            {
-                NotificationId = GuidStr(),
-                Content = info.Content,
-                DateSent = info.DateSent,
-                IconClass = info.IconClass,
-                ReferenceId = info.RefLink,
-                Subject = info.Subject
-            };
-
-            var receivers = await _identityWebContext.Accounts.Select(e => new NotificationReceiver
-            {
-                NotificationId = data.NotificationId,
-                ReceiverId = e.AccountId,
-            }).ToListAsync();
-
-            await _identityWebContext.AddAsync(data);
-            await _identityWebContext.AddRangeAsync(receivers);
-
-            await _identityWebContext.SaveChangesAsync();
-
-            var notification = new Notification
-            {
-                Subject = "Notification Created",
-            };
-
-            await _notificationService.AddNotification(data.NotificationId, "info", "Notification Created", "Notification successfull created.",
+        {            
+            await _notificationService.AddNotification(info.RefLink, "info", info.Subject, info.Content, info.DateSent,
                     EnumNotificationType.Success, EnumNotificationEntityClass.Notification, Array.Empty<string>(), new[] { "Consumer" }, cancellationToken);
-            //await _notificationHubContext.Clients.Group("Consumer").OnNotificationCreated(notification);
-
+            
             return Ok();
         }
 

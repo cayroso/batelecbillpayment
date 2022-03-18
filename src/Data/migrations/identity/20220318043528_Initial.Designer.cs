@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.migrations.identity
 {
     [DbContext(typeof(IdentityWebContext))]
-    [Migration("20220316072538_Initial")]
+    [Migration("20220318043528_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -833,7 +833,7 @@ namespace Data.migrations.identity
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Data.Identity.Models.Account", "Receiver")
+                    b.HasOne("Data.Identity.Models.Users.UserInformation", "Receiver")
                         .WithMany()
                         .HasForeignKey("ReceiverId")
                         .OnDelete(DeleteBehavior.Cascade)

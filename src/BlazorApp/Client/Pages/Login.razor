@@ -15,35 +15,46 @@
 </h1>
 
 
-<EditForm class="form-signin container col-md-6 col-lg-3" OnValidSubmit="OnSubmit" Model="loginParameters">
+<EditForm class="form-signin container col-md-6 col-lg-4" OnValidSubmit="OnSubmit" Model="loginParameters">
 
     <DataAnnotationsValidator />
     <h4 class="font-weight-normal text-center">Login</h4>
 
-    <label for="inputUsername" class="sr-only">Email</label>
-    <InputText id="inputUsername" class="form-control" @bind-Value="loginParameters.Email" autofocus placeholder="Email" />
-    <ValidationMessage For="@(() => loginParameters.Email)" />
+    <div class="form-floating mb-3">
+        <InputText id="inputEmail" class="form-control" @bind-Value="loginParameters.Email" autofocus placeholder="Email" />
+        <label for="inputEmail">Email</label>
+        <ValidationMessage For="@(() => loginParameters.Email)" />
 
-    <label for="inputPassword" class="sr-only">Password</label>
-    <InputText type="password" id="inputPassword" class="form-control" placeholder="Password" @bind-Value="loginParameters.Password" />
-    <ValidationMessage For="@(() => loginParameters.Password)" />
+    </div>
+    <div class="form-floating">
+        <InputText type="password" id="inputPassword" class="form-control" placeholder="Password" @bind-Value="loginParameters.Password" />
+        <label for="inputPassword">Password</label>
+        <ValidationMessage For="@(() => loginParameters.Password)" />
+    </div>
 
     <div class="form-check m-3">
         <InputCheckbox id="inputRememberMe" class="form-check-input" @bind-Value="@loginParameters.RememberMe" />
         <label class="form-check-label" for="inputRememberMe">Remember Me</label>
     </div>
 
-    <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
-
+    <div class="row align-items-center justify-content-between">
+        <div class="col">
+            <button class="btn btn-primary" type="submit">Sign in</button>
+        </div>
+        <div class="col text-end">
+            <NavLink href="register" class="">
+                Create account
+            </NavLink>
+        </div>
+    </div>
     <label class="text-danger">@error</label>
 
-    <NavLink href="register">
-        <h6 class="font-weight-normal text-center pt-4">Create account</h6>
-    </NavLink>
+
 </EditForm>
 
-<div class="col-4 offset-4 mt-5">    
-    <table class="table border">
+
+<div class="table-responsive m-1">
+    <table class="table table-primary table-bordered">
         <caption>Test Accounts</caption>
         <thead>
             <tr>
@@ -89,6 +100,8 @@
         </tbody>
     </table>
 </div>
+
+
 
 @code {
     LoginModel loginParameters { get; set; } = new LoginModel();

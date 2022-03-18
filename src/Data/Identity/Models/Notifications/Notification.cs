@@ -23,7 +23,7 @@ namespace Data.Identity.Models.Notifications
     {
         Unknown = 0,
         Notification = 1,
-        Job = 2,
+        Reservation = 2,
     }
 
     public class Notification

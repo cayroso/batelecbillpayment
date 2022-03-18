@@ -1,4 +1,5 @@
 ﻿using Cayent.Core.Common.Extensions;
+using Data.Identity.Models.Users;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -14,7 +15,7 @@ namespace Data.Identity.Models.Notifications
         public virtual Notification Notification { get; set; }
 
         public string ReceiverId { get; set; }
-        public virtual Account Receiver { get; set; }
+        public virtual UserInformation Receiver { get; set; }
 
 
         DateTime _dateReceived;

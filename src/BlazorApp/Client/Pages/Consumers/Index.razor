@@ -6,42 +6,22 @@
 
 @inject HttpClient Http
 
-<h3>My Bills</h3>
-<table class="table border">
-    <thead>
-        <tr>
-            <th>Bill</th>
-            <th>Due Date</th>
-            <th>Amount</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Billings)
-        {
-            <tr>
-                <td>
-                    <a href="/consumer/checkout/@item.BillingId">
-                       Bill # @item.BillingNumber
-                    </a>
-                </td>
-                <td>
-                    @item.BillingDateDue
-                </td>
-                <td>
-                    @item.BillingAmount.ToString("C")
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<div>
+    <h3>Last Reading</h3>
+    <h3>Inquire Billing</h3>
+    <h3>Annoucement</h3>
+    <h3>Reservation</h3>
+    <h3>Contact</h3>
+</div>
+
 @code {
 
-    List<Billing> Billings = new List<Billing>();
+    //List<Billing> Billings = new List<Billing>();
 
     protected override async Task OnInitializedAsync()
     {
-        var foo = await Http.GetFromJsonAsync<List<Billing>>("/api/billing/my-billings");
+        //var foo = await Http.GetFromJsonAsync<List<Billing>>("/api/billing/my-billings");
 
-        Billings = foo;
+        //Billings = foo;
     }
 }

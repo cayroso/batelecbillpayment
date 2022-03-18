@@ -1,53 +1,70 @@
 ﻿@page "/consumer/reservations/add"
 
+@using BlazorApp.Client.Components.Toaster
 @using BlazorApp.Shared.Branches
 @using BlazorApp.Shared.Reservations
 @inject HttpClient Http
 @inject NavigationManager navigationManager
 
-<h3>Reservations Add</h3>
+<PageTitle>Add Reservation</PageTitle>
+<h3>Add Reservation</h3>
 
-<EditForm class="form-signin container col-md-6 col-lg-4" OnValidSubmit="OnSubmit" Model="Parameters">
+<EditForm OnValidSubmit="OnSubmit" Model="Parameters">
 
     <DataAnnotationsValidator />
 
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="form-floating mb-3">
+                    <input id="dateReservation" type="date" class="form-control" @bind-value="Parameters.DateReservation" placeholder="Reservation Date" />
+                    <label for="dateReservation">Reservation Date</label>
+                    <ValidationMessage For="@(() => Parameters.DateReservation)" />
+                </div>
 
-    <div class="form-group">
-        <label for="inputUsername" class="sr-only">Date</label>
-        <input id="dateReservation" type="date" class="form-control" @bind-value="Parameters.DateReservation" />
-        <ValidationMessage For="@(() => Parameters.DateReservation)" />
-    </div>
-    <div class="form-group">
-        <label for="branchId" class="sr-only">Time Slot</label>
-        <InputSelect @bind-Value="@Parameters.TimeSlot" class="form-control">
-            <option value="">- Select Time Slot -</option>
-            @foreach (var opt in TimeSlots)
-            {
-                <option value="@opt">@opt</option>
-            }
-        </InputSelect>
-        <ValidationMessage For="@(() => Parameters.TimeSlot)" />
-    </div>
+                <div class="form-floating mb-3">
+                    <InputSelect @bind-Value="@Parameters.TimeSlot" class="form-select" id="timeSlot">
+                        <option value=""></option>
+                        @foreach (var opt in TimeSlots)
+                        {
+                            <option value="@opt">@opt</option>
+                        }
+                    </InputSelect>
+                    <label for="timeSlot">Time Slot</label>
+                    <ValidationMessage For="@(() => Parameters.TimeSlot)" />
+                </div>
 
-    <div class="form-group">
-        <label for="branchId" class="sr-only">Branch</label>
-        <InputSelect @bind-Value="@Parameters.BranchId" class="form-control">
-            <option value="">- Select branch -</option>
-            @foreach (var opt in Branches.OrderBy(e => e.Name))
-            {
-                <option value="@opt.BranchId">@opt.Name</option>
-            }
-        </InputSelect>
-        <ValidationMessage For="@(() => Parameters.BranchId)" />
+                <div class="form-floating mb-3">
+                    <InputSelect @bind-Value="@Parameters.BranchId" class="form-control" id="branchId">
+                        <option value=""></option>
+                        @foreach (var opt in Branches.OrderBy(e => e.Name))
+                        {
+                            <option value="@opt.BranchId">@opt.Name</option>
+                        }
+                    </InputSelect>
+                    <label for="branchId">Branch</label>
+                    <ValidationMessage For="@(() => Parameters.BranchId)" />
+                </div>
+
+
+                <div class="">
+                    <button class="btn btn-primary" type="submit">Save</button>
+                    <a href="/consumer/reservations" class="btn btn-outline-secondary">Cancel</a>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <label class="text-danger">@error</label>
 
-    <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+
 
 </EditForm>
 
 @code {
+    [Inject] private ToasterService? _toasterService { get; set; }
+    private ToasterService toasterService => _toasterService!;
 
     AddReservationInfo Parameters { get; set; } = new AddReservationInfo();
     string error { get; set; }
@@ -85,12 +102,14 @@
 
             if (!result.IsSuccessStatusCode)
             {
-                var foo = await result.Content.ReadAsStringAsync();
+                error = await result.Content.ReadAsStringAsync();
 
-                error = foo;
+                return;
             }
-            else
-                navigationManager.NavigateTo("/consumers/reservations");
+
+            toasterService.AddToast(Toast.NewToast("Create Reservation", "Reservation successfully created.", MessageColour.Success, 10));
+
+            navigationManager.NavigateTo("/consumer/reservations");
         }
         catch (Exception ex)
         {

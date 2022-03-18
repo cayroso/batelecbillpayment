@@ -1,4 +1,4 @@
-﻿@page "/consumers/checkout/{billingId}"
+﻿@page "/consumer/checkout/{billingId}"
 @using System.Net.Http.Headers
 @using BlazorApp.Shared.Billing
 @using BlazorApp.Shared.GCash
@@ -150,7 +150,7 @@ else
 
     async Task GetBilling(string billingId)
     {
-        var foo = await Http.GetFromJsonAsync<Billing>($"/api/billing/get/{billingId}");
+        var foo = await Http.GetFromJsonAsync<Billing>($"/api/billing/{billingId}");
 
         BillingInfo = foo;
     }
@@ -198,6 +198,6 @@ else
 
             };
 
-        await Http.PostAsJsonAsync<AddBillingSourceInfo>("/api/billing/AddBillingResource", info);
+        await Http.PostAsJsonAsync<AddBillingSourceInfo>("/api/billing/add-billing-resource", info);
     }
 }

@@ -9,47 +9,59 @@
 
 <PageTitle>Add Notification</PageTitle>
 <h3>Add Notification</h3>
+<EditForm OnValidSubmit="OnSubmit" Model="Parameters">
 
-<EditForm class="container" OnValidSubmit="OnSubmit" Model="Parameters">
+    @*<div class="row">
+        <div class="col">
+        <h3>Add Notification</h3>
+        </div>
+        <div class="col-auto">
+        <button class="btn btn-primary" type="submit">Save</button>
+        <a href="/administrator/notifications" class="btn btn-default">Cancel</a>
+        </div>
+        </div>*@
 
     <DataAnnotationsValidator />
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6">
 
-    <div class="row">
-        <div class="col-sm-6">
+                <div class="row mb-3">
+                    <label class="col-lg-4 col-form-label text-lg-end">Subject</label>
+                    <div class="col">
+                        <InputText class="form-control" @bind-Value="Parameters.Subject" />
+                        <ValidationMessage For="@(() => Parameters.Subject)" />
+                    </div>
+                </div>
 
-            <div class="row mb-3">
-                <label class="col-lg-4 col-form-label text-lg-end">Subject</label>
-                <div class="col">
-                    <InputText class="form-control" @bind-Value="Parameters.Subject" />
-                    <ValidationMessage For="@(() => Parameters.Subject)" />
+                <div class="row mb-3">
+                    <label class="col-lg-4 col-form-label text-lg-end">Content</label>
+                    <div class="col">
+                        <InputTextArea class="form-control" @bind-Value="Parameters.Content" />
+                        <ValidationMessage For="@(() => Parameters.Content)" />
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <label class="col-lg-4 col-form-label text-lg-end">Date</label>
+                    <div class="col">
+                        <input class="form-control" type="date" @bind-value="Parameters.DateSent" />
+                        <ValidationMessage For="@(() => Parameters.DateSent)" />
+                    </div>
+                </div>
+
+                <div class="row align-items-center justify-content-between">
+                    <div class="offset-lg-4">
+                        
+                        <button class="btn btn-primary" type="submit">Save</button>
+                        <a href="/administrator/notifications" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+
                 </div>
             </div>
-
-            <div class="row mb-3">
-                <label class="col-lg-4 col-form-label text-lg-end">Content</label>
-                <div class="col">
-                    <InputTextArea class="form-control" @bind-Value="Parameters.Content" />
-                    <ValidationMessage For="@(() => Parameters.Content)" />
-                </div>
-            </div>
-            <div class="row mb-3">
-                <label class="col-lg-4 col-form-label text-lg-end">Date</label>
-                <div class="col">
-                    <input class="form-control" type="date" @bind-value="Parameters.DateSent" />
-                    <ValidationMessage For="@(() => Parameters.DateSent)" />
-                </div>
-            </div>
-
-
         </div>
-
     </div>
 
-
     <label class="text-danger">@error</label>
-
-    <button class="btn btn-primary" type="submit">Save</button>
-    <a href="/administrator/notifications" class="btn btn-default">Cancel</a>
 
 </EditForm>
 
