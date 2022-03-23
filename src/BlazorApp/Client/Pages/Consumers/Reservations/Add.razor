@@ -3,6 +3,7 @@
 @using BlazorApp.Client.Components.Toaster
 @using BlazorApp.Shared.Branches
 @using BlazorApp.Shared.Reservations
+@using System.ComponentModel.DataAnnotations
 @inject HttpClient Http
 @inject NavigationManager navigationManager
 
@@ -23,7 +24,7 @@
                 </div>
 
                 <div class="form-floating mb-3">
-                    <InputSelect @bind-Value="@Parameters.TimeSlot" class="form-select" id="timeSlot">
+                    <InputSelect @bind-Value="TimeSlot" class="form-select" id="timeSlot">
                         <option value=""></option>
                         @foreach (var opt in TimeSlots)
                         {
@@ -31,11 +32,11 @@
                         }
                     </InputSelect>
                     <label for="timeSlot">Time Slot</label>
-                    <ValidationMessage For="@(() => Parameters.TimeSlot)" />
+                    <ValidationMessage For="@(() => TimeSlot)" />
                 </div>
 
                 <div class="form-floating mb-3">
-                    <InputSelect @bind-Value="@Parameters.BranchId" class="form-control" id="branchId">
+                    <InputSelect @bind-Value="Parameters.BranchId" class="form-control" id="branchId">
                         <option value=""></option>
                         @foreach (var opt in Branches.OrderBy(e => e.Name))
                         {
@@ -73,6 +74,9 @@
 
     List<string> TimeSlots = new List<string>();
 
+    [Required]
+    public string TimeSlot { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
         Parameters.DateReservation = DateTime.UtcNow;
@@ -98,6 +102,13 @@
         error = null;
         try
         {
+            var ts = DateTime.Parse(TimeSlot);
+
+            var dateReservation = Parameters.DateReservation.Date.AddHours(ts.Hour).AddMinutes(ts.Minute);
+            dateReservation = DateTime.SpecifyKind(dateReservation, DateTimeKind.Local);
+
+            Parameters.DateReservation = dateReservation;
+
             var result = await Http.PostAsJsonAsync<AddReservationInfo>("/api/reservation", Parameters);
 
             if (!result.IsSuccessStatusCode)

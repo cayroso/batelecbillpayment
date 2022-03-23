@@ -1,32 +1,36 @@
-﻿@page "/administrator/notifications"
+﻿@page "/administrator/announcements"
 @attribute [Authorize]
 
 @using BlazorApp.Client.Components.Toaster
-@using BlazorApp.Shared.Notifications
+@using BlazorApp.Shared.Announcements
 
 @attribute [Authorize(Roles = "Administrator")]
 
 @inject HttpClient Http
 @inject IJSRuntime JSRuntime
 
-<PageTitle>Notifications</PageTitle>
+<PageTitle>Announcements</PageTitle>
 
 <div class="row">
     <div class="col">
-        <h3>Notifications</h3>
+        <h3>Announcements</h3>
     </div>
     <div class="col-auto">
-        <a href="/administrator/notifications/add" class="btn btn-primary">
+        <button class="btn btn-secondary" @onclick="@(async ()=> await GetItems())">
+            <i class="oi oi-reload"></i>
+            Refresh
+        </button>
+        <a href="/administrator/announcements/add" class="btn btn-primary">
             <i class="oi oi-plus me-1"></i>Add
         </a>
     </div>
 </div>
 
-<div class="table-responsive pt-2">
+<div class="table-responsive pt-1">
 
     <table class="table table-bordered">
         <thead>
-            <tr>
+            <tr class="table-primary">
                 <th>Subject</th>
                 <th>Content</th>
                 <th>Date</th>
@@ -44,10 +48,10 @@
                         @item.Content
                     </td>
                     <td>
-                        @item.DateSent.ToLocalTime()
+                        @item.DateCreated.ToLocalTime()
                     </td>
                     <td>
-                        <button @onclick="@(async ()=> await DeleteItem(item.NotificationId))" class="btn btn-sm btn-warning">
+                        <button @onclick="@(async ()=> await DeleteItem(item.AnnouncementId))" class="btn btn-sm btn-warning">
                             <i class="oi oi-trash"></i>
                             Delete
                         </button>
@@ -62,7 +66,7 @@
     [Inject] private ToasterService? _toasterService { get; set; }
     private ToasterService toasterService => _toasterService!;
 
-    List<ViewNotificationInfo> Items = new List<ViewNotificationInfo>();
+    List<ViewAnnouncementInfo> Items = new List<ViewAnnouncementInfo>();
 
     protected override async Task OnInitializedAsync()
     {
@@ -71,17 +75,17 @@
 
     async Task GetItems()
     {
-        var items = await Http.GetFromJsonAsync<List<ViewNotificationInfo>>("/api/notification/");
+        var items = await Http.GetFromJsonAsync<List<ViewAnnouncementInfo>>("/api/announcement/");
 
         Items = items;
     }
 
     async Task DeleteItem(string id)
     {
-        if (!await JSRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to delete the notification?"))
+        if (!await JSRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to delete the announcement?"))
             return;
 
-        var result = await Http.DeleteAsync($"/api/notification/{id}/delete");
+        var result = await Http.DeleteAsync($"/api/announcement/{id}/delete");
 
         if (!result.IsSuccessStatusCode)
         {
@@ -91,7 +95,7 @@
             return;
         }
 
-        toasterService.AddToast(Toast.NewToast("Delete Notification", "Notification successfully deleted.", MessageColour.Warning, 10));
+        toasterService.AddToast(Toast.NewToast("Delete Announcement", "Announcement successfully deleted.", MessageColour.Warning, 10));
 
         await GetItems();
     }

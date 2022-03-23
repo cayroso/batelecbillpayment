@@ -10,7 +10,7 @@
 
 <PageTitle>Login</PageTitle>
 
-<h1 class="h2 font-weight-normal pt-2 text-center">
+<h1 class="h2 font-weight-normal pt-2 text-center text-white">
     Batelec Bills Payment
 </h1>
 
@@ -18,44 +18,51 @@
 <EditForm class="form-signin container col-md-6 col-lg-4" OnValidSubmit="OnSubmit" Model="loginParameters">
 
     <DataAnnotationsValidator />
-    <h4 class="font-weight-normal text-center">Login</h4>
+    <h4 class="font-weight-normal text-center text-white" >Login</h4>
 
-    <div class="form-floating mb-3">
-        <InputText id="inputEmail" class="form-control" @bind-Value="loginParameters.Email" autofocus placeholder="Email" />
-        <label for="inputEmail">Email</label>
-        <ValidationMessage For="@(() => loginParameters.Email)" />
+    <div class="card">
 
-    </div>
-    <div class="form-floating">
-        <InputText type="password" id="inputPassword" class="form-control" placeholder="Password" @bind-Value="loginParameters.Password" />
-        <label for="inputPassword">Password</label>
-        <ValidationMessage For="@(() => loginParameters.Password)" />
-    </div>
+        <div class="card-body">
 
-    <div class="form-check m-3">
-        <InputCheckbox id="inputRememberMe" class="form-check-input" @bind-Value="@loginParameters.RememberMe" />
-        <label class="form-check-label" for="inputRememberMe">Remember Me</label>
-    </div>
 
-    <div class="row align-items-center justify-content-between">
-        <div class="col">
-            <button class="btn btn-primary" type="submit">Sign in</button>
+            <div class="form-floating mb-3">
+                <InputText id="inputEmail" class="form-control" @bind-Value="loginParameters.Email" autofocus placeholder="Email" />
+                <label for="inputEmail">Email</label>
+                <ValidationMessage For="@(() => loginParameters.Email)" />
+
+            </div>
+            <div class="form-floating">
+                <InputText type="password" id="inputPassword" class="form-control" placeholder="Password" @bind-Value="loginParameters.Password" />
+                <label for="inputPassword">Password</label>
+                <ValidationMessage For="@(() => loginParameters.Password)" />
+            </div>
+
+            <div class="form-check m-3">
+                <InputCheckbox id="inputRememberMe" class="form-check-input" @bind-Value="@loginParameters.RememberMe" />
+                <label class="form-check-label" for="inputRememberMe">Remember Me</label>
+            </div>
+
+            <div class="row align-items-center justify-content-between">
+                <div class="col">
+                    <button class="btn btn-primary" type="submit">Sign in</button>
+                </div>
+                <div class="col text-end">
+                    <NavLink href="register" class="">
+                        Create account
+                    </NavLink>
+                </div>
+            </div>
+            <label class="text-danger">@error</label>
         </div>
-        <div class="col text-end">
-            <NavLink href="register" class="">
-                Create account
-            </NavLink>
-        </div>
     </div>
-    <label class="text-danger">@error</label>
-
 
 </EditForm>
 
+<div class="col-lg-6 offset-lg-3">
 
-<div class="table-responsive m-1">
+<div class="table-responsive mt-5 pt-5 mx-2">
     <table class="table table-primary table-bordered">
-        <caption>Test Accounts</caption>
+        <caption class="text-white">Test Accounts</caption>
         <thead>
             <tr>
                 <th>Username</th>
@@ -100,7 +107,7 @@
         </tbody>
     </table>
 </div>
-
+</div>
 
 
 @code {

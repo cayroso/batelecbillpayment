@@ -177,8 +177,10 @@ else
             };
         using (var response = await Http.SendAsync(request))
         {
-            response.EnsureSuccessStatusCode();
+            
             var body = await response.Content.ReadAsStringAsync();
+
+            response.EnsureSuccessStatusCode();
 
             var foo = await response.Content.ReadFromJsonAsync<BlazorApp.Shared.GCash.SourceResource>();
 

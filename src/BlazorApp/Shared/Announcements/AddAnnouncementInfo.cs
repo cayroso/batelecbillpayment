@@ -5,13 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BlazorApp.Shared.Reservations
+namespace BlazorApp.Shared.Announcements
 {
-    public class AddReservationInfo
+    public class AddAnnouncementInfo
     {
         [Required]
-        public DateTime DateReservation { get; set; }        
+        public string Subject { get; set; }
         [Required]
-        public string BranchId { get; set; }
+        public string Content { get; set; }
     }
 }

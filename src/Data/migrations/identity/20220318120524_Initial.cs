@@ -10,6 +10,20 @@ namespace Data.migrations.identity
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "Announcement",
+                columns: table => new
+                {
+                    AnnouncementId = table.Column<string>(type: "TEXT", maxLength: 36, nullable: false),
+                    Subject = table.Column<string>(type: "TEXT", nullable: false),
+                    Content = table.Column<string>(type: "TEXT", nullable: false),
+                    DateCreated = table.Column<DateTime>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Announcement", x => x.AnnouncementId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Branch",
                 columns: table => new
                 {
@@ -575,6 +589,9 @@ namespace Data.migrations.identity
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Announcement");
+
             migrationBuilder.DropTable(
                 name: "Feedback");
 

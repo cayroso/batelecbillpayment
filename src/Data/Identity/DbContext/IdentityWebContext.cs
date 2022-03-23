@@ -1,5 +1,6 @@
 ﻿
 using Data.Identity.Models;
+using Data.Identity.Models.Announcements;
 using Data.Identity.Models.Notifications;
 using Data.Identity.Models.Reservations;
 using Data.Identity.Models.Users;
@@ -37,6 +38,7 @@ namespace Data.Identity.DbContext
 
         //  app specific
         public DbSet<Account> Accounts { get; set; }
+        public DbSet<Announcement> Announcements { get; set; }
         public DbSet<Billing> Billings { get; set; }
         public DbSet<Branch> Branches { get; set; }
         public DbSet<GcashResource> GcashResources { get; set; }
@@ -203,6 +205,7 @@ namespace Data.Identity.DbContext
 
             //  app specific
             builder.ApplyConfiguration(new AccountConfiguration());
+            builder.ApplyConfiguration(new AnnouncementConfiguration());
             builder.ApplyConfiguration(new BillingConfiguration());
             builder.ApplyConfiguration(new BranchConfiguration());
             builder.ApplyConfiguration(new GcashResourceConfiguration());

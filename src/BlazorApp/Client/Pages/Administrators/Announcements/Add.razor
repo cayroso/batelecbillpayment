@@ -1,0 +1,77 @@
+﻿@page "/administrator/announcements/add"
+@using BlazorApp.Client.Components.Toaster
+@using BlazorApp.Shared.Announcements
+
+@attribute [Authorize]
+
+@inject HttpClient Http
+@inject NavigationManager navigationManager
+
+<PageTitle>Add Announcement</PageTitle>
+<h3>Add Announcement</h3>
+
+<EditForm OnValidSubmit="OnSubmit" Model="Parameters">
+
+    <DataAnnotationsValidator />
+
+    <div>
+        <div class="row">
+            <div class="col-lg-6">
+
+                <div class="form-floating mb-3">
+                    <InputText id="subject" class="form-control" @bind-Value="Parameters.Subject" placeholder="Subject" />
+                    <label for="subject">Subject</label>
+                    <ValidationMessage For="@(() => Parameters.Subject)" />
+                </div>
+
+                <div class="form-floating mb-3">
+                    <InputTextArea id="content" class="form-control" @bind-Value="Parameters.Content" placeholder="Content" style="height: 150px"/>
+                    <label for="content">Content</label>
+                    <ValidationMessage For="@(() => Parameters.Content)" />
+                </div>
+
+                <div>
+                    <button class="btn btn-primary" type="submit">Save</button>
+                    <a href="/administrator/announcement" class="btn btn-outline-secondary">Cancel</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <label class="text-danger">@error</label>
+
+</EditForm>
+
+@code {
+    [Inject] private ToasterService? _toasterService { get; set; }
+    private ToasterService toasterService => _toasterService!;
+
+    string error { get; set; }
+
+    AddAnnouncementInfo Parameters { get; set; } = new()
+        {
+            Subject = "",
+            Content = "",
+        };
+
+    protected override async Task OnInitializedAsync()
+    {
+
+    }
+
+    async Task OnSubmit()
+    {
+        var result = await Http.PostAsJsonAsync<AddAnnouncementInfo>("/api/announcement/add", Parameters);
+
+        if (!result.IsSuccessStatusCode)
+        {
+            error = await result.Content.ReadAsStringAsync();
+
+            return;
+        }
+
+        toasterService.AddToast(Toast.NewToast("Add Announcement", "Announcement successfully created.", MessageColour.Info, 10));
+
+        navigationManager.NavigateTo("/administrator/announcements/");
+    }
+}

@@ -52,6 +52,28 @@ namespace Data.migrations.identity
                     b.ToTable("Account", (string)null);
                 });
 
+            modelBuilder.Entity("Data.Identity.Models.Announcements.Announcement", b =>
+                {
+                    b.Property<string>("AnnouncementId")
+                        .HasMaxLength(36)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Subject")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("AnnouncementId");
+
+                    b.ToTable("Announcement", (string)null);
+                });
+
             modelBuilder.Entity("Data.Identity.Models.Billing", b =>
                 {
                     b.Property<string>("BillingId")

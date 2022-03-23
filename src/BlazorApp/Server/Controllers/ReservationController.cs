@@ -123,14 +123,16 @@ namespace BlazorApp.Server.Controllers
         [Authorize]
         public async Task<IActionResult> Post(AddReservationInfo info, CancellationToken cancellationToken)
         {
-            var ts = DateTime.Parse(info.TimeSlot);
-            var dateReservation = info.DateReservation.Date.AddHours(ts.Hour).AddMinutes(ts.Minute).Truncate();
-            dateReservation = DateTime.SpecifyKind(dateReservation, DateTimeKind.Local);
+            //var ts = DateTime.Parse(info.TimeSlot);
+            //var dateReservation = info.DateReservation.Date.AddHours(ts.Hour).AddMinutes(ts.Minute).Truncate();
+            //dateReservation = DateTime.SpecifyKind(dateReservation, DateTimeKind.Local);
+
+            var dateReservation = info.DateReservation;
 
             //  check if date is in the past
             var now = DateTime.UtcNow;
 
-            if (dateReservation <= now)
+            if (dateReservation.Date < now.Date)
                 return BadRequest("Cannot place reservation in the past.");
 
             //  check if the existing            

@@ -11,45 +11,49 @@
         <h3>Billings</h3>
     </div>
     <div class="col-auto">
+        <button class="btn btn-secondary" @onclick="@(async ()=> await GetItems())">
+            <i class="oi oi-reload"></i>
+            Refresh
+        </button>
         <a href="/administrator/billings/add" class="btn btn-primary">
             <i class="oi oi-plus me-1"></i>Add
         </a>
     </div>
 </div>
 
-<div class="tabletable-responsive">
+<div class="tabletable-responsive pt-1">
     <table class="table table-bordered">
-    <thead>
-        <tr class="table-primary">
-            <th>Bill</th>
-            <th>Due Date</th>
-            <th>Amount</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Billings)
-        {
-            <tr>
-                <td>
-                    <a href="/administrator/billings/@item.BillingId">
-                       Bill # @item.BillingNumber x
-                    </a>
-                </td>
-                <td>
-                    @item.BillingDateDue
-                </td>
-                <td>
-                    @item.BillingAmount.ToString("C")
-                </td>
+        <thead>
+            <tr class="table-primary">
+                <th>Bill</th>
+                <th>Due Date</th>
+                <th>Amount</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var item in Billings)
+            {
+                <tr>
+                    <td>
+                        <a href="/administrator/billings/@item.BillingId">
+                            @item.BillingNumber
+                        </a>
+                    </td>
+                    <td>
+                        @item.BillingDateDue
+                    </td>
+                    <td>
+                        @item.BillingAmount.ToString("C")
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 
 </div>
 @code {
 
-    [Inject] private ToasterService? _toasterService {get; set;}    
+    [Inject] private ToasterService? _toasterService { get; set; }
     private ToasterService toasterService => _toasterService!;
 
     private void AddToast() => toasterService.AddToast(Toast.NewToast("Hello World", "Hello from Blazor", MessageColour.Info, 30));
@@ -57,6 +61,11 @@
     List<Billing> Billings = new List<Billing>();
 
     protected override async Task OnInitializedAsync()
+    {
+        await GetItems();
+    }
+
+    async Task GetItems()
     {
         var foo = await Http.GetFromJsonAsync<List<Billing>>("/api/billing/");
 

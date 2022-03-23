@@ -15,142 +15,177 @@
     <DataAnnotationsValidator />
 
     <div class="row">
-        <div class="col-sm-6">
-            <div class="row mb-3">
-                <label class="col-lg-4 col-form-label text-lg-end">Account</label>
-                <div class="col">
-                    <InputSelect class="form-control" @bind-Value="@Parameters.AccountId">
-                        <option value="">- Select Account -</option>
-                        @foreach (var opt in Accounts)
-                        {
-                            <option value="@opt.AccountId">@opt.Name</option>
-                        }
-                    </InputSelect>
-                    <ValidationMessage For="@(() => Parameters.BillingMonth)" />
-                </div>
+        <div class="col-sm-6">            
+            <div class="form-floating mb-3">
+                <InputSelect @bind-Value="Parameters.AccountId" class="form-select" id="AccountId">
+                    <option value=""></option>
+                    @foreach (var opt in Accounts)
+                    {
+                        <option value="@opt.AccountId">@opt.Name</option>
+                    }
+                </InputSelect>
+                <label for="AccountId">Account</label>
+                <ValidationMessage For="@(() => Parameters.AccountId)" />
             </div>
 
-            <div class="row mb-3">
-                <label class="col-lg-4 col-form-label text-lg-end">Amount</label>
-                <div class="col">
-                    <InputNumber type="number" class="form-control" @bind-Value="Parameters.BillingAmount" />
-                    <ValidationMessage For="@(() => Parameters.BillingAmount)" />
-                </div>
+            <div class="form-floating mb-3">
+                <InputNumber id="Amount" type="number" class="form-control" @bind-Value="Parameters.BillingAmount" placeholder=" Amount" />
+                <label for="Amount">Amount</label>
+                <ValidationMessage For="@(() => Parameters.BillingAmount)" />
             </div>
 
-            <div class="row mb-3">
-                <label class="col-lg-4 col-form-label text-lg-end">Number</label>
-                <div class="col">
-                    <InputText class="form-control" @bind-Value="Parameters.BillingNumber" />
-                    <ValidationMessage For="@(() => Parameters.BillingNumber)" />
-                </div>
+            <div class="form-floating mb-3">
+                <InputText id="BillingNumber" class="form-control" @bind-Value="Parameters.BillingNumber" placeholder="Billing Number" />
+                <label for="BillingNumber">Number</label>
+                <ValidationMessage For="@(() => Parameters.BillingNumber)" />
             </div>
 
-            <div class="row mb-3">
-                <label class="col-lg-4 col-form-label text-lg-end">Year</label>
-                <div class="col">
-                    <InputSelect class="form-control" @bind-Value="@Parameters.BillingYear">
-                        <option value="">- Select Year -</option>
-                        <option value="2021">2021</option>
-                        <option value="2022">2022</option>
-                        <option value="2023">2023</option>
-                        <option value="2024">2024</option>
-                    </InputSelect>
-                    <ValidationMessage For="@(() => Parameters.BillingYear)" />
-                </div>
+            <div class="form-floating mb-3">
+                <InputSelect @bind-Value="@Parameters.BillingYear" class="form-select" id="Year">
+                    <option value=""></option>
+                    <option value="2021">2021</option>
+                    <option value="2022">2022</option>
+                    <option value="2023">2023</option>
+                    <option value="2024">2024</option>
+                </InputSelect>
+                <label for="Year">Year</label>
+                <ValidationMessage For="@(() => Parameters.BillingYear)" />
             </div>
 
-            <div class="row mb-3">
-                <label class="col-lg-4 col-form-label text-lg-end">Month</label>
-                <div class="col">
-                    <InputSelect class="form-control" @bind-Value="@Parameters.BillingMonth">
-                        <option value="">- Select Month -</option>
-                        <option value="January">January</option>
-                        <option value="February">February</option>
-                        <option value="March">March</option>
-                        <option value="April">April</option>
-                        <option value="May">May</option>
-                        <option value="June">June</option>
-                        <option value="July">July</option>
-                    </InputSelect>
-                    <ValidationMessage For="@(() => Parameters.BillingMonth)" />
-                </div>
+            <div class="form-floating mb-3">
+                <InputSelect @bind-Value="@Parameters.BillingMonth" class="form-select" id="Month">
+                    <option value=""></option>
+                    <option value="January">January</option>
+                    <option value="February">February</option>
+                    <option value="March">March</option>
+                    <option value="April">April</option>
+                    <option value="May">May</option>
+                    <option value="June">June</option>
+                    <option value="July">July</option>
+                    <option value="August">August</option>
+                    <option value="September">September</option>
+                    <option value="October">October</option>
+                    <option value="November">November</option>
+                    <option value="December">December</option>
+                </InputSelect>
+                <label for="Month">Month</label>
+                <ValidationMessage For="@(() => Parameters.BillingMonth)" />
             </div>
 
-            <div class="row mb-3">
-                <label class="col-lg-4 col-form-label text-lg-end">Reading Date</label>
-                <div class="col">
-                    <InputDate class="form-control" @bind-Value="Parameters.ReadingDate" />
-                    <ValidationMessage For="@(() => Parameters.ReadingDate)" />
-                </div>
+            <div class="form-floating mb-3">
+                <InputDate id="ReadingDate" class="form-control" @bind-Value="Parameters.ReadingDate" placeholder="Reading Date" />
+                <label for="ReadingDate">Reading Date</label>
+                <ValidationMessage For="@(() => Parameters.ReadingDate)" />
             </div>
 
-            <div class="row mb-3">
-                <label class="col-lg-4 col-form-label text-lg-end">Billing Start</label>
-                <div class="col">
-                    <InputDate class="form-control" @bind-Value="Parameters.BillingDateStart" />
-                    <ValidationMessage For="@(() => Parameters.BillingDateStart)" />
-                </div>
+            <div class="form-floating mb-3">
+                <InputDate id="BillingDateDue" class="form-control" @bind-Value="Parameters.BillingDateDue" placeholder="Billing Due Date" />
+                <label for="BillingDateDue">Billing Due Date</label>
+                <ValidationMessage For="@(() => Parameters.BillingDateDue)" />
             </div>
 
         </div>
         <div class="col-sm-6">
-            <div class="row mb-3">
+
+            <div class="form-floating mb-3">
+                <InputDate id="BillingDateStart" class="form-control" @bind-Value="Parameters.BillingDateStart" placeholder="Billing Start" />
+                <label for="BillingDateStart">Billing Start</label>
+                <ValidationMessage For="@(() => Parameters.BillingDateStart)" />
+            </div>
+
+            <div class="form-floating mb-3">
+                <InputDate id="BillingDateEnd" class="form-control" @bind-Value="Parameters.BillingDateEnd" placeholder="Billing End" />
+                <label for="BillingDateEnd">Billing End</label>
+                <ValidationMessage For="@(() => Parameters.BillingDateEnd)" />
+            </div>
+
+            @*<div class="row mb-3">
                 <label class="col-lg-4 col-form-label text-lg-end">Billing End</label>
                 <div class="col">
                     <InputDate class="form-control" @bind-Value="Parameters.BillingDateEnd" />
                     <ValidationMessage For="@(() => Parameters.BillingDateEnd)" />
                 </div>
+            </div>*@
+
+            <div class="form-floating mb-3">
+                <InputNumber id="PresentReading" class="form-control" @bind-Value="Parameters.PresentReading" placeholder="Present Reading (kWH)" />
+                <label for="PresentReading">Present Reading (kWH)</label>
+                <ValidationMessage For="@(() => Parameters.PresentReading)" />
             </div>
 
-
-            <div class="row mb-3">
+            @*<div class="row mb-3">
                 <label class="col-lg-4 col-form-label text-lg-end">Present Reading (kWH)</label>
                 <div class="col">
                     <InputNumber class="form-control" @bind-Value="Parameters.PresentReading" />
                     <ValidationMessage For="@(() => Parameters.PresentReading)" />
                 </div>
+            </div>*@
+
+            <div class="form-floating mb-3">
+                <InputNumber id="PreviousReading" class="form-control" @bind-Value="Parameters.PreviousReading" placeholder="Previous Reading (kWH)" />
+                <label for="PreviousReading">Previous Reading (kWH)</label>
+                <ValidationMessage For="@(() => Parameters.PreviousReading)" />
             </div>
 
-            <div class="row mb-3">
+            @*<div class="row mb-3">
                 <label class="col-lg-4 col-form-label text-lg-end">Previous Reading (kWH)</label>
                 <div class="col">
                     <InputNumber class="form-control" @bind-Value="Parameters.PreviousReading" />
                     <ValidationMessage For="@(() => Parameters.PreviousReading)" />
                 </div>
+            </div>*@
+
+            <div class="form-floating mb-3">
+                <InputNumber id="Multiplier" class="form-control" @bind-Value="Parameters.Multiplier" placeholder="Multiplier" />
+                <label for="Multiplier">Multiplier</label>
+                <ValidationMessage For="@(() => Parameters.Multiplier)" />
             </div>
 
-            <div class="row mb-3">
+            @*<div class="row mb-3">
                 <label class="col-lg-4 col-form-label text-lg-end">Multiplier</label>
                 <div class="col">
                     <InputNumber class="form-control" @bind-Value="Parameters.Multiplier" />
                     <ValidationMessage For="@(() => Parameters.Multiplier)" />
                 </div>
+            </div>*@
+
+            <div class="form-floating mb-3">
+                <InputNumber id="KilloWattHourUsed" class="form-control" @bind-Value="Parameters.KilloWattHourUsed" placeholder="kWH Used" />
+                <label for="KilloWattHourUsed">kWH Used</label>
+                <ValidationMessage For="@(() => Parameters.KilloWattHourUsed)" />
             </div>
 
-            <div class="row mb-3">
+            @*<div class="row mb-3">
                 <label class="col-lg-4 col-form-label text-lg-end">kWH Used</label>
                 <div class="col">
                     <InputNumber class="form-control" @bind-Value="Parameters.KilloWattHourUsed" />
                     <ValidationMessage For="@(() => Parameters.KilloWattHourUsed)" />
                 </div>
-            </div>
+            </div>*@
 
-            <div class="row mb-3">
+            
+
+            @*<div class="row mb-3">
                 <label class="col-lg-4 col-form-label text-lg-end">Billing Due Date</label>
                 <div class="col">
                     <InputDate class="form-control" @bind-Value="Parameters.BillingDateDue" />
                     <ValidationMessage For="@(() => Parameters.BillingDateDue)" />
                 </div>
+            </div>*@
+
+            <div class="form-floating mb-3">
+                <InputText id="Reader" class="form-control" @bind-Value="Parameters.Reader" placeholder="Reader" />
+                <label for="Reader">Reader</label>
+                <ValidationMessage For="@(() => Parameters.Reader)" />
             </div>
 
-            <div class="row mb-3">
+            @*<div class="row mb-3">
                 <label class="col-lg-4 col-form-label text-lg-end">Reader</label>
                 <div class="col">
                     <InputText class="form-control" @bind-Value="Parameters.Reader" />
                     <ValidationMessage For="@(() => Parameters.Reader)" />
                 </div>
-            </div>
+            </div>*@
 
         </div>
     </div>
@@ -164,7 +199,7 @@
 </EditForm>
 
 @code {
-    [Inject] private ToasterService? _toasterService {get; set;}    
+    [Inject] private ToasterService? _toasterService { get; set; }
     private ToasterService toasterService => _toasterService!;
 
     string error { get; set; }
