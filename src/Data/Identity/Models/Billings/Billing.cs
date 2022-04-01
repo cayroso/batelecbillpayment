@@ -7,8 +7,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Data.Identity.Models
+namespace Data.Identity.Models.Billings
 {
+    public enum EnumBillingStatus
+    {
+        Uknown = 0,
+        Unpaid = 1,
+        Review = 2,
+        Paid = 3,
+    }
+
     public class Billing
     {
         public string BillingId { get; set; }
@@ -18,10 +26,12 @@ namespace Data.Identity.Models
         public string AccountId { get; set; }
         public virtual Account Account { get; set; }
 
-        public double BillingAmount { get; set; }
-        public string BillingNumber { get; set; }
-        public string BillingMonth { get; set; }
-        public string BillingYear { get; set; }
+        public EnumBillingStatus Status { get; set; }
+
+        public double Amount { get; set; }
+        public string Number { get; set; }
+        public string Month { get; set; }
+        public string Year { get; set; }
 
 
         DateTime _readingDate;
@@ -31,18 +41,18 @@ namespace Data.Identity.Models
             set => _readingDate = value.Truncate();
         }
 
-        DateTime _billingDateStart;
-        public DateTime BillingDateStart
+        DateTime _dateStart;
+        public DateTime DateStart
         {
-            get => _billingDateStart.AsUtc();
-            set => _billingDateStart = value.Truncate();
+            get => _dateStart.AsUtc();
+            set => _dateStart = value.Truncate();
         }
 
-        DateTime _billingDateEnd;
-        public DateTime BillingDateEnd
+        DateTime _dateEnd;
+        public DateTime DateEnd
         {
-            get => _billingDateEnd.AsUtc();
-            set => _billingDateEnd = value.Truncate();
+            get => _dateEnd.AsUtc();
+            set => _dateEnd = value.Truncate();
         }
 
         public double PresentReading { get; set; }
@@ -50,11 +60,11 @@ namespace Data.Identity.Models
         public double Multiplier { get; set; }
         public double KilloWattHourUsed { get; set; }
 
-        DateTime _billingDateDue;
-        public DateTime BillingDateDue
+        DateTime _dateDue;
+        public DateTime DateDue
         {
-            get => _billingDateDue.AsUtc();
-            set => _billingDateDue = value.Truncate();
+            get => _dateDue.AsUtc();
+            set => _dateDue = value.Truncate();
         }
 
         public string Reader { get; set; }
@@ -82,6 +92,8 @@ namespace Data.Identity.Models
 
         //  due date
         //  reader
+
+        public virtual ICollection<BillingAttachment> Attachments { get; set; }
     }
 
     internal class BillingConfiguration : Cayent.Core.Data.Components.EntityBaseConfiguration<Billing>
@@ -93,7 +105,7 @@ namespace Data.Identity.Models
 
             b.Property(e => e.BillingId).HasMaxLength(KeyMaxLength).IsRequired();
             b.Property(e => e.AccountId).HasMaxLength(KeyMaxLength).IsRequired();
-            b.Property(e => e.BillingNumber).HasMaxLength(KeyMaxLength).IsRequired();
+            b.Property(e => e.Number).HasMaxLength(KeyMaxLength).IsRequired();
             b.Property(e => e.GcashResourceId).HasMaxLength(KeyMaxLength).IsRequired(false);
             b.Property(e => e.GcashPaymentId).HasMaxLength(KeyMaxLength).IsRequired(false);
 
@@ -107,6 +119,9 @@ namespace Data.Identity.Models
                 .WithOne(d => d.Billing)
                 .HasForeignKey<GcashPayment>(d => d.BillingId);
 
+            b.HasMany(e => e.Attachments)
+                .WithOne(d => d.Billing)
+                .HasForeignKey(d => d.BillingId);
 
             b.Property(e => e.ConcurrencyToken).HasMaxLength(KeyMaxLength).IsRequired().IsConcurrencyToken();
         }

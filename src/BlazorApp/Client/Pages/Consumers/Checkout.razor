@@ -7,7 +7,7 @@
 
 <h3>Checkout</h3>
 
-@if (BillingInfo == null)
+@if (ViewBillingInfo == null)
 {
     <div>
         Loading
@@ -24,7 +24,7 @@ else
                         Amount
                     </th>
                     <td>
-                        @BillingInfo.BillingAmount.ToString("C")
+                        @ViewBillingInfo.Amount.ToString("C")
                     </td>
                 </tr>
                 <tr>
@@ -32,7 +32,7 @@ else
                         Billing Date From/To
                     </th>
                     <td>
-                        @BillingInfo.BillingDateStart to @BillingInfo.BillingDateEnd
+                        @ViewBillingInfo.DateStart to @ViewBillingInfo.DateEnd
                     </td>
                 </tr>
                 <tr>
@@ -40,7 +40,7 @@ else
                         Due Date
                     </th>
                     <td>
-                        @BillingInfo.BillingDateDue
+                        @ViewBillingInfo.DateDue
                     </td>
                 </tr>
                 <tr>
@@ -48,7 +48,7 @@ else
                         Present Reading
                     </th>
                     <td>
-                        @BillingInfo.PresentReading
+                        @ViewBillingInfo.PresentReading
                     </td>
                 </tr>
                 <tr>
@@ -56,7 +56,7 @@ else
                         Previous Reading
                     </th>
                     <td>
-                        @BillingInfo.PreviousReading
+                        @ViewBillingInfo.PreviousReading
                     </td>
                 </tr>
                 <tr>
@@ -64,19 +64,19 @@ else
                         kWH Used
                     </th>
                     <td>
-                        @(BillingInfo.KilloWattHourUsed * @BillingInfo.Multiplier)
+                        @(ViewBillingInfo.KilloWattHourUsed * @ViewBillingInfo.Multiplier)
                     </td>
                 </tr>
 
 
 
 
-                @if (!string.IsNullOrWhiteSpace(BillingInfo.Payment.GcashPaymentId))
+                @if (!string.IsNullOrWhiteSpace(ViewBillingInfo.Payment.GcashPaymentId))
                 {
                     <tr>
                         <th></th>
                         <td>
-                            <a href="@BillingInfo.Resource.CheckoutUrl">View in GCash</a>
+                            <a href="@ViewBillingInfo.Resource.CheckoutUrl">View in GCash</a>
                         </td>
                     </tr>
                     <tr>
@@ -84,7 +84,7 @@ else
                             Paid Amount
                         </th>
                         <td>
-                            @BillingInfo.Payment.Amount.ToString("C")
+                            @ViewBillingInfo.Payment.Amount.ToString("C")
                         </td>
                     </tr>
                     <tr>
@@ -92,7 +92,7 @@ else
                             Fee
                         </th>
                         <td>
-                            - @BillingInfo.Payment.Fee.ToString("C")
+                            - @ViewBillingInfo.Payment.Fee.ToString("C")
                         </td>
                     </tr>
                     <tr>
@@ -100,7 +100,7 @@ else
                             Net Amount
                         </th>
                         <td>
-                            @BillingInfo.Payment.NetAmount.ToString("C")
+                            @ViewBillingInfo.Payment.NetAmount.ToString("C")
                         </td>
                     </tr>
                 }
@@ -109,7 +109,7 @@ else
                     <tr>
                         <th></th>
                         <td>
-                            <a href="@BillingInfo.Resource.CheckoutUrl">Pay with GCash via PayMongo</a>
+                            <a href="@ViewBillingInfo.Resource.CheckoutUrl">Pay with GCash via PayMongo</a>
                         </td>
                     </tr>
                 }
@@ -125,7 +125,7 @@ else
     [Parameter]
     public string BillingId { get; set; }
 
-    Billing BillingInfo { get; set; }
+    ViewBillingInfo ViewBillingInfo { get; set; }
 
     //BlazorApp.Shared.GCash.SourceResource SourceResourceInfo { get; set; }
 
@@ -133,7 +133,7 @@ else
     {
         await GetBilling(BillingId);
 
-        if (string.IsNullOrWhiteSpace(BillingInfo.GCashSourceResourceId))
+        if (string.IsNullOrWhiteSpace(ViewBillingInfo.GCashSourceResourceId))
         {
 
             var source = await CreateSourceResource();
@@ -150,9 +150,9 @@ else
 
     async Task GetBilling(string billingId)
     {
-        var foo = await Http.GetFromJsonAsync<Billing>($"/api/billing/{billingId}");
+        var foo = await Http.GetFromJsonAsync<ViewBillingInfo>($"/api/billing/{billingId}");
 
-        BillingInfo = foo;
+        ViewBillingInfo = foo;
     }
 
     async Task<BlazorApp.Shared.GCash.SourceResource> CreateSourceResource()
@@ -167,7 +167,7 @@ else
                 { "Accept", "application/json" },
                 { "Authorization", "Basic cGtfdGVzdF9lbnlCR1VWRUtLRW1qRzRMNVhpazZ4cXk6" },
             },
-                Content = new StringContent("{\"data\":{\"attributes\":{\"amount\":" + (BillingInfo.BillingAmount * 100).ToString() + ",\"redirect\":{\"success\":\"https://localhost:7104/gcash/success/" + BillingInfo.BillingId + "\",\"failed\":\"https://localhost:7104/gcash/failed/" + BillingInfo.BillingId + "\"},\"type\":\"gcash\",\"currency\":\"PHP\"}}}")
+                Content = new StringContent("{\"data\":{\"attributes\":{\"amount\":" + (ViewBillingInfo.Amount * 100).ToString() + ",\"redirect\":{\"success\":\"https://localhost:7104/gcash/success/" + ViewBillingInfo.BillingId + "\",\"failed\":\"https://localhost:7104/gcash/failed/" + ViewBillingInfo.BillingId + "\"},\"type\":\"gcash\",\"currency\":\"PHP\"}}}")
                 {
                     Headers =
                 {

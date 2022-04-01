@@ -1,6 +1,7 @@
 ﻿using Cayent.Core.Data.Identity.Models.Users;
 using Data.Constants;
 using Data.Identity.Models;
+using Data.Identity.Models.Billings;
 using Data.Identity.Models.Reservations;
 using Data.Identity.Models.Users;
 using Microsoft.AspNetCore.Identity;
@@ -218,13 +219,13 @@ namespace Data.Identity.DbContext
                 {
                     BillingId = Guid.NewGuid().ToString(),
                     AccountId = account1.AccountId,
-                    BillingAmount = 1000,
-                    BillingDateStart = dateStart,
-                    BillingDateEnd = dateEnd,
-                    BillingDateDue = dateEnd.AddDays(5),
-                    BillingMonth = now.Month.ToString(),
-                    BillingYear = now.Year.ToString(),
-                    BillingNumber = Guid.NewGuid().ToString(),
+                    Amount = 1000,
+                    DateStart = dateStart,
+                    DateEnd = dateEnd,
+                    DateDue = dateEnd.AddDays(5),
+                    Month = now.Month.ToString(),
+                    Year = now.Year.ToString(),
+                    Number = Guid.NewGuid().ToString(),
                     KilloWattHourUsed = 102, Multiplier = 1,
                     PresentReading = 100, PreviousReading = 50,
                     Reader = "Reader#001", ReadingDate = now,
@@ -233,13 +234,13 @@ namespace Data.Identity.DbContext
                 {
                     BillingId = Guid.NewGuid().ToString(),
                     AccountId = account1.AccountId,
-                    BillingAmount = 2000,
-                    BillingDateStart = dateStart,
-                    BillingDateEnd = dateEnd,
-                    BillingDateDue = dateEnd.AddDays(5),
-                    BillingMonth = now.Month.ToString(),
-                    BillingYear = now.Year.ToString(),
-                    BillingNumber = Guid.NewGuid().ToString(),
+                    Amount = 2000,
+                    DateStart = dateStart,
+                    DateEnd = dateEnd,
+                    DateDue = dateEnd.AddDays(5),
+                    Month = now.Month.ToString(),
+                    Year = now.Year.ToString(),
+                    Number = Guid.NewGuid().ToString(),
                     KilloWattHourUsed = 102, Multiplier = 1,
                     PresentReading = 100, PreviousReading = 50,
                     Reader = "Reader#001", ReadingDate = now,
@@ -248,13 +249,13 @@ namespace Data.Identity.DbContext
                 {
                     BillingId = Guid.NewGuid().ToString(),
                     AccountId = account1.AccountId,
-                    BillingAmount = 500,
-                    BillingDateStart = dateStart,
-                    BillingDateEnd = dateEnd,
-                    BillingDateDue = dateEnd.AddDays(5),
-                    BillingMonth = now.Month.ToString(),
-                    BillingYear = now.Year.ToString(),
-                    BillingNumber = Guid.NewGuid().ToString(),
+                    Amount = 500,
+                    DateStart = dateStart,
+                    DateEnd = dateEnd,
+                    DateDue = dateEnd.AddDays(5),
+                    Month = now.Month.ToString(),
+                    Year = now.Year.ToString(),
+                    Number = Guid.NewGuid().ToString(),
                     KilloWattHourUsed = 102, Multiplier = 1,
                     PresentReading = 100, PreviousReading = 50,
                     Reader = "Reader#002", ReadingDate = now,

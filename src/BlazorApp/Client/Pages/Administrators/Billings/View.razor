@@ -5,10 +5,10 @@
 
 <h3>View</h3>
 
-@if (BillingInfo != null)
+@if (ViewBillingInfo != null)
 {
     <div>
-        @BillingInfo.BillingNumber
+        @ViewBillingInfo.Number
     </div>
 }
 
@@ -17,7 +17,7 @@
     [Parameter]
     public string BillingId { get; set; }
 
-    Billing BillingInfo { get; set; }
+    ViewBillingInfo ViewBillingInfo { get; set; }
 
 
     protected override async Task OnInitializedAsync()
@@ -29,9 +29,9 @@
     {
         try
         {
-            var result = await Http.GetFromJsonAsync<Billing>($"/api/billing/{billingId}");
+            var result = await Http.GetFromJsonAsync<ViewBillingInfo>($"/api/billing/{billingId}");
 
-            BillingInfo = result;
+            ViewBillingInfo = result;
         }
         catch (Exception ex)
         {

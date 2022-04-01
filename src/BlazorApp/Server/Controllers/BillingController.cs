@@ -32,18 +32,19 @@ namespace BlazorApp.Server.Controllers
             var dto = await _identityWebContext.Billings
                 .AsNoTracking()
                 .Where(e => (e.AccountId == UserId || isAdmin) && e.BillingId == billingId)
-                .Select(e => new BlazorApp.Shared.Billing.Billing
+                .Select(e => new BlazorApp.Shared.Billing.ViewBillingInfo
                 {
                     GCashSourceResourceId = e.GcashResource!.GcashResourceId,
                     GCashCheckoutUrl = e.GcashResource!.CheckoutUrl,
-                    BillingDateEnd = e.BillingDateEnd,
-                    BillingDateStart = e.BillingDateDue,
-                    BillingDateDue = e.BillingDateDue,
-                    BillingAmount = e.BillingAmount,
+                    DateEnd = e.DateEnd,
+                    DateStart = e.DateStart,
+                    DateDue = e.DateDue,
+                    Amount = e.Amount,
                     BillingId = e.BillingId,
-                    BillingMonth = e.BillingMonth,
-                    BillingNumber = e.BillingNumber,
-                    BillingYear = e.BillingYear,
+                    StatusText = e.Status.ToString(),
+                    Month = e.Month,
+                    Number = e.Number,
+                    Year = e.Year,
                     KilloWattHourUsed = e.KilloWattHourUsed,
                     Multiplier = e.Multiplier,
                     PresentReading = e.PresentReading,
@@ -80,18 +81,19 @@ namespace BlazorApp.Server.Controllers
         {
             var dto = await _identityWebContext.Billings
                 .AsNoTracking()
-                .Select(e => new BlazorApp.Shared.Billing.Billing
+                .Select(e => new BlazorApp.Shared.Billing.ViewBillingInfo
                 {
                     GCashSourceResourceId = e.GcashResource!.GcashResourceId,
                     GCashCheckoutUrl = e.GcashResource!.CheckoutUrl,
-                    BillingDateEnd = e.BillingDateEnd,
-                    BillingDateStart = e.BillingDateDue,
-                    BillingDateDue = e.BillingDateDue,
-                    BillingAmount = e.BillingAmount,
+                    DateEnd = e.DateEnd,
+                    DateStart = e.DateStart,
+                    DateDue = e.DateDue,
+                    Amount = e.Amount,
                     BillingId = e.BillingId,
-                    BillingMonth = e.BillingMonth,
-                    BillingNumber = e.BillingNumber,
-                    BillingYear = e.BillingYear,
+                    StatusText = e.Status.ToString(),
+                    Month = e.Month,
+                    Number = e.Number,
+                    Year = e.Year,
                     KilloWattHourUsed = e.KilloWattHourUsed,
                     Multiplier = e.Multiplier,
                     PresentReading = e.PresentReading,
@@ -126,18 +128,19 @@ namespace BlazorApp.Server.Controllers
             var dto = await _identityWebContext.Billings
                 .AsNoTracking()
                 .Where(e => e.AccountId == UserId)
-                .Select(e => new BlazorApp.Shared.Billing.Billing
+                .Select(e => new BlazorApp.Shared.Billing.ViewBillingInfo
                 {
                     GCashSourceResourceId = e.GcashResource!.GcashResourceId,
                     GCashCheckoutUrl = e.GcashResource!.CheckoutUrl,
-                    BillingDateEnd = e.BillingDateEnd,
-                    BillingDateStart = e.BillingDateDue,
-                    BillingDateDue = e.BillingDateDue,
-                    BillingAmount = e.BillingAmount,
+                    DateEnd = e.DateEnd,
+                    DateStart = e.DateStart,
+                    DateDue = e.DateDue,
+                    Amount = e.Amount,
                     BillingId = e.BillingId,
-                    BillingMonth = e.BillingMonth,
-                    BillingNumber = e.BillingNumber,
-                    BillingYear = e.BillingYear,
+                    StatusText = e.Status.ToString(),
+                    Month = e.Month,
+                    Number = e.Number,
+                    Year = e.Year,
                     KilloWattHourUsed = e.KilloWattHourUsed,
                     Multiplier = e.Multiplier,
                     PresentReading = e.PresentReading,
@@ -170,17 +173,17 @@ namespace BlazorApp.Server.Controllers
         [HttpPost("add-billing")]
         public async Task<IActionResult> AddBilling(AddBillingInfo info)
         {
-            var data = new Data.Identity.Models.Billing
+            var data = new Data.Identity.Models.Billings.Billing
             {
                 BillingId = GuidStr(),
                 AccountId = info.AccountId,
-                BillingAmount = info.BillingAmount,
-                BillingDateDue = info.BillingDateDue,
-                BillingDateEnd = info.BillingDateEnd,
-                BillingDateStart = info.BillingDateStart,
-                BillingMonth = info.BillingMonth,
-                BillingNumber = info.BillingNumber,
-                BillingYear = info.BillingYear,
+                Amount = info.Amount,
+                DateDue = info.DateDue,
+                DateEnd = info.DateEnd,
+                DateStart = info.DateStart,
+                Month = info.Month,
+                Number = info.Number,
+                Year = info.Year,
                 KilloWattHourUsed = info.KilloWattHourUsed,
                 PresentReading = info.PresentReading,
                 PreviousReading = info.PreviousReading,

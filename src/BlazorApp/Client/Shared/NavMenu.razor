@@ -11,31 +11,11 @@
 
 <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
     <nav class="flex-column">
-        @*<div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-            <span class="oi oi-home" aria-hidden="true"></span> Home
-            </NavLink>
-            </div>
-            <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-            <span class="oi oi-plus" aria-hidden="true"></span> Counter
-            </NavLink>
-            </div>
-            <div class="nav-item px-3">
-            <NavLink class="nav-link" href="fetchdata">
-            <span class="oi oi-list-rich" aria-hidden="true"></span> Fetch data
-            </NavLink>
-            </div>
-            <div class="nav-item px-3">
-            <NavLink class="nav-link" href="/consumer" Match="NavLinkMatch.All">
-            <span class="oi oi-home" aria-hidden="true"></span> Consumer
-            </NavLink>
-            </div>*@
         @if (user.IsInRole("System"))
         {
             <div class="nav-item px-3">
                 <NavLink class="nav-link" href="/system" Match="NavLinkMatch.All">
-                    <span class="oi oi-home" aria-hidden="true"></span> Home
+                    <span class="fas fa-home" aria-hidden="true"></span> Home
                 </NavLink>
             </div>
             <div class="nav-item px-3">
@@ -54,35 +34,36 @@
         {
             <div class="nav-item px-3">
                 <NavLink class="nav-link" href="/administrator" Match="NavLinkMatch.All">
-                    <span class="oi oi-home" aria-hidden="true"></span> Home
+                    <i class="fa-solid fa-dashboard me-2" aria-hidden="true"></i>Dashboard
                 </NavLink>
             </div>
             <div class="nav-item px-3">
                 <NavLink class="nav-link" href="/administrator/billings" Match="NavLinkMatch.All">
-                    <span class="oi oi-home" aria-hidden="true"></span> Billings
+                    <i class="fa-solid fa-money-bill me-2" aria-hidden="true"></i>Billings
                 </NavLink>
             </div>
             <div class="nav-item px-3">
                 <NavLink class="nav-link" href="/administrator/announcements" Match="NavLinkMatch.All">
-                    <span class="oi oi-home" aria-hidden="true"></span> Announcements
+                    <i class="fa-solid fa-bullhorn me-2" aria-hidden="true"></i>Announcements
                 </NavLink>
             </div>
             <div class="nav-item px-3">
                 <NavLink class="nav-link" href="/administrator/reservations" Match="NavLinkMatch.All">
-                    <span class="oi oi-home" aria-hidden="true"></span> Reservations
+                    <i class="fa-solid fa-calendar-check me-2" aria-hidden="true"></i>Reservations
                 </NavLink>
             </div>
             <div class="nav-item px-3">
                 <NavLink class="nav-link" href="/administrator/consumers" Match="NavLinkMatch.All">
-                    <span class="oi oi-home" aria-hidden="true"></span> Consumers
+                    <i class="fa-solid fa-users me-2" aria-hidden="true"></i>Consumers
                 </NavLink>
             </div>
 
             <div class="nav-item px-3">
                 <NavLink class="nav-link" href="/administrator/notifications" Match="NavLinkMatch.All">
-                    <span class="oi oi-home" aria-hidden="true"></span> Notifications
+                    <i class="fa-solid fa-bell me-2" aria-hidden="true"></i>Notifications
                 </NavLink>
             </div>
+
         }
 
         @if (user.IsInRole("Consumer"))
@@ -107,7 +88,27 @@
                     <span class="oi oi-home" aria-hidden="true"></span> Reservations
                 </NavLink>
             </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="/consumer/notifications" Match="NavLinkMatch.All">
+                    <span class="oi oi-home" aria-hidden="true"></span> Notifications
+                </NavLink>
+            </div>
+
+
         }
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="/account" Match="NavLinkMatch.All">
+                <span class="oi oi-home" aria-hidden="true"></span> My Account
+            </NavLink>
+        </div>
+
+        <div class="d-block d-sm-none nav-item px-3">
+            <NavLink class="nav-link" href="/logout" Match="NavLinkMatch.All">
+                <span class="oi oi-home" aria-hidden="true"></span> Log Out
+            </NavLink>
+        </div>
+
     </nav>
 </div>
 

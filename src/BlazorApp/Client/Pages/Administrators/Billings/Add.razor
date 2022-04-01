@@ -29,19 +29,19 @@
             </div>
 
             <div class="form-floating mb-3">
-                <InputNumber id="Amount" type="number" class="form-control" @bind-Value="Parameters.BillingAmount" placeholder=" Amount" />
+                <InputNumber id="Amount" type="number" class="form-control" @bind-Value="Parameters.Amount" placeholder=" Amount" />
                 <label for="Amount">Amount</label>
-                <ValidationMessage For="@(() => Parameters.BillingAmount)" />
+                <ValidationMessage For="@(() => Parameters.Amount)" />
             </div>
 
             <div class="form-floating mb-3">
-                <InputText id="BillingNumber" class="form-control" @bind-Value="Parameters.BillingNumber" placeholder="Billing Number" />
+                <InputText id="BillingNumber" class="form-control" @bind-Value="Parameters.Number" placeholder="Billing Number" />
                 <label for="BillingNumber">Number</label>
-                <ValidationMessage For="@(() => Parameters.BillingNumber)" />
+                <ValidationMessage For="@(() => Parameters.Number)" />
             </div>
 
             <div class="form-floating mb-3">
-                <InputSelect @bind-Value="@Parameters.BillingYear" class="form-select" id="Year">
+                <InputSelect @bind-Value="@Parameters.Year" class="form-select" id="Year">
                     <option value=""></option>
                     <option value="2021">2021</option>
                     <option value="2022">2022</option>
@@ -49,11 +49,11 @@
                     <option value="2024">2024</option>
                 </InputSelect>
                 <label for="Year">Year</label>
-                <ValidationMessage For="@(() => Parameters.BillingYear)" />
+                <ValidationMessage For="@(() => Parameters.Year)" />
             </div>
 
             <div class="form-floating mb-3">
-                <InputSelect @bind-Value="@Parameters.BillingMonth" class="form-select" id="Month">
+                <InputSelect @bind-Value="@Parameters.Month" class="form-select" id="Month">
                     <option value=""></option>
                     <option value="January">January</option>
                     <option value="February">February</option>
@@ -69,7 +69,7 @@
                     <option value="December">December</option>
                 </InputSelect>
                 <label for="Month">Month</label>
-                <ValidationMessage For="@(() => Parameters.BillingMonth)" />
+                <ValidationMessage For="@(() => Parameters.Month)" />
             </div>
 
             <div class="form-floating mb-3">
@@ -79,24 +79,24 @@
             </div>
 
             <div class="form-floating mb-3">
-                <InputDate id="BillingDateDue" class="form-control" @bind-Value="Parameters.BillingDateDue" placeholder="Billing Due Date" />
+                <InputDate id="BillingDateDue" class="form-control" @bind-Value="Parameters.DateDue" placeholder="Billing Due Date" />
                 <label for="BillingDateDue">Billing Due Date</label>
-                <ValidationMessage For="@(() => Parameters.BillingDateDue)" />
+                <ValidationMessage For="@(() => Parameters.DateDue)" />
             </div>
 
         </div>
         <div class="col-sm-6">
 
             <div class="form-floating mb-3">
-                <InputDate id="BillingDateStart" class="form-control" @bind-Value="Parameters.BillingDateStart" placeholder="Billing Start" />
+                <InputDate id="BillingDateStart" class="form-control" @bind-Value="Parameters.DateStart" placeholder="Billing Start" />
                 <label for="BillingDateStart">Billing Start</label>
-                <ValidationMessage For="@(() => Parameters.BillingDateStart)" />
+                <ValidationMessage For="@(() => Parameters.DateStart)" />
             </div>
 
             <div class="form-floating mb-3">
-                <InputDate id="BillingDateEnd" class="form-control" @bind-Value="Parameters.BillingDateEnd" placeholder="Billing End" />
+                <InputDate id="BillingDateEnd" class="form-control" @bind-Value="Parameters.DateEnd" placeholder="Billing End" />
                 <label for="BillingDateEnd">Billing End</label>
-                <ValidationMessage For="@(() => Parameters.BillingDateEnd)" />
+                <ValidationMessage For="@(() => Parameters.DateEnd)" />
             </div>
 
             @*<div class="row mb-3">
@@ -207,9 +207,9 @@
     AddBillingInfo Parameters { get; set; } = new AddBillingInfo
         {
             ReadingDate = DateTime.UtcNow,
-            BillingDateDue = DateTime.UtcNow,
-            BillingDateStart = DateTime.UtcNow,
-            BillingDateEnd = DateTime.UtcNow,
+            DateDue = DateTime.UtcNow,
+            DateStart = DateTime.UtcNow,
+            DateEnd = DateTime.UtcNow,
         };
 
     List<AccountLookupInfo> Accounts = new();

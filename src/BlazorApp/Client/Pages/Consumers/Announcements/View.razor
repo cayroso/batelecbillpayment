@@ -1,9 +1,59 @@
-﻿@page "/consumer/announcements/view/{announcementId}"
+﻿@page "/consumer/announcements/{announcementId}"
+@using BlazorApp.Shared.Announcements
+@using BlazorApp.Shared.Notifications
 
 @attribute [Authorize]
 
-<h3>View</h3>
+<PageTitle>View Announcement</PageTitle>
+
+<div class="row">
+    <div class="col">
+        <h3>View Announcement</h3>
+    </div>
+    <div class="col-auto">
+        <a href="/consumer/announcements" class="btn btn-outline-secondary">Back</a>
+    </div>
+</div>
+
+<div class="col-md1">
+    <div class="form-floating mb-2">
+        <div id="Subject" class="form-control border-0">
+            @Item.Subject
+        </div>
+        <label for="Subject" class="small fw-bolder">Subject</label>
+    </div>
+    <div class="form-floating mb-2">
+        <div id="DateCreated" class="form-control border-0">
+            @Item.DateCreated.ToLocalTime()
+        </div>
+        <label for="DateCreated" class="small fw-bolder">Date</label>
+    </div>
+    <div class="form-floating mb-2">
+        <div id="Content" class="form-control border-0">
+            <pre>
+                @Item.Content
+            </pre>
+        </div>
+        <label for="Content" class="small fw-bolder">Content</label>
+    </div>
+</div>
 
 @code {
+    [Inject] private HttpClient Http { get; set; }
 
+    [Parameter] public string AnnouncementId { get; set; }
+
+    ViewAnnouncementInfo Item = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetItem();
+    }
+
+    async Task GetItem()
+    {
+        var item = await Http.GetFromJsonAsync<ViewAnnouncementInfo>($"/api/announcement/{AnnouncementId}");
+
+        Item = item;
+    }
 }

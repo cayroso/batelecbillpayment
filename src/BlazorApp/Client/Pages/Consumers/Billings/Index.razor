@@ -24,7 +24,8 @@
     <table class="table table-bordered">
         <thead>
             <tr class="table-primary">
-                <th>Bill</th>
+                <th>Number</th>
+                <th>Status</th>
                 <th>Due Date</th>
                 <th>Amount</th>
             </tr>
@@ -35,14 +36,17 @@
                 <tr>
                     <td>
                         <a href="/consumer/billings/@item.BillingId">
-                            Bill # @item.BillingNumber x
+                            @item.Number
                         </a>
                     </td>
                     <td>
-                        @item.BillingDateDue
+                        @item.StatusText
                     </td>
                     <td>
-                        @item.BillingAmount.ToString("C")
+                        @item.DateDue
+                    </td>
+                    <td>
+                        @item.Amount.ToString("C")
                     </td>
                 </tr>
             }
@@ -52,7 +56,7 @@
 
 @code {
 
-    List<Billing> Billings = new List<Billing>();
+    List<ViewBillingInfo> Billings = new List<ViewBillingInfo>();
 
     protected override async Task OnInitializedAsync()
     {
@@ -61,7 +65,7 @@
 
     async Task GetBillings()
     {
-        var foo = await Http.GetFromJsonAsync<List<Billing>>("/api/billing/my-billings");
+        var foo = await Http.GetFromJsonAsync<List<ViewBillingInfo>>("/api/billing/my-billings");
 
         Billings = foo;
     }

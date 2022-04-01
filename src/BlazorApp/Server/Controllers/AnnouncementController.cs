@@ -36,11 +36,32 @@ namespace BlazorApp.Server.Controllers
                       {
                           AnnouncementId = n.AnnouncementId,
                           Subject = n.Subject,
-                          Content = n.Content,
+                          //Content = n.Content,
                           DateCreated = n.DateCreated,
                       };
 
             var dto = await sql.ToListAsync();
+
+            return Ok(dto);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(string id)
+        {
+            var sql = from n in _identityWebContext.Announcements
+                      where n.AnnouncementId == id
+                      select new ViewAnnouncementInfo
+                      {
+                          AnnouncementId = n.AnnouncementId,
+                          Subject = n.Subject,
+                          Content = n.Content,
+                          DateCreated = n.DateCreated,
+                      };
+
+            var dto = await sql.FirstOrDefaultAsync();
+
+            if (dto == null)
+                return BadRequest("Announcement not found.");
 
             return Ok(dto);
         }
@@ -53,6 +74,7 @@ namespace BlazorApp.Server.Controllers
                 AnnouncementId = GuidStr(),
                 Subject = info.Subject,
                 Content = info.Content,
+                DatePost = info.DatePost.Date,
                 DateCreated = DateTime.UtcNow
             };
 
@@ -66,6 +88,7 @@ namespace BlazorApp.Server.Controllers
             return Ok();
         }
 
+        [Authorize(Roles = "Administrator")]
         [HttpDelete("{announcementId}/delete")]
         public async Task<IActionResult> Remove(string announcementId)
         {

@@ -9,3 +9,31 @@
 Welcome to your new app.
 
 <SurveyPrompt Title="How is Blazor working for you?" />
+
+@code {
+
+    [Inject] private NavigationManager NavManager { get; set; }
+    [CascadingParameter] private Task<AuthenticationState> authenticationStateTask { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await authenticationStateTask;
+        var user = authState.User;
+
+        var isAdmin = user.IsInRole("Administrator");
+        var isConsumer = user.IsInRole("Consumer");
+
+        if (isAdmin)
+        {
+            NavManager.NavigateTo("/administrator");
+            return;
+        }
+
+        if (isConsumer)
+        {
+            NavManager.NavigateTo("/consumer");
+            return;
+        }
+    }
+
+}

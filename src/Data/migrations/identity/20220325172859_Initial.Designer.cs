@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.migrations.identity
 {
     [DbContext(typeof(IdentityWebContext))]
-    [Migration("20220318120524_Initial")]
+    [Migration("20220325172859_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -67,6 +67,9 @@ namespace Data.migrations.identity
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("TEXT");
 
+                    b.Property<DateTime>("DatePost")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Subject")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -76,7 +79,7 @@ namespace Data.migrations.identity
                     b.ToTable("Announcement", (string)null);
                 });
 
-            modelBuilder.Entity("Data.Identity.Models.Billing", b =>
+            modelBuilder.Entity("Data.Identity.Models.Billings.Billing", b =>
                 {
                     b.Property<string>("BillingId")
                         .HasMaxLength(36)
@@ -87,35 +90,22 @@ namespace Data.migrations.identity
                         .HasMaxLength(36)
                         .HasColumnType("TEXT");
 
-                    b.Property<double>("BillingAmount")
+                    b.Property<double>("Amount")
                         .HasColumnType("REAL");
-
-                    b.Property<DateTime>("BillingDateDue")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("BillingDateEnd")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("BillingDateStart")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("BillingMonth")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("BillingNumber")
-                        .IsRequired()
-                        .HasMaxLength(36)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("BillingYear")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
 
                     b.Property<string>("ConcurrencyToken")
                         .IsConcurrencyToken()
                         .IsRequired()
                         .HasMaxLength(36)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("DateDue")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("DateEnd")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("DateStart")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("GcashPaymentId")
@@ -129,8 +119,17 @@ namespace Data.migrations.identity
                     b.Property<double>("KilloWattHourUsed")
                         .HasColumnType("REAL");
 
+                    b.Property<string>("Month")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<double>("Multiplier")
                         .HasColumnType("REAL");
+
+                    b.Property<string>("Number")
+                        .IsRequired()
+                        .HasMaxLength(36)
+                        .HasColumnType("TEXT");
 
                     b.Property<double>("PresentReading")
                         .HasColumnType("REAL");
@@ -145,11 +144,38 @@ namespace Data.migrations.identity
                     b.Property<DateTime>("ReadingDate")
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("Status")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Year")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.HasKey("BillingId");
 
                     b.HasIndex("AccountId");
 
                     b.ToTable("Billing", (string)null);
+                });
+
+            modelBuilder.Entity("Data.Identity.Models.Billings.BillingAttachment", b =>
+                {
+                    b.Property<string>("BillingId")
+                        .HasMaxLength(36)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("AttachmentId")
+                        .HasMaxLength(36)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("FileuploadId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("BillingId", "AttachmentId");
+
+                    b.HasIndex("FileuploadId");
+
+                    b.ToTable("BillingAttachment", (string)null);
                 });
 
             modelBuilder.Entity("Data.Identity.Models.Branch", b =>
@@ -206,6 +232,43 @@ namespace Data.migrations.identity
                     b.HasIndex("UserId");
 
                     b.ToTable("Feedback", (string)null);
+                });
+
+            modelBuilder.Entity("Data.Identity.Models.Fileuploads.Fileupload", b =>
+                {
+                    b.Property<string>("FileuploadId")
+                        .HasMaxLength(36)
+                        .HasColumnType("TEXT");
+
+                    b.Property<byte[]>("Content")
+                        .IsRequired()
+                        .HasColumnType("BLOB");
+
+                    b.Property<string>("ContentDisposition")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("Length")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("FileuploadId");
+
+                    b.ToTable("Fileupload", (string)null);
                 });
 
             modelBuilder.Entity("Data.Identity.Models.GcashPayment", b =>
@@ -792,7 +855,7 @@ namespace Data.migrations.identity
                     b.Navigation("UserInformation");
                 });
 
-            modelBuilder.Entity("Data.Identity.Models.Billing", b =>
+            modelBuilder.Entity("Data.Identity.Models.Billings.Billing", b =>
                 {
                     b.HasOne("Data.Identity.Models.Account", "Account")
                         .WithMany("Billings")
@@ -801,6 +864,23 @@ namespace Data.migrations.identity
                         .IsRequired();
 
                     b.Navigation("Account");
+                });
+
+            modelBuilder.Entity("Data.Identity.Models.Billings.BillingAttachment", b =>
+                {
+                    b.HasOne("Data.Identity.Models.Billings.Billing", "Billing")
+                        .WithMany("Attachments")
+                        .HasForeignKey("BillingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Data.Identity.Models.Fileuploads.Fileupload", "Fileupload")
+                        .WithMany()
+                        .HasForeignKey("FileuploadId");
+
+                    b.Navigation("Billing");
+
+                    b.Navigation("Fileupload");
                 });
 
             modelBuilder.Entity("Data.Identity.Models.Feedback", b =>
@@ -816,7 +896,7 @@ namespace Data.migrations.identity
 
             modelBuilder.Entity("Data.Identity.Models.GcashPayment", b =>
                 {
-                    b.HasOne("Data.Identity.Models.Billing", "Billing")
+                    b.HasOne("Data.Identity.Models.Billings.Billing", "Billing")
                         .WithOne("GcashPayment")
                         .HasForeignKey("Data.Identity.Models.GcashPayment", "BillingId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -827,7 +907,7 @@ namespace Data.migrations.identity
 
             modelBuilder.Entity("Data.Identity.Models.GcashResource", b =>
                 {
-                    b.HasOne("Data.Identity.Models.Billing", "Billing")
+                    b.HasOne("Data.Identity.Models.Billings.Billing", "Billing")
                         .WithOne("GcashResource")
                         .HasForeignKey("Data.Identity.Models.GcashResource", "BillingId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -974,8 +1054,10 @@ namespace Data.migrations.identity
                     b.Navigation("Billings");
                 });
 
-            modelBuilder.Entity("Data.Identity.Models.Billing", b =>
+            modelBuilder.Entity("Data.Identity.Models.Billings.Billing", b =>
                 {
+                    b.Navigation("Attachments");
+
                     b.Navigation("GcashPayment")
                         .IsRequired();
 

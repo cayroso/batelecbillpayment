@@ -1,73 +1,151 @@
 ﻿@page "/administrator"
+@using BlazorApp.Shared.Dashboards
 @using BlazorApp.Shared.Reservations
 
 @attribute [Authorize]
 
 @inject HttpClient Http
 
-<h3>Index</h3>
+<PageTitle>Dashboard</PageTitle>
 
-<div>
-    
+<div class="row">
+    <div class="col">
+        <h3>Dashboard</h3>
+    </div>
+    <div class="col-auto">
+        @*<button class="btn btn-secondary" @onclick="@(async ()=> await GetItems())">
+            <i class="oi oi-reload"></i>
+            Refresh
+            </button>
+            <a href="/administrator/announcements/add" class="btn btn-primary">
+            <i class="oi oi-plus me-1"></i>Add
+            </a>*@
+    </div>
 </div>
 
-<table class="table border">
-    <thead>
-        <tr>
-            <th>Date of Reservation</th>
-            <th>Branch Name</th>
-            <th>Account</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Items.OrderByDescending(e => e.DateReservation))
-        {
-            <tr>
-                <td>
-                    @item.DateReservation
-                </td>
-                <td>
-                    @item.BranchName
-                </td>
-                <td>
-                    @item.AccountName
-                </td>
-                <td>
-                    <button @onclick="@(async ()=> await DeleteReservation(item.ReservationId))">
-                        <i class="fa fa-fw fa-trash"></i>
-                        Delete
-                    </button>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<div class="row">
+
+    <div class="col-md mb-2 mb-md-0">
+        <div class="card card-primary">
+            <div class="card-header">
+                Announcements
+            </div>
+            <div class="card-body">
+                @dashboard.Announcements
+            </div>
+        </div>
+    </div>
+    <div class="col-md mb-2 mb-md-0">
+        <div class="card card-primary">
+            <div class="card-header">
+                Notifications
+            </div>
+            <div class="card-body">
+                @dashboard.Notifications
+            </div>
+        </div>
+    </div>
+</div>
+
+<br />
+<h5>Reservations</h5>
+<div class="row">
+    <div class="col-md mb-2 mb-md-0">
+        <div class="card card-primary">
+            <div class="card-header">
+                Today
+            </div>
+            <div class="card-body">
+                @dashboard.TodayReservations
+            </div>
+        </div>
+    </div>
+    <div class="col-md mb-2 mb-md-0">
+        <div class="card card-primary">
+            <div class="card-header">
+                Tomorrow
+            </div>
+            <div class="card-body">
+                @dashboard.TomorrowReservations
+            </div>
+        </div>
+    </div>
+    <div class="col-md mb-2 mb-md-0">
+        <div class="card card-primary">
+            <div class="card-header">
+                This Week
+            </div>
+            <div class="card-body">
+                @dashboard.WeekReservations
+            </div>
+        </div>
+    </div>
+</div>
+
+<br />
+<h5>Billing</h5>
+<div class="row">
+    <div class="col-md mb-2 mb-md-0">
+        <div class="card card-primary">
+            <div class="card-header">
+                Over Due
+            </div>
+            <div class="card-body">
+                @dashboard.PastDueDateBillings
+            </div>
+        </div>
+    </div>
+    <div class="col-md mb-2 mb-md-0">
+        <div class="card card-primary">
+            <div class="card-header">
+                Today
+            </div>
+            <div class="card-body">
+                @dashboard.TodayDueDateBillings
+            </div>
+        </div>
+    </div>
+    <div class="col-md mb-2 mb-md-0">
+        <div class="card card-primary">
+            <div class="card-header">
+                Tomorrow
+            </div>
+            <div class="card-body">
+                @dashboard.TomorrowDueDateBillings
+            </div>
+        </div>
+    </div>
+    <div class="col-md mb-2 mb-md-0">
+        <div class="card card-primary">
+            <div class="card-header">
+                This Week
+            </div>
+            <div class="card-body">
+                @dashboard.WeekDueDateBillings
+            </div>
+        </div>
+    </div>
+</div>
+
 
 @code {
-    List<ReservationInfo> Items = new List<ReservationInfo>();
+
+    Administrator dashboard = new();
 
     protected override async Task OnInitializedAsync()
     {
-        await GetMyReservations();
+        await GetDashboard();
     }
 
-    async Task GetMyReservations()
+    async Task GetDashboard()
     {
-        var items = await Http.GetFromJsonAsync<List<ReservationInfo>>("/api/reservation");
+        var item = await Http.GetFromJsonAsync<Administrator>("/api/dashboard/administrators");
 
-        Items = items;
+        dashboard = item;
     }
 
-    async Task DeleteReservation(string reservationId)
+    async Task Refresh()
     {
-        var result = await Http.DeleteAsync($"/api/reservation/{reservationId}");
-
-        if (!result.IsSuccessStatusCode)
-        {
-            var error = await result.Content.ReadAsStringAsync();
-        }
-
-        await GetMyReservations();
+        await GetDashboard();
     }
 }

@@ -25,11 +25,15 @@
                 </div>
 
                 <div class="form-floating mb-3">
-                    <InputTextArea id="content" class="form-control" @bind-Value="Parameters.Content" placeholder="Content" style="height: 150px"/>
+                    <InputTextArea id="content" class="form-control" @bind-Value="Parameters.Content" placeholder="Content" style="height: 150px" />
                     <label for="content">Content</label>
                     <ValidationMessage For="@(() => Parameters.Content)" />
                 </div>
-
+                <div class="form-floating mb-3">
+                    <InputDate id="DatePost" class="form-control" @bind-Value="Parameters.DatePost" placeholder="Post Date" />
+                    <label for="DatePost">Post Date</label>
+                    <ValidationMessage For="@(() => Parameters.DatePost)" />
+                </div>
                 <div>
                     <button class="btn btn-primary" type="submit">Save</button>
                     <a href="/administrator/announcement" class="btn btn-outline-secondary">Cancel</a>

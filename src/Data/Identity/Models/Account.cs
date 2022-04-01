@@ -1,4 +1,5 @@
-﻿using Data.Identity.Models.Users;
+﻿using Data.Identity.Models.Billings;
+using Data.Identity.Models.Users;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;

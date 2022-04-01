@@ -1,0 +1,339 @@
+﻿@using BlazorApp.Client.Components.Toaster
+@using BlazorApp.Shared.Accounts
+@using System.Security.Claims
+
+<div class="row">
+    <div class="col">
+        <h3>My Account</h3>
+    </div>
+    <div class="col-auto">
+        @if (ViewMode == "view")
+        {
+            <button class="btn btn-primary" @onclick="@(async ()=> await StartEditUserInfo())">
+                <i class="oi oi-reload"></i>
+                Edit User Info
+            </button>
+            <button class="btn btn-primary" @onclick="@(async ()=> await StartEditAccountInfo())">
+                <i class="oi oi-reload"></i>
+                Edit Account Info
+            </button>
+            <button class="btn btn-primary" @onclick="@(async ()=> await StartChangePassword())">
+                <i class="oi oi-reload"></i>
+                Change Password
+            </button>
+        }
+
+
+        <button class="btn ms-2 btn-secondary" @onclick="@(async ()=> await GetItem())">
+            <i class="oi oi-reload"></i>
+            Refresh
+        </button>
+    </div>
+</div>
+
+@if (ViewMode == "edit-user-info")
+{
+    <EditForm OnValidSubmit="SaveUserInfo" Model="editUserInfo">
+
+        <DataAnnotationsValidator />
+
+        <div class="row">
+            <div class="col-md">
+                <div class="form-floating mb-2">
+                    <div id="Email" class="form-control border-0">
+                        @editUserInfo.Email
+                    </div>
+                    <label for="Email" class="small fw-bolder">Email</label>
+                </div>
+                <div class="form-floating mb-2">
+                    <InputText id="PhoneNumber" type="text" class="form-control" @bind-Value="@editUserInfo.PhoneNumber" placeholder="Phone Number" />
+                    <label for="PhoneNumber" class="small fw-bolder">Phone Number</label>
+                    <ValidationMessage For="@(() => editUserInfo.PhoneNumber)" />
+                </div>
+                <div class="form-floating mb-2">
+                    <InputText id="FirstName" type="text" class="form-control" @bind-Value="@editUserInfo.FirstName" placeholder="First Name" />
+                    <label for="FirstName" class="small fw-bolder">First Name</label>
+                    <ValidationMessage For="@(() => editUserInfo.FirstName)" />
+                </div>
+                <div class="form-floating mb-2">
+                    <InputText id="MiddleName" type="text" class="form-control" @bind-Value="@editUserInfo.MiddleName" placeholder="Middle Name" />
+                    <label for="MiddleName" class="small fw-bolder">Middle Name</label>
+                    <ValidationMessage For="@(() => editUserInfo.MiddleName)" />
+                </div>
+                <div class="form-floating mb-2">
+                    <InputText id="LastName" type="text" class="form-control" @bind-Value="@editUserInfo.LastName" placeholder="Last Name" />
+                    <label for="LastName" class="small fw-bolder">Last Name</label>
+                    <ValidationMessage For="@(() => editUserInfo.LastName)" />
+                </div>
+                <div class="alert-danger">
+                    @error
+                </div>
+                <div>
+                    <button class="btn btn-primary" type="submit">Save</button>
+                    <button class="btn btn-secondary" type="reset" @onclick="@(async ()=> await ResetChanges())">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </EditForm>
+}
+else if (ViewMode == "edit-consumer-info")
+{
+    <EditForm OnValidSubmit="SaveAccountInfo" Model="editAccountInfo">
+
+        <DataAnnotationsValidator />
+
+        <div class="row">
+            <div class="col-md">
+                <div class="form-floating mb-2">
+                    <InputText id="AccountNumber" type="text" class="form-control" @bind-Value="@editAccountInfo.AccountNumber" placeholder="Account Number" />
+                    <label for="AccountNumber" class="small fw-bolder">Account Number</label>
+                    <ValidationMessage For="@(() => editAccountInfo.AccountNumber)" />
+                </div>
+                <div class="form-floating mb-2">
+                    <InputText id="MeterNumber" type="text" class="form-control" @bind-Value="@editAccountInfo.MeterNumber" placeholder="Meter Number" />
+                    <label for="MeterNumber" class="small fw-bolder">Meter Number</label>
+                    <ValidationMessage For="@(() => editAccountInfo.MeterNumber)" />
+                </div>
+                <div class="form-floating mb-2">
+                    <InputText id="ConsumerType" type="text" class="form-control" @bind-Value="@editAccountInfo.ConsumerType" placeholder="Consumer Type" />
+                    <label for="ConsumerType" class="small fw-bolder">Consumer Type</label>
+                    <ValidationMessage For="@(() => editAccountInfo.ConsumerType)" />
+                </div>
+                <div class="form-floating mb-2">
+                    <InputTextArea id="Address" class="form-control" @bind-Value="@editAccountInfo.Address" placeholder="Address" />
+                    <label for="Address" class="small fw-bolder">Address</label>
+                    <ValidationMessage For="@(() => editAccountInfo.Address)" />
+                </div>
+                <div class="alert-danger">
+                    @error
+                </div>
+                <div>
+                    <button class="btn btn-primary" type="submit">Save</button>
+                    <button class="btn btn-secondary"  type="reset" @onclick="@(async ()=> await ResetChanges())">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </EditForm>
+}
+else if (ViewMode == "change-password")
+{
+    <EditForm OnValidSubmit="UpdatePassword" Model="changePasswordInfo">
+
+        <DataAnnotationsValidator />
+
+        <div class="row">
+            <div class="col-md">
+                <div class="form-floating mb-2">
+                    <InputText id="CurrentPassword" type="password" class="form-control" @bind-Value="@changePasswordInfo.CurrentPassword" placeholder="Current Password" />
+                    <label for="CurrentPassword" class="small fw-bolder">Current Password</label>
+                    <ValidationMessage For="@(() => changePasswordInfo.CurrentPassword)" />
+                </div>
+                <div class="form-floating mb-2">
+                    <InputText id="NewPassword" type="password" class="form-control" @bind-Value="@changePasswordInfo.NewPassword" placeholder="New Password" />
+                    <label for="NewPassword" class="small fw-bolder">New Password</label>
+                    <ValidationMessage For="@(() => changePasswordInfo.NewPassword)" />
+                </div>                
+                <div class="alert-danger">
+                    @error
+                </div>
+                <div>
+                    <button class="btn btn-primary" type="submit">Save</button>
+                    <button class="btn btn-secondary" type="reset" @onclick="@(async ()=> await ResetChanges())">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </EditForm>
+}
+else
+{
+    <div class="row">
+        <div class="col-md">
+            <div class="form-floating mb-2">
+                <div id="Email" class="form-control border-0">
+                    @viewUserInfo.Email
+                </div>
+                <label for="Email" class="small fw-bolder">Email</label>
+            </div>
+            <div class="form-floating mb-2">
+                <div id="PhoneNumber" class="form-control border-0">
+                    @viewUserInfo.PhoneNumber
+                </div>
+                <label for="PhoneNumber" class="small fw-bolder">Phone Number</label>
+            </div>
+            <div class="form-floating mb-2">
+                <div id="FirstName" class="form-control border-0">
+                    @viewUserInfo.FirstName
+                </div>
+                <label for="FirstName" class="small fw-bolder">First Name</label>
+            </div>
+            <div class="form-floating mb-2">
+                <div id="MiddleName" class="form-control border-0">
+                    @viewUserInfo.MiddleName
+                </div>
+                <label for="MiddleName" class="small fw-bolder">Middle Name</label>
+            </div>
+            <div class="form-floating mb-2">
+                <div id="LastName" class="form-control border-0">
+                    @viewUserInfo.LastName
+                </div>
+                <label for="LastName" class="small fw-bolder">Last Name</label>
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="form-floating mb-2">
+                <div id="AccountNumber" class="form-control border-0">
+                    @viewUserInfo.AccountInfo.AccountNumber
+                </div>
+                <label for="AccountNumber" class="small fw-bolder">Account Number</label>
+            </div>
+            <div class="form-floating mb-2">
+                <div id="MeterNumber" class="form-control border-0">
+                    @viewUserInfo.AccountInfo.MeterNumber
+                </div>
+                <label for="MeterNumber" class="small fw-bolder">Meter Number</label>
+            </div>
+            <div class="form-floating mb-2">
+                <div id="ConsumerType" class="form-control border-0">
+                    @viewUserInfo.AccountInfo.ConsumerType
+                </div>
+                <label for="ConsumerType" class="small fw-bolder">Consumer Type</label>
+            </div>
+            <div class="form-floating mb-2">
+                <div id="Address" class="form-control border-0">
+                    <pre>@viewUserInfo.AccountInfo.Address</pre>
+                </div>
+                <label for="Address" class="small fw-bolder">Address</label>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+
+    [Inject] HttpClient? _http { get; set; }
+    private HttpClient Http => _http!;
+
+    [Inject] private ToasterService? _toasterService { get; set; }
+    private ToasterService toasterService => _toasterService!;
+
+    [CascadingParameter] private Task<AuthenticationState> authenticationStateTask { get; set; }
+
+    ClaimsPrincipal User{get;set;}
+
+    ViewUserInfo viewUserInfo = new();
+    EditUserInformationInfo editUserInfo = new();
+    EditAccountInfo editAccountInfo = new();
+    ChangePasswordInfo changePasswordInfo = new();
+
+    string ViewMode { get; set; } = "view";
+    string error { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await authenticationStateTask;
+        var user = authState.User;
+
+        await GetItem();
+    }
+
+    async Task GetItem()
+    {
+        viewUserInfo = await Http.GetFromJsonAsync<ViewUserInfo>("/api/account/info");
+
+        editUserInfo.UserId = viewUserInfo.UserId;
+        editUserInfo.Email = viewUserInfo.Email;
+        editUserInfo.PhoneNumber = viewUserInfo.PhoneNumber;
+        editUserInfo.FirstName = viewUserInfo.FirstName;
+        editUserInfo.MiddleName = viewUserInfo.MiddleName;
+        editUserInfo.LastName = viewUserInfo.LastName;
+
+        if (viewUserInfo.AccountInfo != null)
+        {
+            editAccountInfo.AccountNumber = viewUserInfo.AccountInfo.AccountNumber;
+            editAccountInfo.Address = viewUserInfo.AccountInfo.Address;
+            editAccountInfo.ConsumerType = viewUserInfo.AccountInfo.ConsumerType;
+            editAccountInfo.MeterNumber = viewUserInfo.AccountInfo.MeterNumber;
+            editAccountInfo.UserId = viewUserInfo.UserId;
+        }
+
+        changePasswordInfo = new();
+        changePasswordInfo.UserId = viewUserInfo.UserId;
+    }
+
+    async Task StartEditUserInfo()
+    {
+        ViewMode = "edit-user-info";
+    }
+
+    async Task StartEditAccountInfo()
+    {
+        ViewMode = "edit-consumer-info";
+    }
+
+    async Task StartChangePassword()
+    {
+        ViewMode = "change-password";
+    }
+
+    async Task ResetChanges()
+    {
+        await GetItem();
+
+        ViewMode = "view";
+    }
+
+    async Task SaveUserInfo()
+    {
+        var result = await Http.PutAsJsonAsync<EditUserInformationInfo>("/api/account/user-info", editUserInfo);
+
+        if (!result.IsSuccessStatusCode)
+        {
+            error = await result.Content.ReadAsStringAsync();
+
+            return;
+        }
+
+        toasterService.AddToast(Toast.NewToast("Update User Information", "User information successfully updated.", MessageColour.Info, 10));
+
+        await ResetChanges();
+    }
+
+    async Task SaveAccountInfo()
+    {
+        var result = await Http.PutAsJsonAsync<EditAccountInfo>("/api/account/account-info", editAccountInfo);
+
+        if (!result.IsSuccessStatusCode)
+        {
+            error = await result.Content.ReadAsStringAsync();
+
+            return;
+        }
+
+        toasterService.AddToast(Toast.NewToast("Update Account Information", "Account information successfully updated.", MessageColour.Info, 10));
+
+        await ResetChanges();
+    }
+
+    async Task UpdatePassword()
+    {
+        var result = await Http.PutAsJsonAsync<ChangePasswordInfo>("/api/account/change-password", changePasswordInfo);
+
+        if (!result.IsSuccessStatusCode)
+        {
+            error = await result.Content.ReadAsStringAsync();
+
+            return;
+        }
+
+        toasterService.AddToast(Toast.NewToast("Change Password", "Password chagned successfully.", MessageColour.Info, 10));
+
+        await ResetChanges();
+    }
+
+}

@@ -56,7 +56,7 @@ namespace BlazorApp.Server.Controllers
 
                 if (status == "chargeable")
                 {
-                    var postedPayment = await PostGcashPayment(gcashResource.GcashResourceId, gcashResource.Amount, $"Payment for Batelec Bill# {billing.BillingNumber}");
+                    var postedPayment = await PostGcashPayment(gcashResource.GcashResourceId, gcashResource.Amount, $"Payment for Batelec Bill# {billing.Number}");
 
                     var paymentInfo = await GetGcashPayment(postedPayment.Data.Id);
 

@@ -13,5 +13,7 @@ namespace BlazorApp.Shared.Announcements
         public string Subject { get; set; }
         [Required]
         public string Content { get; set; }
+        [Required]
+        public DateTime DatePost { get; set; }
     }
 }

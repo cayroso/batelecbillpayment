@@ -1,0 +1,56 @@
+﻿@page "/consumer/notifications/{notificationId}"
+@using BlazorApp.Shared.Notifications
+@attribute [Authorize]
+
+<div class="row">
+    <div class="col">
+        <h3>View Notification</h3>
+    </div>
+    <div class="col-auto">
+        <a href="/consumer/notifications" class="btn btn-outline-secondary">Back</a>
+    </div>
+</div>
+
+<div class="col-md1">
+    <div class="form-floating mb-2">
+        <div id="Subject" class="form-control border-0">
+            @Item.Subject
+        </div>
+        <label for="Subject" class="small fw-bolder">Subject</label>
+    </div>
+    <div class="form-floating mb-2">
+        <div id="DateCreated" class="form-control border-0">
+            @Item.DateSent.ToLocalTime()
+        </div>
+        <label for="DateCreated" class="small fw-bolder">Date</label>
+    </div>
+    <div class="form-floating mb-2">
+        <div id="Content" class="form-control border-0">
+            <pre>
+                @Item.Content
+            </pre>
+        </div>
+        <label for="Content" class="small fw-bolder">Content</label>
+    </div>
+</div>
+
+@code {
+    [Inject] private HttpClient? _http { get; set; }
+    private HttpClient Http => _http!;
+
+    [Parameter] public string NotificationId { get; set; }
+
+    ViewNotificationInfo Item = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetItem();
+    }
+
+    async Task GetItem()
+    {
+        var item = await Http.GetFromJsonAsync<ViewNotificationInfo>($"/api/notification/{NotificationId}");
+
+        Item = item;
+    }
+}

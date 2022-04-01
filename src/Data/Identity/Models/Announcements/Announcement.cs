@@ -20,6 +20,13 @@ namespace Data.Identity.Models.Announcements
             get => _dateCreated;
             set => _dateCreated = value.Truncate().AsUtc();
         }
+
+        DateTime _datePost;
+        public DateTime DatePost
+        {
+            get => _datePost;
+            set => _datePost = value.Truncate().AsUtc();
+        }
     }
 
     internal class AnnouncementConfiguration : Cayent.Core.Data.Components.EntityBaseConfiguration<Announcement>

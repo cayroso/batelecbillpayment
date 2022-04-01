@@ -2,6 +2,7 @@
 @attribute [Authorize]
 
 @using BlazorApp.Client.Components.Toaster
+@using BlazorApp.Shared.Announcements
 @using BlazorApp.Shared.Notifications
 
 @attribute [Authorize(Roles = "Consumer")]
@@ -29,7 +30,6 @@
         <thead>
             <tr>
                 <th>Subject</th>
-                <th>Content</th>
                 <th>Date</th>
             </tr>
         </thead>
@@ -38,13 +38,12 @@
             {
                 <tr>
                     <td>
-                        @item.Subject
+                        <a href="/consumer/announcements/@item.AnnouncementId">
+                            @item.Subject
+                        </a>
                     </td>
                     <td>
-                        @item.Content
-                    </td>
-                    <td>
-                        @item.DateSent.ToLocalTime()
+                        @item.DateCreated.ToLocalTime()
                     </td>
                 </tr>
             }
@@ -56,7 +55,7 @@
     [Inject] private ToasterService? _toasterService { get; set; }
     private ToasterService toasterService => _toasterService!;
 
-    List<ViewNotificationInfo> Items = new List<ViewNotificationInfo>();
+    List<ViewAnnouncementInfo> Items = new List<ViewAnnouncementInfo>();
 
     protected override async Task OnInitializedAsync()
     {
@@ -65,10 +64,10 @@
 
     async Task GetItems()
     {
-        var items = await Http.GetFromJsonAsync<List<ViewNotificationInfo>>("/api/announcement/");
+        var items = await Http.GetFromJsonAsync<List<ViewAnnouncementInfo>>("/api/announcement/");
 
         Items = items;
     }
 
-    
+
 }

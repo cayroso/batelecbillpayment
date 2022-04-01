@@ -1,6 +1,8 @@
 ﻿
 using Data.Identity.Models;
 using Data.Identity.Models.Announcements;
+using Data.Identity.Models.Billings;
+using Data.Identity.Models.Fileuploads;
 using Data.Identity.Models.Notifications;
 using Data.Identity.Models.Reservations;
 using Data.Identity.Models.Users;
@@ -39,7 +41,12 @@ namespace Data.Identity.DbContext
         //  app specific
         public DbSet<Account> Accounts { get; set; }
         public DbSet<Announcement> Announcements { get; set; }
+
+        public DbSet<Fileupload> Fileuploads { get; set; }
+
         public DbSet<Billing> Billings { get; set; }
+        public DbSet<BillingAttachment> BillingAttachments { get; set; }
+
         public DbSet<Branch> Branches { get; set; }
         public DbSet<GcashResource> GcashResources { get; set; }
         public DbSet<GcashPayment> GcashPayments { get; set; }
@@ -207,7 +214,9 @@ namespace Data.Identity.DbContext
             builder.ApplyConfiguration(new AccountConfiguration());
             builder.ApplyConfiguration(new AnnouncementConfiguration());
             builder.ApplyConfiguration(new BillingConfiguration());
+            builder.ApplyConfiguration(new BillingAttachmentConfiguration());
             builder.ApplyConfiguration(new BranchConfiguration());
+            builder.ApplyConfiguration(new FileuploadConfiguration());
             builder.ApplyConfiguration(new GcashResourceConfiguration());
             builder.ApplyConfiguration(new GcashPaymentConfiguration());
             builder.ApplyConfiguration(new NotificationConfiguration());

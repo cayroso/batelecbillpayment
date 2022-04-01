@@ -16,7 +16,8 @@ namespace Data.migrations.identity
                     AnnouncementId = table.Column<string>(type: "TEXT", maxLength: 36, nullable: false),
                     Subject = table.Column<string>(type: "TEXT", nullable: false),
                     Content = table.Column<string>(type: "TEXT", nullable: false),
-                    DateCreated = table.Column<DateTime>(type: "TEXT", nullable: false)
+                    DateCreated = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    DatePost = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -34,6 +35,24 @@ namespace Data.migrations.identity
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Branch", x => x.BranchId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Fileupload",
+                columns: table => new
+                {
+                    FileuploadId = table.Column<string>(type: "TEXT", maxLength: 36, nullable: false),
+                    Url = table.Column<string>(type: "TEXT", nullable: false),
+                    FileName = table.Column<string>(type: "TEXT", nullable: false),
+                    ContentDisposition = table.Column<string>(type: "TEXT", nullable: false),
+                    ContentType = table.Column<string>(type: "TEXT", nullable: false),
+                    Content = table.Column<byte[]>(type: "BLOB", nullable: false),
+                    Length = table.Column<long>(type: "INTEGER", nullable: false),
+                    DateCreated = table.Column<DateTime>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Fileupload", x => x.FileuploadId);
                 });
 
             migrationBuilder.CreateTable(
@@ -368,18 +387,19 @@ namespace Data.migrations.identity
                 {
                     BillingId = table.Column<string>(type: "TEXT", maxLength: 36, nullable: false),
                     AccountId = table.Column<string>(type: "TEXT", maxLength: 36, nullable: false),
-                    BillingAmount = table.Column<double>(type: "REAL", nullable: false),
-                    BillingNumber = table.Column<string>(type: "TEXT", maxLength: 36, nullable: false),
-                    BillingMonth = table.Column<string>(type: "TEXT", nullable: false),
-                    BillingYear = table.Column<string>(type: "TEXT", nullable: false),
+                    Status = table.Column<int>(type: "INTEGER", nullable: false),
+                    Amount = table.Column<double>(type: "REAL", nullable: false),
+                    Number = table.Column<string>(type: "TEXT", maxLength: 36, nullable: false),
+                    Month = table.Column<string>(type: "TEXT", nullable: false),
+                    Year = table.Column<string>(type: "TEXT", nullable: false),
                     ReadingDate = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    BillingDateStart = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    BillingDateEnd = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    DateStart = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    DateEnd = table.Column<DateTime>(type: "TEXT", nullable: false),
                     PresentReading = table.Column<double>(type: "REAL", nullable: false),
                     PreviousReading = table.Column<double>(type: "REAL", nullable: false),
                     Multiplier = table.Column<double>(type: "REAL", nullable: false),
                     KilloWattHourUsed = table.Column<double>(type: "REAL", nullable: false),
-                    BillingDateDue = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    DateDue = table.Column<DateTime>(type: "TEXT", nullable: false),
                     Reader = table.Column<string>(type: "TEXT", nullable: false),
                     ConcurrencyToken = table.Column<string>(type: "TEXT", maxLength: 36, nullable: false),
                     GcashResourceId = table.Column<string>(type: "TEXT", maxLength: 36, nullable: true),
@@ -421,6 +441,30 @@ namespace Data.migrations.identity
                         principalTable: "Branch",
                         principalColumn: "BranchId",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "BillingAttachment",
+                columns: table => new
+                {
+                    BillingId = table.Column<string>(type: "TEXT", maxLength: 36, nullable: false),
+                    AttachmentId = table.Column<string>(type: "TEXT", maxLength: 36, nullable: false),
+                    FileuploadId = table.Column<string>(type: "TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BillingAttachment", x => new { x.BillingId, x.AttachmentId });
+                    table.ForeignKey(
+                        name: "FK_BillingAttachment_Billing_BillingId",
+                        column: x => x.BillingId,
+                        principalTable: "Billing",
+                        principalColumn: "BillingId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_BillingAttachment_Fileupload_FileuploadId",
+                        column: x => x.FileuploadId,
+                        principalTable: "Fileupload",
+                        principalColumn: "FileuploadId");
                 });
 
             migrationBuilder.CreateTable(
@@ -483,6 +527,11 @@ namespace Data.migrations.identity
                 name: "IX_Billing_AccountId",
                 table: "Billing",
                 column: "AccountId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BillingAttachment_FileuploadId",
+                table: "BillingAttachment",
+                column: "FileuploadId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Feedback_UserId",
@@ -593,6 +642,9 @@ namespace Data.migrations.identity
                 name: "Announcement");
 
             migrationBuilder.DropTable(
+                name: "BillingAttachment");
+
+            migrationBuilder.DropTable(
                 name: "Feedback");
 
             migrationBuilder.DropTable(
@@ -627,6 +679,9 @@ namespace Data.migrations.identity
 
             migrationBuilder.DropTable(
                 name: "UserToken");
+
+            migrationBuilder.DropTable(
+                name: "Fileupload");
 
             migrationBuilder.DropTable(
                 name: "Billing");

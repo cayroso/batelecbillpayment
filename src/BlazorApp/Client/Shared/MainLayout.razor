@@ -6,22 +6,25 @@
 <div class="page">
     <AuthorizeView>
         <Authorized>
-            <Toaster />
+            
+            <BlazorApp.Client.Components.Notification.Notification />
             <div class="sidebar">
                 <NavMenu />
             </div>
 
-            <main>
+            <main class="bg-white">                
                 <div class="top-row px-4">
                     <LoginDisplay />
-                    @*<a href="http://blazor.net" target="_blank" class="ml-md-auto">About</a>*@
                 </div>
-
+                
                 <article class="container p-2">
+                    
                     @Body
+                    
                 </article>
-                <BlazorApp.Client.Components.Notification.Notification />
+                
             </main>
+            <Toaster />
         </Authorized>
         <NotAuthorized>
             @*Just render the body so that RedirectToLogin works*@

@@ -7,11 +7,60 @@
 
 @if (BillingInfo != null)
 {
+    <div class="row">
+        <div class="col-md">
+            <div class="form-floating mb-2">
+                <div id="Number" class="form-control border-0">
+                    @BillingInfo.Number
+                </div>
+                <label for="Number" class="small fw-bolder">Number</label>
+            </div>
+
+            <div class="form-floating mb-2">
+                <div id="Amount" class="form-control border-0">
+                    @BillingInfo.Amount.ToString("C3")
+                </div>
+                <label for="Amount" class="small fw-bold">Amount</label>
+            </div>
+
+            <div class="form-floating mb-2">
+                <div id="Amount" class="form-control border-0">
+                    @BillingInfo.DateDue.ToLocalTime()
+                </div>
+                <label for="Amount" class="small fw-bold">Due Date</label>
+            </div>
+
+            <div class="form-floating mb-2">
+                <div id="Amount" class="form-control border-0">
+                    @BillingInfo.ReadingDate.ToLocalTime()
+                </div>
+                <label for="Amount" class="small fw-bold">Reading Date</label>
+            </div>
+
+            <div class="form-floating mb-2">
+                <div id="Amount" class="form-control border-0">
+                    @BillingInfo.DateStart.ToLocalTime()
+                </div>
+                <label for="Amount" class="small fw-bold">Billing Start Date</label>
+            </div>
+
+            <div class="form-floating mb-2">
+                <div id="Amount" class="form-control border-0">
+                    @BillingInfo.DateEnd.ToLocalTime()
+                </div>
+                <label for="Amount" class="small fw-bold">Biiling End Date</label>
+            </div>
+        </div>
+
+        <div class="col-md">
+            <BlazorApp.Client.Components.ImageUpload.ImageUpload></BlazorApp.Client.Components.ImageUpload.ImageUpload>
+        </div>
+    </div>
     <div>
-        @BillingInfo.BillingNumber
+        @BillingInfo.Number
     </div>
     <a href="/consumer/checkout/@BillingInfo.BillingId">
-        Bill # @BillingInfo.BillingNumber
+        Bill # @BillingInfo.Number
     </a>
 }
 @code {
@@ -19,7 +68,7 @@
     [Parameter]
     public string BillingId { get; set; }
 
-    Billing BillingInfo { get; set; }
+    ViewBillingInfo BillingInfo { get; set; }
 
 
     protected override async Task OnInitializedAsync()
@@ -29,7 +78,7 @@
 
     async Task GetBilling(string billingId)
     {
-        var foo = await Http.GetFromJsonAsync<Billing>($"/api/billing/{billingId}");
+        var foo = await Http.GetFromJsonAsync<ViewBillingInfo>($"/api/billing/{billingId}");
 
         BillingInfo = foo;
     }

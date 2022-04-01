@@ -30,5 +30,9 @@
 		<ProjectReference Include="..\Shared\BlazorApp.Shared.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="StaticFiles\Images\" />
+	</ItemGroup>
+
 
 </Project>

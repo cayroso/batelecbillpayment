@@ -1,0 +1,73 @@
+﻿@page "/administrator/consumers"
+@using BlazorApp.Shared.Accounts
+
+<PageTitle>Consumers</PageTitle>
+
+<div class="row">
+    <div class="col">
+        <h3>Consumers</h3>
+    </div>
+    <div class="col-auto">
+        <button class="btn btn-secondary" @onclick="@(async ()=> await GetItems())">
+            <i class="oi oi-reload"></i>
+            Refresh
+        </button>
+        <a href="/administrator/billings/add" class="btn btn-primary">
+            <i class="oi oi-plus me-1"></i>Add
+        </a>
+    </div>
+</div>
+
+<div class="table-responsive pt-1">
+    <table class="table table-bordered">
+        <thead>
+            <tr class="table-primary">
+                <th>Email</th>
+                <th>PhoneNumber</th>
+                <th>AccountNumber</th>
+                <th>Name</th>
+            </tr>
+        </thead>
+        <tbody class="bg-white">
+            @foreach (var item in Items)
+            {
+                <tr>
+                    <td>
+                        <a href="/administrator/consumers/@item.UserId">
+                            @item.Email
+                        </a>
+                    </td>
+                    <td>
+                        @item.PhoneNumber
+                    </td>
+                    <td>
+                        @item.AccountNumber
+                    </td>
+                    <td>
+                        @item.FirstLastName
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@code {
+
+    [Inject] private HttpClient? _http { get; set; }
+    private HttpClient Http => _http!;
+
+    List<ViewConsumerInfo> Items = new List<ViewConsumerInfo>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetItems();
+    }
+
+    async Task GetItems()
+    {
+        var foo = await Http.GetFromJsonAsync<List<ViewConsumerInfo>>("/api/account/consumers/");
+
+        Items = foo;
+    }
+}

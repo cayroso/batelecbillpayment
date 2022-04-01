@@ -21,29 +21,33 @@
     </div>
 </div>
 
-<div class="tabletable-responsive pt-1">
+<div class="table-responsive pt-1">
     <table class="table table-bordered">
         <thead>
             <tr class="table-primary">
                 <th>Bill</th>
+                <th>Status</th>
                 <th>Due Date</th>
                 <th>Amount</th>
             </tr>
         </thead>
-        <tbody>
+        <tbody class="bg-white">
             @foreach (var item in Billings)
             {
                 <tr>
                     <td>
                         <a href="/administrator/billings/@item.BillingId">
-                            @item.BillingNumber
+                            @item.Number
                         </a>
                     </td>
                     <td>
-                        @item.BillingDateDue
+                        @item.StatusText
                     </td>
                     <td>
-                        @item.BillingAmount.ToString("C")
+                        @item.DateDue
+                    </td>
+                    <td>
+                        @item.Amount.ToString("C")
                     </td>
                 </tr>
             }
@@ -58,7 +62,7 @@
 
     private void AddToast() => toasterService.AddToast(Toast.NewToast("Hello World", "Hello from Blazor", MessageColour.Info, 30));
 
-    List<Billing> Billings = new List<Billing>();
+    List<ViewBillingInfo> Billings = new List<ViewBillingInfo>();
 
     protected override async Task OnInitializedAsync()
     {
@@ -67,7 +71,7 @@
 
     async Task GetItems()
     {
-        var foo = await Http.GetFromJsonAsync<List<Billing>>("/api/billing/");
+        var foo = await Http.GetFromJsonAsync<List<ViewBillingInfo>>("/api/billing/");
 
         Billings = foo;
     }

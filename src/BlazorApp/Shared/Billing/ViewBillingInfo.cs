@@ -6,25 +6,27 @@ using System.Threading.Tasks;
 
 namespace BlazorApp.Shared.Billing
 {    
-    public class Billing
+    public class ViewBillingInfo
     {
         public string BillingId { get; set; }
+
+        public string StatusText { get; set; }
         public string GCashSourceResourceId { get; set; }
         public string GCashCheckoutUrl { get; set; }
-        public double BillingAmount { get; set; }
-        public string BillingNumber { get; set; }
-        public string BillingMonth { get; set; }
-        public string BillingYear { get; set; }
+        public double Amount { get; set; }
+        public string Number { get; set; }
+        public string Month { get; set; }
+        public string Year { get; set; }
 
         public DateTime ReadingDate { get; set; }
-        public DateTime BillingDateStart { get; set; }
-        public DateTime BillingDateEnd { get; set; }
+        public DateTime DateStart { get; set; }
+        public DateTime DateEnd { get; set; }
 
         public double PresentReading { get; set; }
         public double PreviousReading { get; set; }
         public double Multiplier { get; set; }
         public double KilloWattHourUsed { get; set; }        
-        public DateTime BillingDateDue { get; set; }
+        public DateTime DateDue { get; set; }
 
         public string Reader { get; set; }
         public string Token { get; set; }

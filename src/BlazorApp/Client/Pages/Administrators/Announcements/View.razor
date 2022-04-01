@@ -1,9 +1,20 @@
-﻿@page "/administrator/announcements/view/{announcementId}"
+﻿@page "/administrator/announcements/{announcementId}"
 
 @attribute [Authorize]
 
 <h3>View Announcement</h3>
 
 @code {
+    [Parameter]
+    public string AnnouncementId { get; set; }
 
+    protected override async Task OnInitializedAsync()
+    {
+        await GetItem();
+    }
+
+    async Task GetItem()
+    {
+        
+    }
 }
