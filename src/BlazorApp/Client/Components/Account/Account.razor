@@ -13,11 +13,14 @@
                 <i class="oi oi-reload"></i>
                 Edit User Info
             </button>
-            <button class="btn btn-primary" @onclick="@(async ()=> await StartEditAccountInfo())">
-                <i class="oi oi-reload"></i>
-                Edit Account Info
-            </button>
-            <button class="btn btn-primary" @onclick="@(async ()=> await StartChangePassword())">
+            @if (!string.IsNullOrWhiteSpace(editAccountInfo.AccountNumber) && User.IsInRole("Administrator"))
+            {
+                <button class="btn btn-primary ms-1" @onclick="@(async ()=> await StartEditAccountInfo())">
+                    <i class="oi oi-reload"></i>
+                    Edit Account Info
+                </button>
+            }
+            <button class="btn btn-primary ms-1" @onclick="@(async ()=> await StartChangePassword())">
                 <i class="oi oi-reload"></i>
                 Change Password
             </button>
@@ -111,7 +114,7 @@ else if (ViewMode == "edit-consumer-info")
                 </div>
                 <div>
                     <button class="btn btn-primary" type="submit">Save</button>
-                    <button class="btn btn-secondary"  type="reset" @onclick="@(async ()=> await ResetChanges())">
+                    <button class="btn btn-secondary" type="reset" @onclick="@(async ()=> await ResetChanges())">
                         Cancel
                     </button>
                 </div>
@@ -136,7 +139,7 @@ else if (ViewMode == "change-password")
                     <InputText id="NewPassword" type="password" class="form-control" @bind-Value="@changePasswordInfo.NewPassword" placeholder="New Password" />
                     <label for="NewPassword" class="small fw-bolder">New Password</label>
                     <ValidationMessage For="@(() => changePasswordInfo.NewPassword)" />
-                </div>                
+                </div>
                 <div class="alert-danger">
                     @error
                 </div>
@@ -185,32 +188,35 @@ else
                 <label for="LastName" class="small fw-bolder">Last Name</label>
             </div>
         </div>
-        <div class="col-md">
-            <div class="form-floating mb-2">
-                <div id="AccountNumber" class="form-control border-0">
-                    @viewUserInfo.AccountInfo.AccountNumber
+        @if (!string.IsNullOrWhiteSpace(editAccountInfo.AccountNumber))
+        {
+            <div class="col-md">
+                <div class="form-floating mb-2">
+                    <div id="AccountNumber" class="form-control border-0">
+                        @viewUserInfo.AccountInfo.AccountNumber
+                    </div>
+                    <label for="AccountNumber" class="small fw-bolder">Account Number</label>
                 </div>
-                <label for="AccountNumber" class="small fw-bolder">Account Number</label>
-            </div>
-            <div class="form-floating mb-2">
-                <div id="MeterNumber" class="form-control border-0">
-                    @viewUserInfo.AccountInfo.MeterNumber
+                <div class="form-floating mb-2">
+                    <div id="MeterNumber" class="form-control border-0">
+                        @viewUserInfo.AccountInfo.MeterNumber
+                    </div>
+                    <label for="MeterNumber" class="small fw-bolder">Meter Number</label>
                 </div>
-                <label for="MeterNumber" class="small fw-bolder">Meter Number</label>
-            </div>
-            <div class="form-floating mb-2">
-                <div id="ConsumerType" class="form-control border-0">
-                    @viewUserInfo.AccountInfo.ConsumerType
+                <div class="form-floating mb-2">
+                    <div id="ConsumerType" class="form-control border-0">
+                        @viewUserInfo.AccountInfo.ConsumerType
+                    </div>
+                    <label for="ConsumerType" class="small fw-bolder">Consumer Type</label>
                 </div>
-                <label for="ConsumerType" class="small fw-bolder">Consumer Type</label>
-            </div>
-            <div class="form-floating mb-2">
-                <div id="Address" class="form-control border-0">
-                    <pre>@viewUserInfo.AccountInfo.Address</pre>
+                <div class="form-floating mb-2">
+                    <div id="Address" class="form-control border-0">
+                        <pre>@viewUserInfo.AccountInfo.Address</pre>
+                    </div>
+                    <label for="Address" class="small fw-bolder">Address</label>
                 </div>
-                <label for="Address" class="small fw-bolder">Address</label>
             </div>
-        </div>
+        }
     </div>
 }
 
@@ -224,7 +230,7 @@ else
 
     [CascadingParameter] private Task<AuthenticationState> authenticationStateTask { get; set; }
 
-    ClaimsPrincipal User{get;set;}
+    ClaimsPrincipal User { get; set; }
 
     ViewUserInfo viewUserInfo = new();
     EditUserInformationInfo editUserInfo = new();
@@ -237,7 +243,7 @@ else
     protected override async Task OnInitializedAsync()
     {
         var authState = await authenticationStateTask;
-        var user = authState.User;
+        User = authState.User;
 
         await GetItem();
     }

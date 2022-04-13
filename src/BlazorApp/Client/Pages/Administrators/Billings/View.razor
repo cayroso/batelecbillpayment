@@ -3,12 +3,79 @@
 
 @inject HttpClient Http
 
-<h3>View</h3>
+<PageTitle>View Billing</PageTitle>
 
-@if (ViewBillingInfo != null)
+<div class="row">
+    <div class="col">
+        <h3>View Billing</h3>
+    </div>
+    <div class="col-auto">
+        <button>Set to Unpaid</button>
+        <button>Set to Paid</button>
+        <a href="/administrator/billings" class="btn btn-outline-secondary">Back</a>
+    </div>
+</div>
+
+@if (Item != null)
 {
-    <div>
-        @ViewBillingInfo.Number
+    <div class="row">
+        <div class="col-md">
+            <div class="form-floating mb-2">
+                <div id="AccountNumber" class="form-control border-0">
+                    @Item.AccountNumber
+                </div>
+                <label for="AccountNumber" class="small fw-bolder">AccountNumber</label>
+            </div>
+            <div class="form-floating mb-2">
+                <div id="AccountName" class="form-control border-0">
+                    @Item.AccountName
+                </div>
+                <label for="AccountName" class="small fw-bolder">AccountName</label>
+            </div>
+
+            <div class="form-floating mb-2">
+                <div id="Number" class="form-control border-0">
+                    @Item.Number
+                </div>
+                <label for="Number" class="small fw-bolder">Number</label>
+            </div>
+
+            <div class="form-floating mb-2">
+                <div id="Amount" class="form-control border-0">
+                    @Item.Amount.ToString("C3")
+                </div>
+                <label for="Amount" class="small fw-bold">Amount</label>
+            </div>
+
+            <div class="form-floating mb-2">
+                <div id="Amount" class="form-control border-0">
+                    @Item.DateDue.ToLocalTime()
+                </div>
+                <label for="Amount" class="small fw-bold">Due Date</label>
+            </div>
+
+            <div class="form-floating mb-2">
+                <div id="Amount" class="form-control border-0">
+                    @Item.ReadingDate.ToLocalTime()
+                </div>
+                <label for="Amount" class="small fw-bold">Reading Date</label>
+            </div>
+
+            <div class="form-floating mb-2">
+                <div id="Amount" class="form-control border-0">
+                    @Item.DateStart.ToLocalTime()
+                </div>
+                <label for="Amount" class="small fw-bold">Billing Start Date</label>
+            </div>
+
+            <div class="form-floating mb-2">
+                <div id="Amount" class="form-control border-0">
+                    @Item.DateEnd.ToLocalTime()
+                </div>
+                <label for="Amount" class="small fw-bold">Biiling End Date</label>
+            </div>
+        </div>
+
     </div>
 }
 
@@ -17,7 +84,7 @@
     [Parameter]
     public string BillingId { get; set; }
 
-    ViewBillingInfo ViewBillingInfo { get; set; }
+    ViewBillingInfo Item { get; set; }
 
 
     protected override async Task OnInitializedAsync()
@@ -27,15 +94,8 @@
 
     async Task GetBilling(string billingId)
     {
-        try
-        {
             var result = await Http.GetFromJsonAsync<ViewBillingInfo>($"/api/billing/{billingId}");
 
-            ViewBillingInfo = result;
-        }
-        catch (Exception ex)
-        {
-
-        }
+            Item = result;
     }
 }

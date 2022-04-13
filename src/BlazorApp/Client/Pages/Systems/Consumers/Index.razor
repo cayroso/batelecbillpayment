@@ -1,7 +1,139 @@
 ﻿@page "/system/consumers"
+@attribute [Authorize]
 
-<h3>Index</h3>
+@using BlazorApp.Client.Components.Toaster
+@using BlazorApp.Shared.Accounts
+@using BlazorApp.Shared.Announcements
+
+@attribute [Authorize(Roles = "System")]
+
+@inject HttpClient Http
+@inject IJSRuntime JSRuntime
+
+<PageTitle>Consumers</PageTitle>
+
+<div class="row">
+    <div class="col">
+        <h3>Consumers</h3>
+    </div>
+    <div class="col-auto">
+        <button class="btn btn-secondary" @onclick="@(async ()=> await GetItems())">
+            <i class="oi oi-reload"></i>
+            Refresh
+        </button>
+    </div>
+</div>
+
+<div class="table-responsive pt-1">
+
+    <table class="table table-bordered">
+        <thead>
+            <tr class="table-primary">
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Account Number</th>
+                <th>Meter Number</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody class="bg-white">
+            @foreach (var item in Items)
+            {
+                <tr>
+                    <a href="/administrator/announcements/@item.UserId">
+                        @item.FirstLastName
+                    </a>
+                    <td>
+                        @item.Email
+                    </td>
+                    <td>
+                        @item.PhoneNumber
+                    </td>
+                    <td>
+                        @item.AccountNumber
+                    </td>
+                    <td>
+                        @item.MeterNumber
+                    </td>                    
+                    <td>
+                        @if (item.IsLocked)
+                        {
+                            <button @onclick="@(async ()=> await UnlockUser(item.UserId))" class="btn btn-sm btn-outline-primary">
+                                <i class="fa-solid fa-unlock"></i>
+                                Unlock
+                            </button>
+                        }
+                        else
+                        {
+                            <button @onclick="@(async ()=> await LockUser(item.UserId))" class="btn btn-sm btn-outline-warning">
+                                <i class="fa-solid fa-lock"></i>
+                                Lock
+                            </button>
+                        }
+
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
 
 @code {
+    [Inject] private ToasterService? _toasterService { get; set; }
+    private ToasterService toasterService => _toasterService!;
 
+    List<ViewConsumerInfo> Items = new List<ViewConsumerInfo>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetItems();
+    }
+
+    async Task GetItems()
+    {
+        var items = await Http.GetFromJsonAsync<List<ViewConsumerInfo>>("/api/account/consumers/");
+
+        Items = items;
+    }
+
+    async Task LockUser(string id)
+    {
+        if (!await JSRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to lock this user?"))
+            return;
+
+        var result = await Http.PutAsync($"/api/account/{id}/lockout", null);
+
+        if (!result.IsSuccessStatusCode)
+        {
+            var error = await result.Content.ReadAsStringAsync();
+
+            toasterService.AddToast(Toast.NewToast("Unhandled Error", error, MessageColour.Danger, 10));
+            return;
+        }
+
+        toasterService.AddToast(Toast.NewToast("Lock User", "User locked successfully.", MessageColour.Warning, 10));
+
+        await GetItems();
+    }
+
+    async Task UnlockUser(string id)
+    {
+        if (!await JSRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to unlock this user?"))
+            return;
+
+        var result = await Http.PutAsync($"/api/account/{id}/unlockout", null);
+
+        if (!result.IsSuccessStatusCode)
+        {
+            var error = await result.Content.ReadAsStringAsync();
+
+            toasterService.AddToast(Toast.NewToast("Unhandled Error", error, MessageColour.Danger, 10));
+            return;
+        }
+
+        toasterService.AddToast(Toast.NewToast("Unock User", "User unlocked successfully.", MessageColour.Success, 10));
+
+        await GetItems();
+    }
 }

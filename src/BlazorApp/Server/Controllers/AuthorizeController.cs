@@ -35,7 +35,19 @@ namespace BlazorApp.Server.Controllers
             var user = await _userManager.FindByEmailAsync(parameters.Email);
             if (user == null) return BadRequest("User does not exist");
             var singInResult = await _signInManager.CheckPasswordSignInAsync(user, parameters.Password, false);
-            if (!singInResult.Succeeded) return BadRequest("Invalid password");
+            if (!singInResult.Succeeded)
+            {
+                if(singInResult.IsLockedOut)
+                    return BadRequest("Account is locked out.");
+                
+                if (singInResult.IsNotAllowed)
+                    return BadRequest("Account not allowed to access the system.");
+
+                if (singInResult.RequiresTwoFactor)
+                    return BadRequest("System requires two factor authentication.");
+
+                return BadRequest("Invalid username/email or password.");
+            }
 
             await _signInManager.SignInAsync(user, parameters.RememberMe);
 

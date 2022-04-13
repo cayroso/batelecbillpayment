@@ -12,6 +12,7 @@ using BlazorApp.Shared.GCash;
 using BlazorApp.Shared.Billing;
 using Data.Identity.Models;
 using BlazorApp.Shared.Accounts;
+using Cayent.Core.Common.Extensions;
 
 namespace BlazorApp.Server.Controllers
 {
@@ -20,10 +21,13 @@ namespace BlazorApp.Server.Controllers
     [Authorize]
     public class AccountController : BaseController
     {
-        IdentityWebContext _identityWebContext;
-        public AccountController(IdentityWebContext identityWebContext)
+        private readonly IdentityWebContext _identityWebContext;
+        private readonly UserManager<IdentityWebUser> _userManager;
+
+        public AccountController(IdentityWebContext identityWebContext, UserManager<IdentityWebUser> userManager)
         {
             _identityWebContext = identityWebContext;
+            _userManager = userManager;
         }
 
         [HttpGet("info")]
@@ -117,6 +121,37 @@ namespace BlazorApp.Server.Controllers
             return Ok();
         }
 
+        [HttpPut("{userId}/lockout")]
+        public async Task<IActionResult> LockoutUser(string userId, CancellationToken cancellationToken)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+
+            if (user == null)
+                return NotFound("User not found.");
+
+            //await _userManager.SetLockoutEnabledAsync(user, true);
+
+            var now = DateTime.MaxValue.Truncate().AsUtc();
+
+            await _userManager.SetLockoutEndDateAsync(user, now);
+
+            return Ok();
+        }
+
+        [HttpPut("{userId}/unlockout")]
+        public async Task<IActionResult> UnlockoutUser(string userId, CancellationToken cancellationToken)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+
+            if (user == null)
+                return NotFound("User not found.");
+
+            var now = DateTime.UtcNow.Truncate().AsUtc();
+
+            await _userManager.SetLockoutEndDateAsync(user, now.AddDays(-1));
+
+            return Ok();
+        }
 
         [HttpGet("lookup")]
         public async Task<IActionResult> Get()
@@ -146,7 +181,8 @@ namespace BlazorApp.Server.Controllers
                     Email = e.UserInformation.User.Email,
                     PhoneNumber = e.UserInformation.User.PhoneNumber,
                     AccountNumber = e.AccountNumber,
-                    FirstLastName = e.UserInformation.FirstLastName
+                    FirstLastName = e.UserInformation.FirstLastName,
+                    IsLocked = e.UserInformation.User.LockoutEnabled && e.UserInformation.User.LockoutEnd > DateTime.UtcNow.Truncate(),
                 }).ToListAsync(cancellationToken);
 
             return Ok(dto);
@@ -162,7 +198,7 @@ namespace BlazorApp.Server.Controllers
                     UserId = e.AccountId,
                     Email = e.UserInformation.User.Email,
                     PhoneNumber = e.UserInformation.User.PhoneNumber,
-
+                    IsLocked = e.UserInformation.User.LockoutEnabled && e.UserInformation.User.LockoutEnd > DateTime.UtcNow.Truncate(),
                     AccountNumber = e.AccountNumber,
                     Address = e.Address,
                     ConsumerType = e.ConsumerType,
@@ -184,6 +220,43 @@ namespace BlazorApp.Server.Controllers
 
         #region Administrators
 
+        [HttpPost("administrator/add")]
+        public async Task<IActionResult> AddAdmin(
+            [FromServices] IdentityWebContext identityWebContext,
+            AddAdministratorInfo info,
+            CancellationToken cancellationToken)
+        {
+            var user = new IdentityWebUser();
+            user.Id = GuidStr();
+            user.TenantId = "administrator";
+            user.Email = info.Email;
+            user.UserName = info.Email;
+            user.PhoneNumber = info.PhoneNumber;
+
+            var result = await _userManager.CreateAsync(user, info.Password);
+
+            if (!result.Succeeded) return BadRequest(result.Errors.FirstOrDefault()?.Description);
+
+            var userInfo = new UserInformation
+            {
+                //UserInformationId = Guid.NewGuid().ToString(),
+                UserId = user.Id,
+                FirstName = info.FirstName,
+                MiddleName = info.MiddleName,
+                LastName = info.LastName,
+            };
+
+
+            await _userManager.AddToRoleAsync(user, ApplicationRoles.Administrator.Name);
+
+            await identityWebContext.AddRangeAsync(userInfo);
+
+            await identityWebContext.SaveChangesAsync(cancellationToken);
+
+
+            return Ok();
+        }
+
         [HttpGet("administrators")]
         public async Task<IActionResult> GetAdministrators(CancellationToken cancellationToken)
         {
@@ -192,6 +265,8 @@ namespace BlazorApp.Server.Controllers
                 .Select(e => e.UserId)
                 .ToListAsync();
 
+            var now = DateTime.UtcNow.Truncate().AsUtc();
+
             var dto = await _identityWebContext.Users
                 .Where(e => userIds.Contains(e.Id))
                 .Select(e => new ViewAdministratorInfo
@@ -199,7 +274,8 @@ namespace BlazorApp.Server.Controllers
                     UserId = e.Id,
                     Email = e.Email,
                     PhoneNumber = e.PhoneNumber,
-                    FirstLastName = e.UserInformation.FirstLastName
+                    FirstLastName = e.UserInformation.FirstLastName,
+                    IsLocked = e.LockoutEnabled && e.LockoutEnd > now
                 }).ToListAsync(cancellationToken);
 
             return Ok(dto);
@@ -208,6 +284,8 @@ namespace BlazorApp.Server.Controllers
         [HttpGet("administrators/{userId}")]
         public async Task<IActionResult> GetAdministrator(string userId, CancellationToken cancellationToken)
         {
+            var now = DateTime.UtcNow.Truncate().AsUtc();
+
             var dto = await _identityWebContext.Users
                 .Where(e => e.Id == userId)
                 .Select(e => new ViewAdministratorInfo
@@ -220,6 +298,7 @@ namespace BlazorApp.Server.Controllers
                     FirstName = e.UserInformation.FirstName,
                     MiddleName = e.UserInformation.MiddleName,
                     LastName = e.UserInformation.LastName,
+                    IsLocked = e.LockoutEnabled && e.LockoutEnd > now
                 }).FirstOrDefaultAsync(cancellationToken);
 
             if (dto == null)

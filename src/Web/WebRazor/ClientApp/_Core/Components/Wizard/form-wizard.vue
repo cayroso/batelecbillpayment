@@ -1,0 +1,348 @@
+﻿<style scoped>
+    .fade-enter-active, .fade-leave-active {
+        transition: opacity .5s;
+    }
+
+    .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+        opacity: 0;
+    }
+</style>
+<template>
+    <div class="vue-step-wizard">
+        <div class="card">
+            <div class="progress" style="height: 3px">
+                <div class="progress-bar bg-success" role="progressbar" :style="{ width: progress + '%'}">
+                </div>
+            </div>
+            <div class="card-header p-0">
+
+                <nav class="nav nav-pills nav-fill">
+
+                    <a href="#" @click.prevent.stop="selectTab(index)" class="nav-link" v-bind:class="{ 'active': tab.isActive, 'validated': tab.isValidated }" v-for="(tab, index) in tabs" v-bind:key="`tab-${index}`">
+                        <span class="" v-bind:class="{'badge badge-success': tab.isValidated}">{{index+1}}</span>
+                        <span class="tabLabel">{{tab.title}}</span>
+                    </a>
+
+                </nav>
+                <!--<div @click.prevent.stop="selectTab(index)" class="nav-link" v-bind:class="{ 'active': tab.isActive, 'validated': tab.isValidated }" v-for="(tab, index) in tabs" v-bind:key="`tab-${index}`">
+                    <a href="#" v-bind:class="{ 'active': tab.isActive }">
+                        <span class="" v-bind:class="{'badge badge-success': tab.isValidated}">{{index+1}}</span>
+                        <span class="tabLabel">{{tab.title}}</span>
+                    </a>
+                </div>-->
+                <!--<div class="d-flex flex-column flex-sm-row justify-content-between align-items-start">
+                    <div @click.prevent.stop="selectTab(index)" class="p-2 bg-secondary" v-bind:class="{ 'active': tab.isActive, 'validated': tab.isValidated }" v-for="(tab, index) in tabs" v-bind:key="`tab-${index}`">
+                        <a class="step-link" href="#">
+                            <span class="tabStatus">{{index+1}} </span>
+                            <span class="tabLabel">{{tab.title}}</span>
+                        </a>
+                    </div>
+                </div>-->
+
+            </div>
+            <div>
+                <slot></slot>
+            </div>
+            <div class="card-footer text-center p-1">
+                <div class="btn-group" role="group">
+                    <template v-if="!submitSuccess">
+                        <button @click="previousTab" v-bind:disabled="currentTab === 0" class="btn btn-secondary">
+                            <span class="fas fa-fw fa-arrow-left mr-1"></span>Previous
+                        </button>
+                        <button @click="nextTab" v-if="currentTab < totalTabs - 1 && isValid" class="btn btn-primary">
+                            Next<span class="fas fa-fw fa-arrow-right ml-1"></span>
+                        </button>
+                        <button @click="onSubmit" v-if="currentTab === totalTabs - 1 && isValid" class="btn btn-success">Submit</button>
+                    </template>
+                    <template v-else>
+                        <button @click="reset" class="step-button step-button-reset">Reset</button>
+                    </template>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</template>
+<script>
+    //import { store } from "./store.js";
+    const store = {
+        state: {
+            currentTab: 0,
+            v: {},
+        },
+        setCurrentTab(newValue) {
+            this.state.currentTab = newValue;
+        },
+        setValidation(newValue) {
+            this.state.v = newValue;
+        }
+    };
+
+    export default {
+        name: 'form-wizard',
+        data() {
+            return {
+                tabs: [],
+                currentTab: 0,
+                totalTabs: 0,
+                storeState: store.state,
+                submitSuccess: false,
+                progress: 0,
+                isValidationSupport: false
+            }
+        },
+        computed: {
+            isValid() {
+                const vm = this
+
+                const tab = vm.tabs[vm.currentTab];
+                const child = tab.$children[0];
+
+                if (child)
+                    return child.isValid;
+
+                return false;
+            }
+        },
+        mounted() {
+            this.tabs = this.$children;
+            this.totalTabs = this.tabs.length;
+            this.currentTab = this.tabs.findIndex((tab) => tab.isActive === true);
+
+            //Select first tab if none is marked selected
+            if (this.currentTab === -1 && this.totalTabs > 0) {
+                this.tabs[0].isActive = true;
+                this.currentTab = 0;
+            }
+
+            //Setup Initial Progress
+            this.progress = ((this.currentTab + 1) / this.totalTabs * 100);
+
+            this._switchTab(this.currentTab);
+        },
+        updated() {
+            /*
+              Using this lifehook - since store variable gets updated after component is mounted
+              isValidationSupport checks if user is looking to perform validation on each step
+            */
+            //this.isValidationSupport = (Object.keys(this.storeState.v).length !== 0 && this.storeState.v.constructor === Object) ? true : false;
+        },
+        methods: {
+            previousTab() {
+                this._switchTab(this.currentTab - 1);
+                this.$emit('onPreviousStep');
+            },
+            nextTab() {
+                if (this._validateCurrentTab() === false)
+                    return;
+                this._switchTab(this.currentTab + 1);
+                this.$emit('onNextStep');
+            },
+            reset() {
+                this.tabs.forEach(tab => {
+                    tab.isActive = false;
+                    tab.isValidated = false;
+                });
+                this._switchTab(0);
+                this.submitSuccess = false;
+                this.storeState.v.$reset();
+                this.$emit('onReset');
+            },
+            changeStatus() {
+                this.submitSuccess = true;
+            },
+            selectTab(index) {
+                if (index < this.currentTab) {
+                    this._switchTab(index);
+                }
+                if (this._validateCurrentTab() === false) {
+                    return;
+                }
+                if (index > 0 && this.tabs[index - 1].isValidated === false) {
+                    return;
+                }
+                this._switchTab(index);
+
+            },
+            onSubmit() {
+                if (this._validateCurrentTab() === false)
+                    return;
+                this.$emit('onComplete');
+            },
+            _switchTab(index) {
+                this._validateCurrentTab();
+
+                //Disable all tabs
+                this.tabs.forEach(tab => {
+                    tab.isActive = false;
+                });
+                this.currentTab = index;
+                this.tabs[index].isActive = true;
+                this.progress = ((this.currentTab + 1) / this.totalTabs * 100);
+
+                var tab = this.tabs[this.currentTab];
+                if (tab.$children[0] && tab.$children[0].initialize)
+                    tab.$children[0].initialize();
+
+                this.scrollIntoView();
+            },
+            _validateCurrentTab() {
+                var tab = this.tabs[this.currentTab];
+
+                if (tab.$children.length <= 0) {
+                    tab.isValidated = true;
+                    return true;
+                }
+
+                var result = tab.$children[0].isValid;
+
+                tab.isValidated = result;
+
+                return result;
+
+                //if (!this.isValidationSupport)  //Check if user wants to validate
+                //    return true;
+                //this.storeState.v.$touch();
+                //if (this.storeState.v.$invalid) {
+                //    this.tabs[this.currentTab].isValidated = false;
+                //    return false;
+                //}
+                //this.tabs[this.currentTab].isValidated = true;
+                //return true;
+            },
+            scrollIntoView() {
+                const topElem = document.getElementById('top');
+                if (topElem) {
+                    topElem.scrollIntoView({ behavior: 'smooth' });
+                    //debugger
+                }
+            },
+        },
+        watch: {
+            currentTab() {
+                store.setCurrentTab(this.currentTab);
+            }
+        }
+
+    }
+</script>
+<style>
+    .progressbar {
+        transition: width 1s ease;
+    }
+
+    .vue-step-wizard {
+        background-color: #F7F8FC;
+        /*width: 900px;*/
+        margin: auto;
+        /*padding: 40px;*/
+    }
+
+    .step-progress {
+        height: 1rem;
+        background: white;
+        border-radius: 1rem;
+        margin: 1rem 0rem;
+    }
+
+        .step-progress .bar {
+            content: '';
+            height: 1rem;
+            border-radius: 1rem;
+            background-color: #4B8AEB;
+        }
+
+    .step-pills {
+        display: flex;
+        background-color: white;
+        justify-content: space-between;
+        padding: 0.5rem;
+        /*border-radius: 1rem;*/
+        box-shadow: 0 .5rem 1rem rgba(0,0,0,.15) !important;
+    }
+
+        .step-pills .step-item {
+            background-color: silver;
+            /*border-radius: 10px;*/
+            padding: 5px 20px;
+            list-style-type: none;
+            padding: .5rem 1.5rem;
+        }
+
+            .step-pills .step-item a {
+                text-decoration: none;
+                color: #7B7B7B;
+            }
+
+            .step-pills .step-item.active {
+                border: 1px solid #4B8AEB;
+            }
+
+            .step-pills .step-item.validated {
+                border: 1px solid #008011;
+            }
+
+    .step-body {
+        background-color: white;
+        margin-left: auto;
+        padding: 1rem;
+        /*border-radius: 1rem;*/
+        box-shadow: 0 .5rem 1rem rgba(0,0,0,.15) !important;
+    }
+
+    .step-footer {
+        margin-left: auto;
+        padding: 1rem;
+        border-radius: 1rem;
+        margin: 1rem 0rem;
+        text-align: center;
+    }
+
+    .step-button {
+        font-weight: 700;
+        line-height: 1;
+        text-transform: uppercase;
+        position: relative;
+        max-width: 30rem;
+        text-align: center;
+        border: 1px solid;
+        border-radius: 12px;
+        color: #22292f;
+        color: rgba(34,41,47,var(--text-opacity));
+        padding: 0.5rem 1.25rem;
+        font-size: .875rem;
+        margin: 0.5rem;
+        color: #fff;
+        outline: none !important;
+        box-shadow: none !important;
+    }
+
+    .step-button-next {
+        background-color: #126fde;
+    }
+
+    .step-button-previous {
+        background-color: #3deaba;
+    }
+
+    .step-button-submit {
+        background-color: #4fa203;
+    }
+
+    .step-button-reset {
+        background-color: #037da2;
+    }
+    /** Wizard Ends */
+    .tabStatus {
+        display: inline-block;
+        width: 1.5rem;
+        height: 1.5rem;
+        margin-right: .5rem;
+        line-height: 1.5rem;
+        color: #fff;
+        text-align: center;
+        background: rgba(0,0,0,0.38);
+        /*border-radius: 50%;*/
+    }
+</style>

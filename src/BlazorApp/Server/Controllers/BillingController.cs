@@ -32,8 +32,11 @@ namespace BlazorApp.Server.Controllers
             var dto = await _identityWebContext.Billings
                 .AsNoTracking()
                 .Where(e => (e.AccountId == UserId || isAdmin) && e.BillingId == billingId)
-                .Select(e => new BlazorApp.Shared.Billing.ViewBillingInfo
+                .Select(e => new ViewBillingInfo
                 {
+                    AccountName = e.Account.UserInformation.FirstLastName,
+                    AccountNumber = e.Account.AccountNumber,
+
                     GCashSourceResourceId = e.GcashResource!.GcashResourceId,
                     GCashCheckoutUrl = e.GcashResource!.CheckoutUrl,
                     DateEnd = e.DateEnd,
@@ -41,6 +44,7 @@ namespace BlazorApp.Server.Controllers
                     DateDue = e.DateDue,
                     Amount = e.Amount,
                     BillingId = e.BillingId,
+                    Status = (int)e.Status,
                     StatusText = e.Status.ToString(),
                     Month = e.Month,
                     Number = e.Number,

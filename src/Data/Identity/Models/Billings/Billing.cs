@@ -11,7 +11,7 @@ namespace Data.Identity.Models.Billings
 {
     public enum EnumBillingStatus
     {
-        Uknown = 0,
+        Pending = 0,
         Unpaid = 1,
         Review = 2,
         Paid = 3,

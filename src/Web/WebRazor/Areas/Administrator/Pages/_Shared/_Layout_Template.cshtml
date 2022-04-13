@@ -1,0 +1,37 @@
+﻿@using System.Security.Claims
+@{
+
+    var appName = "Batelec Billing Payment";
+    var theme = User.FindFirst("Profile:Theme")?.Value;
+    var uid = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+    var urlProfilePicture = string.Empty;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <base href="~/" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui" />
+    <title>@ViewData["Title"] - @appName</title>
+
+    <%= htmlWebpackPlugin.tags.headTags %>
+
+</head>
+<body id="top" class="bg-light">
+    <div id="root">
+    </div>
+    <script id="app" type="text/x-template">
+        <div v-cloak>
+            <AppBar app-name="@appName"/>
+            <div class="container my-2">
+                @RenderBody()
+            </div>
+        </div>
+    </script>
+
+    <%= htmlWebpackPlugin.tags.bodyTags %>
+        @RenderSection("Scripts", required: false)
+</body>
+</html>

@@ -10,6 +10,10 @@ namespace BlazorApp.Shared.Billing
     {
         public string BillingId { get; set; }
 
+        public string AccountNumber { get; set; }
+        public string AccountName { get; set; }
+
+        public int Status { get; set; }
         public string StatusText { get; set; }
         public string GCashSourceResourceId { get; set; }
         public string GCashCheckoutUrl { get; set; }

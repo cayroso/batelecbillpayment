@@ -1,0 +1,101 @@
+﻿@page "/system/administrators/add"
+@using BlazorApp.Client.Components.Toaster
+@using BlazorApp.Shared.Accounts
+@using BlazorApp.Shared.Announcements
+
+@attribute [Authorize]
+
+@inject HttpClient Http
+@inject NavigationManager navigationManager
+
+<PageTitle>Add Administrator</PageTitle>
+<h3>Add Administrator</h3>
+
+<EditForm OnValidSubmit="OnSubmit" Model="Parameters">
+
+    <DataAnnotationsValidator />
+
+    <div>
+        <div class="row">
+            <div class="col-lg-6">
+
+                <div class="form-floating mb-3">
+                    <InputText id="Email" class="form-control" @bind-Value="Parameters.Email" placeholder="Email" />
+                    <label for="Email">Email</label>
+                    <ValidationMessage For="@(() => Parameters.Email)" />
+                </div>
+
+                <div class="form-floating mb-3">
+                    <InputText id="PhoneNumber" class="form-control" @bind-Value="Parameters.PhoneNumber" placeholder="PhoneNumber" />
+                    <label for="PhoneNumber">PhoneNumber</label>
+                    <ValidationMessage For="@(() => Parameters.PhoneNumber)" />
+                </div>
+
+                <div class="form-floating mb-3">
+                    <InputText id="FirstName" class="form-control" @bind-Value="Parameters.FirstName" placeholder="FirstName" />
+                    <label for="FirstName">FirstName</label>
+                    <ValidationMessage For="@(() => Parameters.FirstName)" />
+                </div>
+                <div class="form-floating mb-3">
+                    <InputText id="MiddleName" class="form-control" @bind-Value="Parameters.MiddleName" placeholder="MiddleName" />
+                    <label for="MiddleName">MiddleName</label>
+                    <ValidationMessage For="@(() => Parameters.MiddleName)" />
+                </div>
+                <div class="form-floating mb-3">
+                    <InputText id="LastName" class="form-control" @bind-Value="Parameters.LastName" placeholder="LastName" />
+                    <label for="LastName">LastName</label>
+                    <ValidationMessage For="@(() => Parameters.LastName)" />
+                </div>
+
+                <div class="form-floating mb-3">
+                    <InputText id="Password" class="form-control" @bind-Value="Parameters.Password" placeholder="Password" />
+                    <label for="Password">Password</label>
+                    <ValidationMessage For="@(() => Parameters.Password)" />
+                </div>
+                @*<div class="form-floating mb-3">
+                    <InputText id="ConfirmPassword" class="form-control" @bind-Value="Parameters.ConfirmPassword" placeholder="ConfirmPassword" />
+                    <label for="ConfirmPassword">ConfirmPassword</label>
+                    <ValidationMessage For="@(() => Parameters.ConfirmPassword)" />
+                    </div>*@
+
+                <div>
+                    <button class="btn btn-primary" type="submit">Save</button>
+                    <a href="/administrator/announcement" class="btn btn-outline-secondary">Cancel</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <label class="text-danger">@error</label>
+
+</EditForm>
+
+@code {
+    [Inject] private ToasterService? _toasterService { get; set; }
+    private ToasterService toasterService => _toasterService!;
+
+    string error { get; set; }
+
+    AddAdministratorInfo Parameters { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+
+    }
+
+    async Task OnSubmit()
+    {
+        var result = await Http.PostAsJsonAsync<AddAdministratorInfo>("/api/account/administrator/add", Parameters);
+
+        if (!result.IsSuccessStatusCode)
+        {
+            error = await result.Content.ReadAsStringAsync();
+
+            return;
+        }
+
+        toasterService.AddToast(Toast.NewToast("Create Administrator", "Administrator created successfully.", MessageColour.Info, 10));
+
+        navigationManager.NavigateTo("/system/administrators/");
+    }
+}

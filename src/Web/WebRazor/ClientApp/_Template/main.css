@@ -1,0 +1,12 @@
+﻿﻿@import '../_Core/core.css';
+
+.main {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    opacity: 0;
+    transition: opacity 1s;
+}
+
+.main-loaded {
+    opacity: 1;
+}
