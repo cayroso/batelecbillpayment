@@ -164,7 +164,7 @@ export default {
                 if (resp.status === 500) {
                     return resp.data.content;
                 }
-                debugger
+
 
                 if (resp.status === 401) {
                     const url = `${window.location.pathname}${window.location.search}`;
@@ -191,7 +191,8 @@ export default {
                     errorMessage += '</ul>';
 
                 }
-                else if (typeof resp.data === 'string') {
+
+                if (typeof resp.data === 'string') {
                     errorMessage = err.response.data;
                 }
 

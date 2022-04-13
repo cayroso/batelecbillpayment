@@ -1,0 +1,100 @@
+﻿@page
+@model WebRazor.Pages.Account.RegisterModel
+@{
+}
+
+<form method="post">
+    <div class="row">
+        <div class="col-lg-6 offset-lg-3">
+            <div class="row mb-3">
+                <label class="col-lg-4 col-form-label text-lg-end">Email</label>
+                <div class="col">
+                    <input type="email" class="form-control" asp-for="Input.Email" />
+                    <span asp-validation-for="@Model.Input.Email" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <label class="col-lg-4 col-form-label text-lg-end">Password</label>
+                <div class="col">
+                    <input type="password" id="inputPassword" class="form-control" asp-for="Input.Password" />
+                    <span asp-validation-for="@Model.Input.Password" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <label class="col-lg-4 col-form-label text-lg-end">Confirm Password</label>
+                <div class="col">
+                    <input type="password" id="inputPasswordConfirm" class="form-control" asp-for="Input.ConfirmPassword" />
+                    <span asp-validation-for="@Model.Input.ConfirmPassword" class="text-danger"></span>
+                </div>
+            </div>
+            <br />
+            <div class="row mb-3">
+                <label class="col-lg-4 col-form-label text-lg-end">First Name</label>
+                <div class="col">
+                    <input class="form-control" asp-for="Input.FirstName" />
+                    <span asp-validation-for="@Model.Input.FirstName" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <label class="col-lg-4 col-form-label text-lg-end">Middle Name</label>
+                <div class="col">
+                    <input class="form-control" asp-for="Input.MiddleName" />
+                    <span asp-validation-for="@Model.Input.MiddleName" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <label class="col-lg-4 col-form-label text-lg-end">Last Name</label>
+                <div class="col">
+                    <input class="form-control" asp-for="Input.LastName" />
+                    <span asp-validation-for="@Model.Input.LastName" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <label class="col-lg-4 col-form-label text-lg-end">Phone Number</label>
+                <div class="col">
+                    <input type="phone" class="form-control" asp-for="Input.PhoneNumber" />
+                    <span asp-validation-for="@Model.Input.PhoneNumber" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <label class="col-lg-4 col-form-label text-lg-end">Address</label>
+                <div class="col">
+                    <textarea class="form-control" rows="3" asp-for="Input.Address"></textarea>
+                    <span asp-validation-for="@Model.Input.Address" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <label class="col-lg-4 col-form-label text-lg-end">Meter Number</label>
+                <div class="col">
+                    <input type="phone" class="form-control" asp-for="Input.MeterNumber" />
+                    <span asp-validation-for="@Model.Input.MeterNumber" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrWhiteSpace(Model.ErrorMessages))
+    {
+        <div class="mt-2 alert alert-danger">
+            @Model.ErrorMessages
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-lg-6 offset-lg-5">
+            <button class="btn btn-primary" type="submit">Create account</button>
+        </div>
+    </div>
+
+    <br />
+    <a href="/account/login">
+        <h6 class="font-weight-normal text-center">Already have an account? Click here to login</h6>
+    </a>
+</form>

@@ -1,0 +1,11 @@
+﻿@page "{id}"
+@model WebRazor.Areas.Consumer.Pages.Billings.ViewModel
+@{
+    var editURl = $"/administrator/billings/edit/{Model.Id}";
+}
+<billings-view uid="@Model.UserId"
+               id="@Model.Id"
+               role-id="consumer"
+               url-edit="@editURl"
+               url-checkout="/consumer/billings/checkout">
+</billings-view>

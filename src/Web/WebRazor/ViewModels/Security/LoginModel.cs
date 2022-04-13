@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Blazor.Shared.Security
+namespace WebRazor.ViewModels.Security
 {
     public class LoginModel
     {

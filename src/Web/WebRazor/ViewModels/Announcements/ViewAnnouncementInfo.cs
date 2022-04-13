@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace WebRazor.ViewModels.Announcements
+﻿namespace WebRazor.ViewModels.Announcements
 {
     public class ViewAnnouncementInfo
     {

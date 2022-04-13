@@ -1,0 +1,9 @@
+﻿@page "{id}"
+@model WebRazor.Areas.Administrator.Pages.Announcements.ViewModel
+@{
+    var editURl = $"/administrator/announcements/edit/{Model.Id}";
+}
+<announcements-view uid="@Model.UserId"
+                    id="@Model.Id"
+                    role-id="administrator"
+                    edit-url="@editURl"></announcements-view>

@@ -17,7 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Data", "src\Data\Data.cspro
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ViewModel", "src\ViewModel\ViewModel.csproj", "{25896995-73D0-4B23-A6AB-C558EBD879F3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebRazor", "src\Web\WebRazor\WebRazor.csproj", "{E26DF5DB-9CD4-4E5C-B5DD-D649F21A79AF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebRazor", "src\Web\WebRazor\WebRazor.csproj", "{E26DF5DB-9CD4-4E5C-B5DD-D649F21A79AF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,17 +1,14 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Blazor.Shared;
-using Data.Identity.Models.Users;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using System.Security.Claims;
-using Blazor.Shared.Security;
+
 using Data.Identity.DbContext;
 using Data.Constants;
 using Microsoft.EntityFrameworkCore;
-using WebRazor.ViewModels.GCash;
 using WebRazor.ViewModels.Billing;
 using Data.Identity.Models;
 using Cayent.Core.Common.Extensions;
+using System.Net.Http.Headers;
+using Data.Identity.Models.Billings;
 
 namespace WebRazor.Controllers
 {
@@ -83,7 +80,7 @@ namespace WebRazor.Controllers
 
         [HttpGet]
 
-        //[Authorize(Roles = "Administrator")]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Billings(string c, int p, int s, string sf, int so, CancellationToken cancellationToken)
         {
             var sql = from e in _identityWebContext.Billings.AsNoTracking()
@@ -93,9 +90,66 @@ namespace WebRazor.Controllers
                             || EF.Functions.Like(e.Account.MeterNumber, $"%{c}%")
                       //|| EF.Functions.Like(e.LastName, $"%{c}%")
 
-                      select new WebRazor.ViewModels.Billing.ViewBillingInfo
+                      select new ViewBillingInfo
                       {
                           GCashSourceResourceId = e.GcashResource!.GcashResourceId,
+                          AccountName = e.Account.UserInformation.FirstLastName,
+                          AccountNumber = e.Account.AccountNumber,
+                          Status = (int)e.Status,
+
+                          GCashCheckoutUrl = e.GcashResource!.CheckoutUrl,
+                          DateEnd = e.DateEnd,
+                          DateStart = e.DateStart,
+                          DateDue = e.DateDue,
+                          Amount = e.Amount,
+                          BillingId = e.BillingId,
+                          StatusText = e.Status.ToString(),
+                          Month = e.Month,
+                          Number = e.Number,
+                          Year = e.Year,
+                          KilloWattHourUsed = e.KilloWattHourUsed,
+                          Multiplier = e.Multiplier,
+                          PresentReading = e.PresentReading,
+                          PreviousReading = e.PreviousReading,
+                          Reader = e.Reader,
+                          ReadingDate = e.ReadingDate,
+                          Token = e.ConcurrencyToken,
+                          Resource = new WebRazor.ViewModels.Billing.SourceResource
+                          {
+                              Amount = e.GcashResource == null ? 0 : e.GcashResource.Amount / 100,
+                              CheckoutUrl = e.GcashResource == null ? "" : e.GcashResource.CheckoutUrl,
+                              //NetAmount = e.GcashResource == null ? 0 : e.GcashResource.net / 100,
+                          },
+                          Payment = new PaymentResource
+                          {
+                              GcashPaymentId = e.GcashPayment == null ? "" : e.GcashPayment.GcashPaymentId,
+                              Amount = e.GcashPayment == null ? 0 : e.GcashPayment.Amount / 100,
+                              Description = e.GcashPayment == null ? "" : e.GcashPayment.Description,
+                              Fee = e.GcashPayment == null ? 0 : e.GcashPayment.Fee / 100,
+                              NetAmount = e.GcashPayment == null ? 0 : e.GcashPayment!.NetAmount / 100,
+                          }
+
+                      };
+
+            var dto = await sql.ToPagedItemsAsync(p, s, cancellationToken);
+
+            return Ok(dto);
+        }
+
+        [HttpGet("my-billings")]
+        public async Task<IActionResult> MyBillings(string c, int p, int s, string sf, int so, CancellationToken cancellationToken)
+        {
+            var sql = from e in _identityWebContext.Billings.AsNoTracking()
+
+                      where e.AccountId == UserId
+
+                      where string.IsNullOrWhiteSpace(c)
+                            || EF.Functions.Like(e.Number, $"%{c}%")
+
+                      select new ViewBillingInfo
+                      {
+                          GCashSourceResourceId = e.GcashResource!.GcashResourceId,                          
+                          Status = (int)e.Status,
                           GCashCheckoutUrl = e.GcashResource!.CheckoutUrl,
                           DateEnd = e.DateEnd,
                           DateStart = e.DateStart,
@@ -134,6 +188,7 @@ namespace WebRazor.Controllers
 
             //var dto = await _identityWebContext.Billings
             //    .AsNoTracking()
+            //    .Where(e => e.AccountId == UserId)
             //    .Select(e => new WebRazor.ViewModels.Billing.ViewBillingInfo
             //    {
             //        GCashSourceResourceId = e.GcashResource!.GcashResourceId,
@@ -171,53 +226,6 @@ namespace WebRazor.Controllers
 
             //    })
             //    .ToListAsync();
-
-            return Ok(dto);
-        }
-
-        [HttpGet("my-billings")]
-        public async Task<IActionResult> MyBillings()
-        {
-            var dto = await _identityWebContext.Billings
-                .AsNoTracking()
-                .Where(e => e.AccountId == UserId)
-                .Select(e => new WebRazor.ViewModels.Billing.ViewBillingInfo
-                {
-                    GCashSourceResourceId = e.GcashResource!.GcashResourceId,
-                    GCashCheckoutUrl = e.GcashResource!.CheckoutUrl,
-                    DateEnd = e.DateEnd,
-                    DateStart = e.DateStart,
-                    DateDue = e.DateDue,
-                    Amount = e.Amount,
-                    BillingId = e.BillingId,
-                    StatusText = e.Status.ToString(),
-                    Month = e.Month,
-                    Number = e.Number,
-                    Year = e.Year,
-                    KilloWattHourUsed = e.KilloWattHourUsed,
-                    Multiplier = e.Multiplier,
-                    PresentReading = e.PresentReading,
-                    PreviousReading = e.PreviousReading,
-                    Reader = e.Reader,
-                    ReadingDate = e.ReadingDate,
-                    Token = e.ConcurrencyToken,
-                    Resource = new WebRazor.ViewModels.Billing.SourceResource
-                    {
-                        Amount = e.GcashResource == null ? 0 : e.GcashResource.Amount / 100,
-                        CheckoutUrl = e.GcashResource == null ? "" : e.GcashResource.CheckoutUrl,
-                        //NetAmount = e.GcashResource == null ? 0 : e.GcashResource.net / 100,
-                    },
-                    Payment = new PaymentResource
-                    {
-                        GcashPaymentId = e.GcashPayment == null ? "" : e.GcashPayment.GcashPaymentId,
-                        Amount = e.GcashPayment == null ? 0 : e.GcashPayment.Amount / 100,
-                        Description = e.GcashPayment == null ? "" : e.GcashPayment.Description,
-                        Fee = e.GcashPayment == null ? 0 : e.GcashPayment.Fee / 100,
-                        NetAmount = e.GcashPayment == null ? 0 : e.GcashPayment!.NetAmount / 100,
-                    }
-
-                })
-                .ToListAsync();
 
             return Ok(dto);
         }
@@ -278,7 +286,78 @@ namespace WebRazor.Controllers
             return Ok();
         }
 
+        [HttpPost("{id}/create-resource")]
+        public async Task<IActionResult> CreateBillingResource(string id)
+        {
+            var item = await _identityWebContext.Billings.FirstOrDefaultAsync(e => e.BillingId == id);
+
+            if (item == null)
+                return NotFound("Billing not found.");
+
+            var http = new HttpClient();
+
+            var request = new HttpRequestMessage
+            {
+                Method = HttpMethod.Post,
+                RequestUri = new Uri("https://api.paymongo.com/v1/sources"),
+                Headers =
+            {
+                { "Accept", "application/json" },
+                { "Authorization", "Basic cGtfdGVzdF9lbnlCR1VWRUtLRW1qRzRMNVhpazZ4cXk6" },
+            },
+                Content = new StringContent("{\"data\":{\"attributes\":{\"amount\":" + (item.Amount * 100).ToString() + ",\"redirect\":{\"success\":\"https://localhost:7104/gcash/success/" + item.BillingId + "\",\"failed\":\"https://localhost:7104/gcash/failed/" + item.BillingId + "\"},\"type\":\"gcash\",\"currency\":\"PHP\"}}}")
+                {
+                    Headers =
+                {
+                    ContentType = new MediaTypeHeaderValue("application/json")
+                }
+                }
+            };
+            using (var response = await http.SendAsync(request))
+            {
+
+                var body = await response.Content.ReadAsStringAsync();
+
+                response.EnsureSuccessStatusCode();
+
+                var sourceResource = await response.Content.ReadFromJsonAsync<ViewModels.GCash.SourceResource>();
+
+                var dataAttributes = sourceResource.Data.Attributes;
+
+                var gcashResource = new GcashResource
+                {
+                    GcashResourceId = sourceResource.Data.Id,
+                    BillingId = item.BillingId,
+
+                    Amount = dataAttributes.Amount,
+                    CheckoutUrl = dataAttributes.Redirect.Checkout_Url,
+                    Status = dataAttributes.Status,
+                };
+
+                await _identityWebContext.AddAsync(gcashResource);
+
+                await _identityWebContext.SaveChangesAsync();
+            }
+
+            return Ok();
+        }
+
+        [HttpPut("{id}/status/{status}")]
+        public async Task<IActionResult> UpdateStatus(string id, EnumBillingStatus status, CancellationToken cancellationToken)
+        {
+            var item = await _identityWebContext.Billings.FirstOrDefaultAsync(e => e.BillingId == id, cancellationToken);
+
+            if (item == null)
+                return NotFound("Billing not found.");
+
+            if (item.Status != status)
+            {
+                item.Status = status;
+
+                await _identityWebContext.SaveChangesAsync(cancellationToken);
+            }
+
+            return Ok();
+        }
     }
-
-
 }

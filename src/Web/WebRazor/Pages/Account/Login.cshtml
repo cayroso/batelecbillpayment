@@ -1,0 +1,41 @@
+﻿@page
+@model WebRazor.Pages.Account.LoginModel
+@{
+    Layout = "_LoginLayout";
+}
+
+<main class="form-signin">
+    <form method="post">
+        <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
+
+        <div class="form-floating">
+            <input asp-for="Input.Email" type="email" class="form-control" placeholder="name@example.com" />
+            <label asp-for="Input.Email">Email address</label>
+            <span asp-validation-for="Input.Email" class="text-danger"></span>
+        </div>
+        <div class="form-floating">
+            <input asp-for=Input.Password type="password" class="form-control" placeholder="Password" />
+            <label asp-for="Input.Password">Password</label>
+            <span asp-validation-for="Input.Password" class="text-danger"></span>
+        </div>
+
+        <div class="checkbox mb-3">
+            <label>
+                <input asp-for="Input.RememberMe" type="checkbox" value="remember-me"> Remember me
+            </label>
+        </div>
+        <button class="w-100 btn btn-lg btn-primary" type="submit">Sign in</button>
+        <div class="mt-2">
+            <a href="/account/register" class="w-100 btn btn-lg btn-outline-primary">
+                Create account
+            </a>
+        </div>
+
+        @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+        {
+            <div class="mt-2 alert alert-danger">
+                @Model.ErrorMessage
+        </div>
+        }
+    </form>
+</main>

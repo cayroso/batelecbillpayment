@@ -73,7 +73,7 @@ const mixin = {
             //vm.$util.href(href);
             const referrer = document.referrer.toLowerCase();
 
-            if (referrer && referrer.includes('/identity/account/login')) {
+            if (referrer && referrer.includes('/account/login')) {
                 history.go(-2);
             }
             else {

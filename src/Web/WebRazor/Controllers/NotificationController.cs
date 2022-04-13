@@ -1,12 +1,9 @@
-﻿
-using App.Hubs;
-using App.Services;
+﻿using App.Services;
 using WebRazor.ViewModels.Notifications;
 using Data.Identity.DbContext;
 using Data.Identity.Models.Notifications;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 namespace WebRazor.Controllers

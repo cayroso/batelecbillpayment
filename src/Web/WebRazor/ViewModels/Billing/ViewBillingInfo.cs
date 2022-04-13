@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace WebRazor.ViewModels.Billing
-{    
+﻿namespace WebRazor.ViewModels.Billing
+{
     public class ViewBillingInfo
     {
         public string BillingId { get; set; }

@@ -2,3 +2,6 @@
 @model WebRazor.Areas.Administrator.Pages.Announcements.IndexModel
 @{
 }
+<announcements-index uid="@Model.UserId"
+                     url-add="/administrator/announcements/add"
+                     url-view="/administrator/announcements/view"></announcements-index>

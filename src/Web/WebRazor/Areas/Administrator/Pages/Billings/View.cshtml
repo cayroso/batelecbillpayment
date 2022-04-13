@@ -1,8 +1,11 @@
 ﻿@page "{id}"
 @model WebRazor.Areas.Administrator.Pages.Billings.ViewModel
 @{
+    var editURl = $"/administrator/billings/edit/{Model.Id}";
 }
 
 <billings-view uid="@Model.UserId"
                id="@Model.Id"
-               role-id="member"></billings-view>
+               role-id="administrator"
+               edit-url="@editURl">
+</billings-view>

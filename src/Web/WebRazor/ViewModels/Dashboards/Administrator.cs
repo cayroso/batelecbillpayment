@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace WebRazor.ViewModels.Dashboards
+﻿namespace WebRazor.ViewModels.Dashboards
 {
     public class Administrator
     {

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace WebRazor.ViewModels.Reservations
+﻿namespace WebRazor.ViewModels.Reservations
 {
     public class TimeSlot
     {

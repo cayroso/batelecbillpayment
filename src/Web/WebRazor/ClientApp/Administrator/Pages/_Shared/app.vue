@@ -13,9 +13,20 @@
 
     import Index from '../Index.vue';
 
+    import AnnouncementsAdd from '../Announcements/add.vue';
+    import AnnouncementsEdit from '../Announcements/edit.vue';
+    import AnnouncementsIndex from '../Announcements/index.vue';
+    import AnnouncementsView from '../Announcements/view.vue';
+
     import BillingsAdd from '../Billings/add.vue';
     import BillingsIndex from '../Billings/index.vue';
     import BillingsView from '../Billings/view.vue';
+
+    import NotificationsIndex from '../Notifications/index.vue';
+    import NotificationsView from '../Notifications/view.vue';
+
+    import ReservationsIndex from '../Reservations/index.vue';
+    import ReservationsView from '../Reservations/view.vue';
 
     export default {
         template: '#app',
@@ -31,10 +42,20 @@
             //BottomNav,
             Index,
 
+            AnnouncementsAdd,
+            AnnouncementsEdit,
+            AnnouncementsIndex,
+            AnnouncementsView,
+
             BillingsAdd,
             BillingsIndex,
             BillingsView,
 
+            NotificationsIndex,
+            NotificationsView,
+
+            ReservationsIndex,
+            ReservationsView,
         },
         props: {
             uid: String,

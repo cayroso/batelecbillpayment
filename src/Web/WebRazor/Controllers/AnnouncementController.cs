@@ -1,15 +1,12 @@
-﻿
-using App.Hubs;
-using App.Services;
+﻿using App.Services;
 using WebRazor.ViewModels.Announcements;
-using WebRazor.ViewModels.Notifications;
 using Data.Identity.DbContext;
 using Data.Identity.Models.Announcements;
 using Data.Identity.Models.Notifications;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using Cayent.Core.Common.Extensions;
 
 namespace WebRazor.Controllers
 {
@@ -29,7 +26,7 @@ namespace WebRazor.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get(string c, int p, int s, string sf, int so, CancellationToken cancellationToken)
         {
             var sql = from n in _identityWebContext.Announcements
                       select new ViewAnnouncementInfo
@@ -40,7 +37,7 @@ namespace WebRazor.Controllers
                           DateCreated = n.DateCreated,
                       };
 
-            var dto = await sql.ToListAsync();
+            var dto = await sql.ToPagedItemsAsync(p, s, cancellationToken);
 
             return Ok(dto);
         }
@@ -85,7 +82,7 @@ namespace WebRazor.Controllers
             await _notificationService.AddNotification(data.AnnouncementId, "info", "New Announcement", data.Subject, data.DateCreated,
                     EnumNotificationType.Success, EnumNotificationEntityClass.Notification, Array.Empty<string>(), new[] { "Consumer" }, cancellationToken);
 
-            return Ok();
+            return Ok(data.AnnouncementId);
         }
 
         [Authorize(Roles = "Administrator")]

@@ -15,15 +15,15 @@
                     </div>
 
                     <!--<div v-if="filter.visible" class="mr-1">
-                <button @click="resetDates" class="btn btn-primary">
-                    <i class="fas fa-sync mr-1"></i>
-                </button>
-            </div>
-            <div class="mr-1">
-                <button @click="filter.visible = !filter.visible" class="btn btn-secondary">
-                    <span class="fa fas fa-fw fa-filter"></span>
-                </button>
-            </div>-->
+                        <button @click="resetDates" class="btn btn-primary">
+                            <i class="fas fa-sync mr-1"></i>
+                        </button>
+                    </div>
+                    <div class="mr-1">
+                        <button @click="filter.visible = !filter.visible" class="btn btn-secondary">
+                            <span class="fa fas fa-fw fa-filter"></span>
+                        </button>
+                    </div>-->
                     <div class="flex-grow-1 ms-1">
                         <div class="input-group">
                             <input type="text" class="form-control" placeholder="Enter criteria..." aria-label="Enter criteria..." aria-describedby="button-addon2" v-model="filter.query.criteria" @keyup.enter="search(1)">
@@ -37,71 +37,81 @@
         </div>
 
         <div class="mt-2 table-responsive">
-        <table-list :header="{key: 'billingId', columns:[]}" :items="filter.items" :getRowNumber="getRowNumber" :setSelected="setSelected" :isSelected="isSelected" table-css="">
-            <template #header>
-                <th class="text-center">#</th>
-                <th>Billing Number</th>
-                <th>Status</th>
-                <th>Due Date</th>
-                <th>Amount</th>
-            </template>
-            <template #table-row="row">
-                <td v-text="getRowNumber(row.index)" class="text-center"></td>
-                <td>
-                    <a :href="`/administrator/billings/view/${row.item.billingId}`">
-                        {{row.item.number}}
-                    </a>
-                </td>
-                <td>
-                    {{row.item.statusText}}
-                </td>
-                <td>
-                    {{$moment(row.item.dateDue).format('YYYY-MM-DD hh:mm:ss')}}
-                </td>
-                <td>
-                    {{row.item.amount}}
-                </td>
-            </template>
+            <table-list :header="{key: 'billingId', columns:[]}" :items="filter.items" :getRowNumber="getRowNumber" :setSelected="setSelected" :isSelected="isSelected" table-css="">
+                <template #header>
+                    <th class="text-center">#</th>
+                    <th>Billing Number</th>
+                    <th>Account</th>
+                    <th>Status</th>
+                    <th>Due Date</th>
+                    <th>Amount</th>
+                </template>
+                <template #table-row="row">
+                    <td v-text="getRowNumber(row.index)" class="text-center"></td>
+                    <td>
+                        <a :href="`/administrator/billings/view/${row.item.billingId}`">
+                            {{row.item.number}}
+                        </a>
+                    </td>
+                    <td>
+                        <div>
+                            {{row.item.accountNumber}}
+                            <sub>
+                                {{row.item.accountName}}
+                            </sub>
+                        </div>
 
-            <template #table-list="row">
-                <div>
-                    <div class="form-group mb-0 row no-gutters">
-                        <label class="col-3 col-form-label">Name</label>
-                        <div class="col align-self-center">
-                            <a href="#" @click.prevent="$refs.modalViewContact.open(row.item.contactId)">
-                                {{row.item.number}}
-                            </a>
-                        </div>
-                    </div>
-                    <div class="form-group mb-0 row no-gutters">
-                        <label class="col-3 col-form-label">Status</label>
-                        <div class="col align-self-center">
-                            <div>{{row.item.statusText}}</div>
-                        </div>
-                    </div>
-                    <div class="form-group mb-0 row no-gutters">
-                        <label class="col-3 col-form-label">Email</label>
-                        <div class="col align-self-center">
-                            {{row.item.email}}
-                        </div>
-                    </div>
-                    <div class="form-group mb-0 row no-gutters">
-                        <label class="col-3 col-form-label">Contact #</label>
-                        <div class="col">
-                            <div class="form-control-plaintext">
+                    </td>
+                    <td>
+                        {{row.item.statusText}}
+                    </td>
+                    <td>
+                        {{$moment(row.item.dateDue).format('YYYY-MM-DD hh:mm:ss')}}
+                    </td>
+                    <td>
+                        {{row.item.amount}}
+                    </td>
+                </template>
 
+                <template #table-list="row">
+                    <div>
+                        <div class="form-group mb-0 row no-gutters">
+                            <label class="col-3 col-form-label">Name</label>
+                            <div class="col align-self-center">
+                                <a href="#" @click.prevent="$refs.modalViewContact.open(row.item.contactId)">
+                                    {{row.item.number}}
+                                </a>
+                            </div>
+                        </div>
+                        <div class="form-group mb-0 row no-gutters">
+                            <label class="col-3 col-form-label">Status</label>
+                            <div class="col align-self-center">
+                                <div>{{row.item.statusText}}</div>
+                            </div>
+                        </div>
+                        <div class="form-group mb-0 row no-gutters">
+                            <label class="col-3 col-form-label">Email</label>
+                            <div class="col align-self-center">
+                                {{row.item.email}}
+                            </div>
+                        </div>
+                        <div class="form-group mb-0 row no-gutters">
+                            <label class="col-3 col-form-label">Contact #</label>
+                            <div class="col">
+                                <div class="form-control-plaintext">
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group mb-0 row no-gutters">
+                            <!--<label class="col-3 col-form-label"></label>-->
+                            <div class="offset-3 col align-self-center">
+                                <button @click="addTask(row.item)" class="btn btn-sm btn-outline-primary">Add Task</button>
                             </div>
                         </div>
                     </div>
-                    <div class="form-group mb-0 row no-gutters">
-                        <!--<label class="col-3 col-form-label"></label>-->
-                        <div class="offset-3 col align-self-center">
-                            <button @click="addTask(row.item)" class="btn btn-sm btn-outline-primary">Add Task</button>
-                        </div>
-                    </div>
-                </div>
-            </template>
-        </table-list>
+                </template>
+            </table-list>
 
         </div>
 
@@ -145,7 +155,7 @@
                     ]
                 },
                 filter: {
-                    items:[],
+                    items: [],
                     cacheKey: `filter-${this.uid}/billings`,
                     query: {
                         //taskStatus: 0,

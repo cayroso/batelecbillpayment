@@ -1,0 +1,7 @@
+﻿@page
+@model WebRazor.Areas.Administrator.Pages.Announcements.AddModel
+@{
+    var urlView = "/administrator/announcements/view";
+}
+<announcements-add uid="@Model.UserId"
+                   url-view="@urlView"></announcements-add>

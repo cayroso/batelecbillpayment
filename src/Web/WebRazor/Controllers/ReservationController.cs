@@ -1,20 +1,12 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Blazor.Shared;
-using Data.Identity.Models.Users;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using System.Security.Claims;
-using Blazor.Shared.Security;
 using Data.Identity.DbContext;
 using Data.Constants;
 using Microsoft.EntityFrameworkCore;
-using WebRazor.ViewModels.GCash;
-using WebRazor.ViewModels.Billing;
-using Data.Identity.Models;
 using WebRazor.ViewModels.Reservations;
 using Data.Identity.Models.Reservations;
-using Cayent.Core.Common.Extensions;
 using App.Services;
+using Cayent.Core.Common.Extensions;
 
 namespace WebRazor.Controllers
 {
@@ -35,7 +27,7 @@ namespace WebRazor.Controllers
         public async Task<IActionResult> Get(string reservationId)
         {
             var dto = await _identityWebContext.Reservations
-                .Where(e => e.AccountId == UserId && e.ReservationId == reservationId)
+                .Where(e => e.ReservationId == reservationId)
                 .Select(e => new ReservationInfo
                 {
                     ReservationId = e.ReservationId,
@@ -52,72 +44,49 @@ namespace WebRazor.Controllers
 
         }
 
-        [HttpGet("my-reservations")]
-        public async Task<IActionResult> GetMyReservations()
+        [HttpGet("mine")]
+        public async Task<IActionResult> GetMyReservations(string c, int p, int s, string sf, int so, CancellationToken cancellationToken)
         {
-            var dto = await _identityWebContext.Reservations
-                .Where(e => e.AccountId == UserId)
-                .Select(e => new ReservationInfo
-                {
-                    ReservationId = e.ReservationId,
-                    DateReservation = e.DateReservation,
-                    BranchId = e.BranchId,
-                    BranchName = e.Branch.Name,
-                    AccountId = e.AccountId,
-                    AccountName = $"{e.Account.UserInformation.FirstLastName}"
-                })
-                .ToListAsync();
+            var sql = from e in _identityWebContext.Reservations.AsNoTracking()
+
+                      where e.AccountId == UserId
+
+                      select new ReservationInfo
+                      {
+                          ReservationId = e.ReservationId,
+                          DateReservation = e.DateReservation,
+                          BranchId = e.BranchId,
+                          BranchName = e.Branch.Name,
+                          AccountId = e.AccountId,
+                          AccountName = $"{e.Account.UserInformation.FirstLastName}"
+                      };
+
+            var dto = await sql.ToPagedItemsAsync(p, s, cancellationToken);
 
             return Ok(dto);
         }
 
         [Authorize(Roles = "Administrator")]
         [HttpGet]
-        public async Task<IActionResult> GetReservations()
+        public async Task<IActionResult> GetReservations(string c, int p, int s, string sf, int so, CancellationToken cancellationToken)
         {
-            var dto = await _identityWebContext.Reservations
-                .Select(e => new ReservationInfo
-                {
-                    ReservationId = e.ReservationId,
-                    DateReservation = e.DateReservation,
-                    BranchId = e.BranchId,
-                    BranchName = e.Branch.Name,
-                    AccountId = e.AccountId,
-                    AccountName = $"{e.Account.UserInformation.FirstLastName}"
-                })
-                .ToListAsync();
+            var sql = from e in _identityWebContext.Reservations.AsNoTracking()
+
+                      select new ReservationInfo
+                      {
+                          ReservationId = e.ReservationId,
+                          DateReservation = e.DateReservation,
+                          BranchId = e.BranchId,
+                          BranchName = e.Branch.Name,
+                          AccountId = e.AccountId,
+                          AccountName = $"{e.Account.UserInformation.FirstLastName}"
+                      };
+
+            var dto = await sql.ToPagedItemsAsync(p, s, cancellationToken);
 
             return Ok(dto);
         }
-        //[HttpGet("DateTimeSlots/{dateTicks}")]
-        //public async Task<IActionResult> GetTimeSlotsForDate(long dateTicks)
-        //{
-        //    var dateUtc = new DateTime(dateTicks).AsUtc().Truncate();
 
-        //    var reservedTimeSpans = await _identityWebContext.Reservations
-        //        .Where(e => e.DateReservation.Date == dateUtc.Date)
-        //        .Select(e => e.DateReservation.ToString("hh:mm tt"))
-        //        .ToListAsync();
-
-        //    var now = DateTime.Now.Date.AddHours(9);
-        //    var end = now.AddHours(9);
-
-        //    var timeSlots = new List<TimeSlot>();
-
-        //    for (; now < end; now = now.AddMinutes(15))
-        //    {
-        //        var slot = now.ToString("hh:mm tt");
-        //        timeSlots.Add(new TimeSlot
-        //        {
-        //            Slot = slot,
-        //            Reserved = reservedTimeSpans.Any(e => e == slot)
-        //        });
-
-
-        //    }
-
-        //    return Ok(timeSlots);
-        //}
 
         [HttpPost]
         [Authorize]
@@ -161,7 +130,7 @@ namespace WebRazor.Controllers
                 Data.Identity.Models.Notifications.EnumNotificationType.Info, Data.Identity.Models.Notifications.EnumNotificationEntityClass.Reservation,
                 Array.Empty<string>(), new[] { ApplicationRoles.Administrator.Name }, cancellationToken);
 
-            return Ok();
+            return Ok(data.ReservationId);
         }
 
         [HttpDelete("{reservationId}/{reason}")]

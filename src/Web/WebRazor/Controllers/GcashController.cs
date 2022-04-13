@@ -1,16 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Blazor.Shared;
-using Data.Identity.Models.Users;
-using Microsoft.AspNetCore.Authorization;
-using System.Security.Claims;
-using Blazor.Shared.Security;
+﻿using Microsoft.AspNetCore.Mvc;
 using Data.Identity.DbContext;
-using Data.Constants;
 using Microsoft.EntityFrameworkCore;
 using WebRazor.ViewModels.GCash;
 using Data.Identity.Models;
-using System.Net.Http;
 using System.Net.Http.Headers;
 
 namespace WebRazor.Controllers

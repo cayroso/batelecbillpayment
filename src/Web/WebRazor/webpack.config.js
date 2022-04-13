@@ -22,7 +22,7 @@ module.exports = (env = {}) => ({
     },
     entry: {
         'administrator': './ClientApp/Administrator/main.js',
-        //'manager': './ClientApp/Manager/main.js',
+        'consumer': './ClientApp/Consumer/main.js',
         //'member': './ClientApp/Member/main.js',
         //'customer': './ClientApp/Customer/main.js',
     },
@@ -116,13 +116,13 @@ module.exports = (env = {}) => ({
             filename: path.resolve(__dirname, "Areas/Administrator/Pages/_Shared/_Layout.cshtml"),
             template: path.resolve(__dirname, "Areas/Administrator/Pages/_Shared/_Layout_Template.cshtml")
         }),
-        //new HtmlWebpackPlugin({
-        //    inject: false,
-        //    scriptLoading: 'defer',
-        //    chunks: ['manager'],
-        //    filename: path.resolve(__dirname, "Areas/Manager/Pages/_Shared/_Layout.cshtml"),
-        //    template: path.resolve(__dirname, "Areas/Manager/Pages/_Shared/_Layout_Template.cshtml")
-        //}),
+        new HtmlWebpackPlugin({
+            inject: false,
+            scriptLoading: 'defer',
+            chunks: ['consumer'],
+            filename: path.resolve(__dirname, "Areas/Consumer/Pages/_Shared/_Layout.cshtml"),
+            template: path.resolve(__dirname, "Areas/Consumer/Pages/_Shared/_Layout_Template.cshtml")
+        }),
         //new HtmlWebpackPlugin({
         //    inject: false,
         //    scriptLoading: 'defer',

@@ -8,3 +8,31 @@
     <h1 class="display-4">Welcome</h1>
     <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
 </div>
+
+@if (User.Identity.IsAuthenticated)
+{
+    <div class="row">
+        @if (User.IsInRole("Administrator"))
+        {
+            <div>
+                <a href="/administrator">Administrator</a>
+            </div>
+        }
+        @if (User.IsInRole("Consumer"))
+        {
+            <div>
+                <a href="/consumer">Consumer</a>
+            </div>
+        }
+
+
+    </div>
+    <a href="/account/login">Login</a>
+}
+else
+{
+    <div>
+        <a href="/account/login">Login</a>
+        <a href="/account/register">Register</a>
+    </div>
+}
