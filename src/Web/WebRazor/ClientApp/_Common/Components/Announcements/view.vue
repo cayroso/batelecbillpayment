@@ -1,12 +1,12 @@
 ﻿<template>
     <div v-cloak>
         <div class="row align-items-center">
-            <div class="col-sm">
+            <div class="col">
                 <h1 class="h3 mb-sm-0">
                     <i class="fas fa-fw fa-bullhorn me-1"></i>View Billings
                 </h1>
             </div>
-            <div class="col-sm-auto">
+            <div class="col-auto">
                 <div class="d-flex flex-row">
                     <template v-if="roleId==='administrator'">
                         <a :href="`${urlEdit}`" class="btn btn-warning">Edit</a>

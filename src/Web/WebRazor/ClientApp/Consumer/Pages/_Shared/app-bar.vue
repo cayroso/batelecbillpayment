@@ -1,12 +1,12 @@
 ﻿<template>
     <nav class="navbar navbar-expand-lg fixed-top navbar-dark bg-success" aria-label="Main navigation">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">Offcanvas navbar</a>
+            <a class="navbar-brand" href="/">{{appName}}</a>
             <button class="navbar-toggler p-0 border-0" type="button" id="navbarSideCollapse" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
-            <div class="navbar-collapse offcanvas-collapse" id="navbarsExampleDefault">
+            <div class="navbar-collapse offcanvas-collapse mb-2 mb-lg-0" id="navbarsExampleDefault">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
                         <a class="nav-link" href="/consumer">
@@ -34,31 +34,27 @@
                         </a>
                     </li>
 
-                    <li class="nav-item">
-                        <a class="nav-link" href="/account">
+
+                </ul>
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="fas fa-user me-2" aria-hidden="true"></i>My Account
                         </a>
-                    </li>
-
-                    <!--<li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-bs-toggle="dropdown" aria-expanded="false">Settings</a>
                         <ul class="dropdown-menu" aria-labelledby="dropdown01">
-                            <li><a class="dropdown-item" href="#">Action</a></li>
-                            <li><a class="dropdown-item" href="#">Another action</a></li>
-                            <li><a class="dropdown-item" href="#">Something else here</a></li>
+                            <li><a class="dropdown-item" href="/account">Information</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <!--<li><a class="dropdown-item" href="#">Another action</a></li>-->
+                            <li><a class="dropdown-item" href="#" @click.prevent="logout">Logout</a></li>
                         </ul>
-                    </li>-->
+                    </li>
                 </ul>
-                <form class="d-flex">
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn btn-outline-success" type="submit">Search</button>
-                </form>
             </div>
         </div>
     </nav>
 </template>
 <script>
-    //import navbarMixin from '../../../_Core/Mixins/navbarMixin';
+    import navbarMixin from '../../../_Core/Mixins/navbarMixin';
 
     //import navDrawer from './nav-drawer.vue';
     //import NotificationsDrawer from '../../../_Common/Drawers/notifications-drawer.vue';
@@ -66,7 +62,7 @@
     //import TeamsDrawer from '../../../_Common/Drawers/teams-drawer.vue';
 
     export default {
-        //mixins: [navbarMixin],
+        mixins: [navbarMixin],
         props: {
             uid: String,
             appName: {

@@ -51,6 +51,9 @@ namespace WebRazor.Controllers
 
                       where e.AccountId == UserId
 
+                      where string.IsNullOrWhiteSpace(c)
+                            || EF.Functions.Like(e.Branch.Name, $"%{c}%")                            
+
                       select new ReservationInfo
                       {
                           ReservationId = e.ReservationId,
@@ -71,6 +74,10 @@ namespace WebRazor.Controllers
         public async Task<IActionResult> GetReservations(string c, int p, int s, string sf, int so, CancellationToken cancellationToken)
         {
             var sql = from e in _identityWebContext.Reservations.AsNoTracking()
+
+                      where string.IsNullOrWhiteSpace(c)
+                            || EF.Functions.Like(e.Branch.Name, $"%{c}%")
+                            || EF.Functions.Like(e.Account.UserInformation.FirstLastName, $"%{c}%")
 
                       select new ReservationInfo
                       {

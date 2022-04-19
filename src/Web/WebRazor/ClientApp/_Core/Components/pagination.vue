@@ -8,7 +8,7 @@
                             <span class="me-1 font-weight-bold">{{filter.totalCount}}</span>records in {{filter.totalPages}} page(s)
                         </span>
                         <div class="d-flex flex-row align-items-center">
-                            <select v-model="filter.query.pageSize" @change="changePagination1" class="custom-select custom-select-sm me-1">
+                            <select v-model="filter.query.pageSize" @change="changePagination1" class="form-select form-select-sm me-1">
                                 <option value="1">1</option>
                                 <option value="2">2</option>
                                 <option value="3">3</option>

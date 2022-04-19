@@ -114,37 +114,52 @@ namespace WebRazor.Controllers
             return Ok();
         }
 
-        [HttpPut("{userId}/lockout")]
-        public async Task<IActionResult> LockoutUser(string userId, CancellationToken cancellationToken)
+        public class UserLockUnlock
         {
-            var user = await _userManager.FindByIdAsync(userId);
+            public string UserId { get; set; }
+            public bool Lockout { get; set; }
+        }
+
+        [HttpPut("lock")]
+        public async Task<IActionResult> LockUser([FromBody] UserLockUnlock info, CancellationToken cancellationToken)
+        {
+            var user = await _userManager.FindByIdAsync(info.UserId);
 
             if (user == null)
                 return NotFound("User not found.");
 
-            //await _userManager.SetLockoutEnabledAsync(user, true);
+            if (info.Lockout)
+            {
+                var now = DateTime.MaxValue.Truncate().AsUtc();
 
-            var now = DateTime.MaxValue.Truncate().AsUtc();
+                await _userManager.SetLockoutEnabledAsync(user, true);
+                await _userManager.SetLockoutEndDateAsync(user, now);
+            }
+            else
+            {
+                var now = DateTime.UtcNow.Truncate().AsUtc();
 
-            await _userManager.SetLockoutEndDateAsync(user, now);
-
-            return Ok();
-        }
-
-        [HttpPut("{userId}/unlockout")]
-        public async Task<IActionResult> UnlockoutUser(string userId, CancellationToken cancellationToken)
-        {
-            var user = await _userManager.FindByIdAsync(userId);
-
-            if (user == null)
-                return NotFound("User not found.");
-
-            var now = DateTime.UtcNow.Truncate().AsUtc();
-
-            await _userManager.SetLockoutEndDateAsync(user, now.AddDays(-1));
+                await _userManager.SetLockoutEnabledAsync(user, false);
+                await _userManager.SetLockoutEndDateAsync(user, now.AddDays(-1));
+            }
 
             return Ok();
         }
+
+        //[HttpPut("unlockout")]
+        //public async Task<IActionResult> UnlockoutUser(string userId, CancellationToken cancellationToken)
+        //{
+        //    var user = await _userManager.FindByIdAsync(userId);
+
+        //    if (user == null)
+        //        return NotFound("User not found.");
+
+        //    var now = DateTime.UtcNow.Truncate().AsUtc();
+
+        //    await _userManager.SetLockoutEndDateAsync(user, now.AddDays(-1));
+
+        //    return Ok();
+        //}
 
         [HttpGet("lookup")]
         public async Task<IActionResult> Get()
@@ -165,18 +180,43 @@ namespace WebRazor.Controllers
         #region Consumers
 
         [HttpGet("consumers")]
-        public async Task<IActionResult> GetConsumers(CancellationToken cancellationToken)
+        public async Task<IActionResult> GetConsumers(string c, int p, int s, string sf, int so, CancellationToken cancellationToken)
         {
-            var dto = await _identityWebContext.Accounts
-                .Select(e => new ViewConsumerInfo
-                {
-                    UserId = e.AccountId,
-                    Email = e.UserInformation.User.Email,
-                    PhoneNumber = e.UserInformation.User.PhoneNumber,
-                    AccountNumber = e.AccountNumber,
-                    FirstLastName = e.UserInformation.FirstLastName,
-                    IsLocked = e.UserInformation.User.LockoutEnabled && e.UserInformation.User.LockoutEnd > DateTime.UtcNow.Truncate(),
-                }).ToListAsync(cancellationToken);
+            var sql = from e in _identityWebContext.Accounts.AsNoTracking()
+                        //.Include(e => e.UserInformation)
+                        //.ThenInclude(e => e.User)
+
+                      where string.IsNullOrWhiteSpace(c)
+                           || EF.Functions.Like(e.UserInformation.User.Email, $"%{c}%")
+                           || EF.Functions.Like(e.UserInformation.User.PhoneNumber, $"%{c}%")
+                           || EF.Functions.Like(e.UserInformation.FirstName, $"%{c}%")
+                           || EF.Functions.Like(e.UserInformation.MiddleName, $"%{c}%")
+                           || EF.Functions.Like(e.UserInformation.LastName, $"%{c}%")
+                           || EF.Functions.Like(e.AccountNumber, $"%{c}%")
+                           || EF.Functions.Like(e.MeterNumber, $"%{c}%")
+                      select new ViewConsumerInfo
+                      {
+                          UserId = e.AccountId,
+                          Email = e.UserInformation.User.Email,
+                          PhoneNumber = e.UserInformation.User.PhoneNumber,
+                          AccountNumber = e.AccountNumber,
+                          FirstLastName = e.UserInformation.FirstLastName,
+                          MeterNumber = e.MeterNumber,
+                          IsLocked = e.UserInformation.User.LockoutEnabled && e.UserInformation.User.LockoutEnd > DateTime.UtcNow.Truncate(),
+                      };
+
+            var dto = await sql.ToPagedItemsAsync(p, s, cancellationToken);
+
+            //var dto = await _identityWebContext.Accounts
+            //    .Select(e => new ViewConsumerInfo
+            //    {
+            //        UserId = e.AccountId,
+            //        Email = e.UserInformation.User.Email,
+            //        PhoneNumber = e.UserInformation.User.PhoneNumber,
+            //        AccountNumber = e.AccountNumber,
+            //        FirstLastName = e.UserInformation.FirstLastName,
+            //        IsLocked = e.UserInformation.User.LockoutEnabled && e.UserInformation.User.LockoutEnd > DateTime.UtcNow.Truncate(),
+            //    }).ToListAsync(cancellationToken);
 
             return Ok(dto);
         }
@@ -251,7 +291,7 @@ namespace WebRazor.Controllers
         }
 
         [HttpGet("administrators")]
-        public async Task<IActionResult> GetAdministrators(CancellationToken cancellationToken)
+        public async Task<IActionResult> GetAdministrators(string c, int p, int s, string sf, int so, CancellationToken cancellationToken)
         {
             var userIds = await _identityWebContext.UserRoles
                 .Where(e => e.RoleId == ApplicationRoles.Administrator.Id)
@@ -260,16 +300,33 @@ namespace WebRazor.Controllers
 
             var now = DateTime.UtcNow.Truncate().AsUtc();
 
-            var dto = await _identityWebContext.Users
-                .Where(e => userIds.Contains(e.Id))
-                .Select(e => new ViewAdministratorInfo
-                {
-                    UserId = e.Id,
-                    Email = e.Email,
-                    PhoneNumber = e.PhoneNumber,
-                    FirstLastName = e.UserInformation.FirstLastName,
-                    IsLocked = e.LockoutEnabled && e.LockoutEnd > now
-                }).ToListAsync(cancellationToken);
+            var sql = from e in _identityWebContext.Users.AsNoTracking()
+                      where userIds.Contains(e.Id)
+                      where string.IsNullOrWhiteSpace(c)
+                           || EF.Functions.Like(e.Email, $"%{c}%")
+                           || EF.Functions.Like(e.PhoneNumber, $"%{c}%")
+                           || EF.Functions.Like(e.UserInformation.FirstLastName, $"%{c}%")
+                      select new ViewAdministratorInfo
+                      {
+                          UserId = e.Id,
+                          Email = e.Email,
+                          PhoneNumber = e.PhoneNumber,
+                          FirstLastName = e.UserInformation.FirstLastName,
+                          IsLocked = e.LockoutEnabled && e.LockoutEnd > now
+                      };
+
+            var dto = await sql.ToPagedItemsAsync(p, s, cancellationToken);
+
+            //var dto = await _identityWebContext.Users
+            //    .Where(e => userIds.Contains(e.Id))
+            //    .Select(e => new ViewAdministratorInfo
+            //    {
+            //        UserId = e.Id,
+            //        Email = e.Email,
+            //        PhoneNumber = e.PhoneNumber,
+            //        FirstLastName = e.UserInformation.FirstLastName,
+            //        IsLocked = e.LockoutEnabled && e.LockoutEnd > now
+            //    }).ToListAsync(cancellationToken);
 
             return Ok(dto);
         }

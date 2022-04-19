@@ -54,6 +54,25 @@ export default {
         vm.showHiddenElements();
     },
     methods: {
+        async logout() {
+            const vm = this;
+
+            try {
+                await vm.$util.axios.post(`api/authorize/logout`)
+                    .then(resp => {
+                        const url = "/";
+                        vm.$toast.warning('Logout', 'You have logged out of the system.', {
+                            timeOut: 5000,
+                            async onClose() {                                
+                                vm.$util.href(url);
+                            }
+                        })
+
+                    });
+            } catch (e) {
+                vm.$util.handleError(e);
+            }
+        },
         async onChatMarkedAsRead(chatId) {
             let vm = this;
             let found = vm.messages.find(p => p.chatId === chatId);

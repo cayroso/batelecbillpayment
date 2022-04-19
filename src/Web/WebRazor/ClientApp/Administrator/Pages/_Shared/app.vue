@@ -75,6 +75,11 @@
         },
         async mounted() {
             //alert("app mounted")
+            //this.$toast.success('Loaded', 'success <b>bold</bold> <a href="/administrator/billings/">Billings</a> <button>button</button>');
+            //this.$toast.warning('Loaded', 'success');
+            //this.$toast.info('Loaded', 'success');
+            //this.$toast.error('Loaded', 'success');
+
             //let theme = localStorage.getItem('theme') || '';
             //if (theme) {
             //    //debugger;

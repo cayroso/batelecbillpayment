@@ -7,7 +7,7 @@
                 </h1>
             </div>
             <div class="col-sm-auto">
-                <div class="d-flex flex-row">                    
+                <div class="d-flex flex-row">
                     <div class="flex-grow-1 ms-1">
                         <div class="input-group">
                             <input type="text" class="form-control" placeholder="Enter criteria..." aria-label="Enter criteria..." aria-describedby="button-addon2" v-model="filter.query.criteria" @keyup.enter="search(1)">
@@ -21,23 +21,24 @@
         </div>
 
         <div class="mt-2 table-responsive">
-            <table-list :header="{key: 'reservationId', columns:[]}" :items="filter.items" :getRowNumber="getRowNumber" :setSelected="setSelected" :isSelected="isSelected" table-css="">
+            <table-list :header="{key: 'notificationId', columns:[]}" :items="filter.items" :getRowNumber="getRowNumber" :setSelected="setSelected" :isSelected="isSelected" table-css="">
                 <template #header>
                     <th class="text-center">#</th>
+                    <th>Subject</th>
                     <th>Date</th>
-                    <th>Branch</th>
                     <th></th>
                 </template>
                 <template #table-row="row">
                     <td v-text="getRowNumber(row.index)" class="text-center"></td>
                     <td>
-                        <!--<a :href="`${urlView}/${row.item.reservationId}`">-->
-                        {{$moment(row.item.dateReservation).calendar()}}
-                        <!--</a>-->
+                        <a :href="`${urlView}/${row.item.notificationId}`" v-bind:class="!row.item.isRead ? 'fw-bold':''" >
+                            {{row.item.subject}}
+                        </a>
                     </td>
                     <td>
-                        {{row.item.branchName}}
+                        {{$moment(row.item.dateSent).calendar()}}
                     </td>
+
                     <td>
                         <div v-if="row.item.expand">
                             <button @click="deleteReservation(row.item)" class="btn btn-warning">
@@ -49,6 +50,17 @@
 
                 <template #table-list="row">
                     <div>
+                        <div class="row mb-3">
+                            <label for="subject" class="col-sm-2 col-form-label">Subject</label>
+                            <div class="col-sm-10">
+                                <div class="form-control-plaintext">
+                                    <a :href="`${urlView}/${row.item.announcementId}`">
+                                        {{row.item.subject}}
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="form-group mb-0 row no-gutters">
                             <label class="col-3 col-form-label">Name</label>
                             <div class="col align-self-center">
@@ -100,7 +112,7 @@
 
         props: {
             uid: String,
-            urlAdd: { type: String, required: true },
+            //urlAdd: { type: String, required: true },
             urlView: { type: String, required: true },
         },
         components: {
@@ -110,14 +122,15 @@
             return {
                 //moment: moment,
 
-                baseUrl: `/api/notification`,
+                baseUrl: `/api/notification/my-notifications`,
                 lookups: {
 
                 },
                 filter: {
                     items: [],
-                    cacheKey: `filter-${this.uid}/notifications`,
+                    cacheKey: `filter-${this.uid}/my-notifications`,
                     query: {
+                        unreadOnly: false,
                         //taskStatus: 0,
                         //taskType: 0,
                         //    dateStart: moment().startOf('week').format('YYYY-MM-DD'),
@@ -138,7 +151,7 @@
             const urlParams = new URLSearchParams(window.location.search);
             const cache = JSON.parse(localStorage.getItem(filter.cacheKey)) || {};
 
-            //filter.query.taskType = urlParams.get('tt') || cache.taskType || filter.query.taskType;
+            filter.query.unreadOnly = urlParams.get('uro') || cache.unreadOnly || filter.query.unreadOnly;
             //filter.query.taskStatus = urlParams.get('ts') || cache.taskStatus || filter.query.taskStatus;
 
             vm.initializeFilter(cache);
@@ -167,7 +180,7 @@
                     '&s=', filter.query.pageSize,
                     '&sf=', filter.query.sortField,
                     '&so=', filter.query.sortOrder,
-                    //'&tt=', filter.query.taskType,
+                    '&uro=', filter.query.unreadOnly,
                     //'&ts=', filter.query.taskStatus,
                 ].join('');
 
@@ -185,7 +198,7 @@
                     sortField: filter.query.sortField,
                     sortOrder: filter.query.sortOrder,
                     visible: filter.visible,
-                    //taskType: filter.query.taskType,
+                    unreadOnly: filter.query.unreadOnly,
                     //taskStatus: filter.query.taskStatus,
                 }));
             },

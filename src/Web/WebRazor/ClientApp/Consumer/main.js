@@ -8,6 +8,7 @@ import * as bs from 'bootstrap';
 import { createApp } from 'vue';
 import App from './Pages/_Shared/app.vue';
 import pluginCommon from '../_Core/Plugins/common';
+import pluginToasts from '../_Core/Plugins/toasts';
 //import MomentVue from 'vue-moment';
 
 //import VueObserveVisibility from 'vue-observe-visibility'
@@ -37,6 +38,7 @@ import TableList from '../_Core/Components/table-list.vue';
 const app = createApp(App);
 
 app.use(pluginCommon);
+app.use(pluginToasts);
 //app.use(MomentVue);
 
 app.component('m-pagination', Pagination);

@@ -225,8 +225,8 @@
                     vm.busy = true;
 
                     await vm.$util.axios.delete(`/api/reservation/${item.reservationId}/${reason}`)
-                        .then(resp => {
-                            alert('Reservation was deleted.');
+                        .then(resp => {                            
+                            vm.$toast.warning('Delete Reservation', 'Reservation was deleted.');
                         });
 
                 } catch (e) {

@@ -216,13 +216,17 @@
                     
                     await vm.$util.axios.post(`/api/reservation`, payload)
                         .then(resp => {
-                            alert('New Reservation Created.');
+                            vm.$toast.success('Add Reservation', 'Reservation was created.', {
+                                async onClose () {
+                                    await vm.close();
+                                }
+                            });
 
-                            setTimeout(() => {
-                                //const url = `${vm.urlView}/${resp.data}`;
-                                vm.close();
-                                vm.$util.href(url);
-                            }, 500);
+                            //setTimeout(() => {
+                            //    //const url = `${vm.urlView}/${resp.data}`;
+                            //    vm.close();
+                            //    vm.$util.href(url);
+                            //}, 3000);
                         });
 
                 } catch (e) {

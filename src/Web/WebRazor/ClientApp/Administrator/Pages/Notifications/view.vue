@@ -1,18 +1,21 @@
 ﻿<template>
     <div v-cloak>
-
+        <notifications-view :uid="uid"
+                            :id="id"></notifications-view>
     </div>
 </template>
 <script>
-    import pageMixin from '../../../_Core/Mixins/pageMixin';
+    import notificationsView from '../../../_Common/Components/Notifications/view.vue';
 
     export default {
-        mixins: [pageMixin],
-
+        
         props: {
-            uid: String,
+            uid: { type: String, required: true },
+            id: { type: String, required: true },
         },
-
+        components: {
+            notificationsView
+        },
         data() {
             return {
 

@@ -4,6 +4,7 @@ import { createApp } from 'vue';
 import NProgress from 'nprogress';
 import axios from 'axios';
 import moment from 'moment';
+import eventBus from '../Components/EventBus/eventBus';
 
 export default {
     install(app, options) {
@@ -235,39 +236,6 @@ export default {
 
         };
 
-        app.config.globalProperties.$bus = {
-            methods: {
-                toggleSidebar() {
-                    this.$emit('event:toggle-sidebar');
-                },
-                openNotification(id) {
-                    this.$emit('event:open-notification', id);
-                },
-                openChat(id) {
-                    this.$emit('event:open-chat', id);
-                },
-                sendMessage(accountId) {
-                    this.$emit('event:send-message', accountId);
-                },
-                quickViewAccount(account) {
-                    this.$emit('event:quick-view-account', account);
-                },
-                quickViewQbTransaction(id) {
-                    this.$emit('event:quick-view-qb-transaction', id);
-                },
-                addFeedback(jobId, feedback) {
-                    this.$emit('event:add-feedback', jobId, feedback);
-                },
-                closeFeedback(jobId) {
-                    this.$emit('event:close-feedback', jobId);
-                }
-                //requestJobStart(req) {
-                //    this.$emit('event:request-job-start', req);
-                //},
-                //responseJobStart(resp) {
-                //    this.$emit('event:response-job-start', resp);
-                //}
-            }
-        };
+        app.config.globalProperties.$bus = eventBus;
     }
 }

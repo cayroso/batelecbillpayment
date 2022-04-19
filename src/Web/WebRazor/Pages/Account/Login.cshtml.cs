@@ -1,3 +1,4 @@
+using Data.Constants;
 using Data.Identity.DbContext;
 using Data.Identity.Models.Users;
 using Microsoft.AspNetCore.Identity;
@@ -69,6 +70,22 @@ namespace WebRazor.Pages.Account
                 return Page();
 
             await _signInManager.SignInAsync(user, Input.RememberMe);
+
+            
+            var isSystem = await _userManager.IsInRoleAsync(user, ApplicationRoles.System.Name);
+            var isAdmin = await _userManager.IsInRoleAsync(user, ApplicationRoles.Administrator.Name);
+            var isConsumer = await _userManager.IsInRoleAsync(user, ApplicationRoles.Consumer.Name);
+
+            var onlySystem = isSystem && !isAdmin && !isConsumer;
+            var onlyAdmin = !isSystem && isAdmin && !isConsumer;
+            var onlyConsumer = !isSystem && !isAdmin && isConsumer;
+
+            if (onlySystem)
+                return Redirect("/system");
+            else if (onlyAdmin)
+                return Redirect("/administrator");
+            else if (onlyConsumer)
+                return Redirect("/consumer");
 
             return RedirectToPage("/Index");
         }

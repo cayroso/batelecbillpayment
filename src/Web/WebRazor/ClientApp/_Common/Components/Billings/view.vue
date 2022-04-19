@@ -272,6 +272,11 @@
                     await vm.$util.axios.put(`/api/billing/${vm.id}/status/${status}`)
                         .then(resp => {
                             //vm.item = resp.data;
+                            vm.$toast.info('Change Status', 'Billing status was updated.', {
+                                async onClose() {
+                                    await vm.get();
+                                }
+                            })
                         });
                 } catch (e) {
                     vm.$util.handleError(e);
@@ -279,7 +284,6 @@
                 } finally {
                     vm.busy = false;
 
-                    await vm.get();
                 }
             }
         }

@@ -1,98 +1,130 @@
 ﻿<template>
-    
-    <div class="nav-scroller bg-body shadow-sm">
-        <nav class="nav nav-underline" aria-label="Secondary navigation">
-            <a class="nav-link active" aria-current="page" href="#">Dashboard</a>
-            <a class="nav-link" href="#">
-                Friends
-                <span class="badge bg-light text-dark rounded-pill align-text-bottom">27</span>
-            </a>
-            <a class="nav-link" href="#">Explore</a>
-            <a class="nav-link" href="#">Suggestions</a>
-            <a class="nav-link" href="#">Link</a>
-            <a class="nav-link" href="#">Link</a>
-            <a class="nav-link" href="#">Link</a>
-            <a class="nav-link" href="#">Link</a>
-            <a class="nav-link" href="#">Link</a>
-        </nav>
+
+    <div v-cloak>
+
+        <div class="row">
+            <div class="col">
+                <h3>Dashboard</h3>
+            </div>
+            <div class="col-auto">
+                <button class="btn btn-secondary" @click="get">
+                    <i class="oi oi-reload"></i>
+                    Refresh
+                </button>
+            </div>
+        </div>
+
+        <div class="row">
+
+            <div class="col-md mb-2 mb-md-0">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        Announcements
+                    </div>
+                    <div class="card-body">
+                        {{item.announcements}}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md mb-2 mb-md-0">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        Notifications
+                    </div>
+                    <div class="card-body">
+                        {{item.notifications}}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <br />
+        <h5>Reservations</h5>
+        <div class="row">
+            <div class="col-md mb-2 mb-md-0">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        Today
+                    </div>
+                    <div class="card-body">
+                        {{item.todayReservations}}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md mb-2 mb-md-0">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        Tomorrow
+                    </div>
+                    <div class="card-body">
+                        {{item.tomorrowReservations}}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md mb-2 mb-md-0">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        This Week
+                    </div>
+                    <div class="card-body">
+                        {{item.weekReservations}}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <br />
+        <h5>Billing</h5>
+        <div class="row">
+            <div class="col-md mb-2 mb-md-0">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        Over Due
+                    </div>
+                    <div class="card-body">
+                        {{item.pastDueDateBillings}}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md mb-2 mb-md-0">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        Today
+                    </div>
+                    <div class="card-body">
+                        {{item.todayDueDateBillings}}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md mb-2 mb-md-0">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        Tomorrow
+                    </div>
+                    <div class="card-body">
+                        {{item.tomorrowDueDateBillings}}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md mb-2 mb-md-0">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        This Week
+                    </div>
+                    <div class="card-body">
+                        {{item.weekDueDateBillings}}
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-
-    <main class="container">
-        <div class="d-flex align-items-center p-3 my-3 text-white bg-purple rounded shadow-sm">
-            <img class="me-3" src="/docs/{{< param docs_version >}}/assets/brand/bootstrap-logo-white.svg" alt="" width="48" height="38">
-            <div class="lh-1">
-                <h1 class="h6 mb-0 text-white lh-1">Bootstrap</h1>
-                <small>Since 2011</small>
-            </div>
-        </div>
-
-        <div class="my-3 p-3 bg-body rounded shadow-sm">
-            <h6 class="border-bottom pb-2 mb-0">Recent updates</h6>
-            <div class="d-flex text-muted pt-3">
-                <p class="pb-3 mb-0 small lh-sm border-bottom">
-                    <strong class="d-block text-gray-dark">@username</strong>
-                    Some representative placeholder content, with some information about this user. Imagine this being some sort of status update, perhaps?
-                </p>
-            </div>
-            <div class="d-flex text-muted pt-3">
-                <p class="pb-3 mb-0 small lh-sm border-bottom">
-                    <strong class="d-block text-gray-dark">@username</strong>
-                    Some more representative placeholder content, related to this other user. Another status update, perhaps.
-                </p>
-            </div>
-            <div class="d-flex text-muted pt-3">
-                <p class="pb-3 mb-0 small lh-sm border-bottom">
-                    <strong class="d-block text-gray-dark">@username</strong>
-                    This user also gets some representative placeholder content. Maybe they did something interesting, and you really want to highlight this in the recent updates.
-                </p>
-            </div>
-            <small class="d-block text-end mt-3">
-                <a href="#">All updates</a>
-            </small>
-        </div>
-
-        <div class="my-3 p-3 bg-body rounded shadow-sm">
-            <h6 class="border-bottom pb-2 mb-0">Suggestions</h6>
-            <div class="d-flex text-muted pt-3">
-                <div class="pb-3 mb-0 small lh-sm border-bottom w-100">
-                    <div class="d-flex justify-content-between">
-                        <strong class="text-gray-dark">Full Name</strong>
-                        <a href="#">Follow</a>
-                    </div>
-                    <span class="d-block">@username</span>
-                </div>
-            </div>
-            <div class="d-flex text-muted pt-3">
-                <div class="pb-3 mb-0 small lh-sm border-bottom w-100">
-                    <div class="d-flex justify-content-between">
-                        <strong class="text-gray-dark">Full Name</strong>
-                        <a href="#">Follow</a>
-                    </div>
-                    <span class="d-block">@username</span>
-                </div>
-            </div>
-            <div class="d-flex text-muted pt-3">
-                <div class="pb-3 mb-0 small lh-sm border-bottom w-100">
-                    <div class="d-flex justify-content-between">
-                        <strong class="text-gray-dark">Full Name</strong>
-                        <a href="#">Follow</a>
-                    </div>
-                    <span class="d-block">@username</span>
-                </div>
-            </div>
-            <small class="d-block text-end mt-3">
-                <a href="#">All suggestions</a>
-            </small>
-        </div>
-    </main>
-
 </template>
 
 <script>
     import pageMixin from '../../_Core/Mixins/pageMixin';
 
     export default {
-        //mixins: [pageMixin],
+        mixins: [pageMixin],
 
         props: {
             uid: String,
@@ -118,7 +150,7 @@
         async mounted() {
             const vm = this;
             //alert('index loaded')
-            //await vm.get();
+            await vm.get();
         },
 
         methods: {
@@ -129,16 +161,16 @@
             //async clickMe() {
             //    alert('click me.')
             //},
-            //async get() {
-            //    const vm = this;
+            async get() {
+                const vm = this;
 
-            //    try {
-            //        await vm.$util.axios.get(`/api/managers/default/dashboard`)
-            //            .then(resp => vm.item = resp.data);
-            //    } catch (e) {
-            //        vm.$util.handleError(e);
-            //    }
-            //}
+                try {
+                    await vm.$util.axios.get(`/api/dashboard/administrators`)
+                        .then(resp => vm.item = resp.data);
+                } catch (e) {
+                    vm.$util.handleError(e);
+                }
+            }
         }
     }
 </script>

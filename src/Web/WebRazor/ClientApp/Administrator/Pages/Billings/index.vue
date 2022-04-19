@@ -75,40 +75,54 @@
 
                 <template #table-list="row">
                     <div>
-                        <div class="form-group mb-0 row no-gutters">
-                            <label class="col-3 col-form-label">Name</label>
-                            <div class="col align-self-center">
-                                <a href="#" @click.prevent="$refs.modalViewContact.open(row.item.contactId)">
-                                    {{row.item.number}}
-                                </a>
-                            </div>
-                        </div>
-                        <div class="form-group mb-0 row no-gutters">
-                            <label class="col-3 col-form-label">Status</label>
-                            <div class="col align-self-center">
-                                <div>{{row.item.statusText}}</div>
-                            </div>
-                        </div>
-                        <div class="form-group mb-0 row no-gutters">
-                            <label class="col-3 col-form-label">Email</label>
-                            <div class="col align-self-center">
-                                {{row.item.email}}
-                            </div>
-                        </div>
-                        <div class="form-group mb-0 row no-gutters">
-                            <label class="col-3 col-form-label">Contact #</label>
-                            <div class="col">
+                        <div class="row mb-3">
+                            <label for="subject" class="col-sm-2 col-form-label">Billing Number</label>
+                            <div class="col-sm-10">
                                 <div class="form-control-plaintext">
-
+                                    <a :href="`/administrator/billings/view/${row.item.billingId}`">
+                                        {{row.item.number}}
+                                    </a>
                                 </div>
                             </div>
                         </div>
-                        <div class="form-group mb-0 row no-gutters">
-                            <!--<label class="col-3 col-form-label"></label>-->
-                            <div class="offset-3 col align-self-center">
-                                <button @click="addTask(row.item)" class="btn btn-sm btn-outline-primary">Add Task</button>
+                        <div class="row mb-3">
+                            <label for="subject" class="col-sm-2 col-form-label">Account</label>
+                            <div class="col-sm-10">
+                                <div class="form-control-plaintext">
+                                    <div>
+                                        {{row.item.accountNumber}}
+                                        <sub>
+                                            {{row.item.accountName}}
+                                        </sub>
+                                    </div>
+                                </div>
                             </div>
                         </div>
+                        <div class="row mb-3">
+                            <label for="subject" class="col-sm-2 col-form-label">Status</label>
+                            <div class="col-sm-10">
+                                <div class="form-control-plaintext">
+                                    {{row.item.statusText}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label for="subject" class="col-sm-2 col-form-label">Due Date</label>
+                            <div class="col-sm-10">
+                                <div class="form-control-plaintext">
+                                    {{$moment(row.item.dateDue).format('YYYY-MM-DD hh:mm:ss')}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label for="subject" class="col-sm-2 col-form-label">Amount</label>
+                            <div class="col-sm-10">
+                                <div class="form-control-plaintext">
+                                    {{row.item.amount}}
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </template>
             </table-list>

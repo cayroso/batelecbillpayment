@@ -1,6 +1,5 @@
 ﻿<template>
-    <div v-cloak>
-        xxxxxxxx
+    <div v-cloak>        
         <notifications-index :uid="uid"
                              :urlView="urlView"></notifications-index>
     </div>

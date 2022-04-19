@@ -5,6 +5,7 @@ using Data.Identity.Models.Notifications;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Cayent.Core.Common.Extensions;
 
 namespace WebRazor.Controllers
 {
@@ -86,23 +87,23 @@ namespace WebRazor.Controllers
             return Ok(dto);
         }
 
-        [HttpGet("my-notifications/{unreadOnly}")]
-        public async Task<IActionResult> GetMyNotifications(bool unreadOnly)
+        [HttpGet("my-notifications")]
+        public async Task<IActionResult> GetMyNotifications(bool uro, string c, int p, int s, string sf, int so, CancellationToken cancellationToken)
         {
-            var sql = from nr in _identityWebContext.NotificationReceivers
+            var sql = from nr in _identityWebContext.NotificationReceivers.AsNoTracking()
                       where nr.ReceiverId == UserId
-                      where !unreadOnly || nr.IsRead == false
+                      where !uro || nr.IsRead == false
                       select new ViewNotificationInfo
                       {
                           NotificationId = nr.Notification.NotificationId,
-                          Content = nr.Notification.Content,
+                          //Content = nr.Notification.Content,
                           IconClass = nr.Notification.IconClass,
                           ReferenceId = nr.Notification.ReferenceId,
                           DateSent = nr.Notification.DateSent,
                           Subject = nr.Notification.Subject
                       };
 
-            var dto = await sql.ToListAsync();
+            var dto = await sql.ToPagedItemsAsync(p, s, cancellationToken);
 
             return Ok(dto);
         }
