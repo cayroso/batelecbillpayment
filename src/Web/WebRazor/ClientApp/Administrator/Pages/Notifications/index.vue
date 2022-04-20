@@ -10,7 +10,7 @@
     export default {
         
         props: {
-            uid: String,            
+            uid: { type: String, required: true },
             urlView: { type: String, required: true },
         },
         components: {

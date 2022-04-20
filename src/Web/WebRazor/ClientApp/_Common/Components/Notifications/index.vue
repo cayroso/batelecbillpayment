@@ -30,7 +30,7 @@
                 </template>
                 <template #table-row="row">
                     <td v-text="getRowNumber(row.index)" class="text-center"></td>
-                    <td>
+                    <td v-bind:class="`text-${row.item.iconClass}`">
                         <a :href="`${urlView}/${row.item.notificationId}`" v-bind:class="!row.item.isRead ? 'fw-bold':''" >
                             {{row.item.subject}}
                         </a>
@@ -41,7 +41,7 @@
 
                     <td>
                         <div v-if="row.item.expand">
-                            <button @click="deleteReservation(row.item)" class="btn btn-warning">
+                            <button @click="deleteNotification(row.item)" class="btn btn-warning">
                                 <i class="fas fa-trash me-1"></i>Delete
                             </button>
                         </div>
@@ -54,45 +54,27 @@
                             <label for="subject" class="col-sm-2 col-form-label">Subject</label>
                             <div class="col-sm-10">
                                 <div class="form-control-plaintext">
-                                    <a :href="`${urlView}/${row.item.announcementId}`">
+                                    <a :href="`${urlView}/${row.item.notificationId}`" v-bind:class="!row.item.isRead ? 'fw-bold':''">
                                         {{row.item.subject}}
                                     </a>
                                 </div>
                             </div>
                         </div>
-
-                        <div class="form-group mb-0 row no-gutters">
-                            <label class="col-3 col-form-label">Name</label>
-                            <div class="col align-self-center">
-                                <a href="#" @click.prevent="$refs.modalViewContact.open(row.item.contactId)">
-                                    {{row.item.number}}
-                                </a>
-                            </div>
-                        </div>
-                        <div class="form-group mb-0 row no-gutters">
-                            <label class="col-3 col-form-label">Status</label>
-                            <div class="col align-self-center">
-                                <div>{{row.item.statusText}}</div>
-                            </div>
-                        </div>
-                        <div class="form-group mb-0 row no-gutters">
-                            <label class="col-3 col-form-label">Email</label>
-                            <div class="col align-self-center">
-                                {{row.item.email}}
-                            </div>
-                        </div>
-                        <div class="form-group mb-0 row no-gutters">
-                            <label class="col-3 col-form-label">Contact #</label>
-                            <div class="col">
+                        <div class="row mb-3">
+                            <label for="subject" class="col-sm-2 col-form-label">Date</label>
+                            <div class="col-sm-10">
                                 <div class="form-control-plaintext">
-
+                                    {{$moment(row.item.dateSent).calendar()}}
                                 </div>
                             </div>
                         </div>
-                        <div class="form-group mb-0 row no-gutters">
-                            <!--<label class="col-3 col-form-label"></label>-->
-                            <div class="offset-3 col align-self-center">
-                                <button @click="addTask(row.item)" class="btn btn-sm btn-outline-primary">Add Task</button>
+                        <div v-if="row.item.expand" class="row mb-3">
+                            <div class="col-sm-10 offset-sm-2">
+                                <div class="align-self-center">
+                                    <button @click="deleteNotification(row.item)" class="btn btn-warning">
+                                        <i class="fas fa-trash me-1"></i>Delete
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -219,21 +201,16 @@
 
             async deleteNotification(item) {
                 const vm = this;
-
-                const reason = prompt('Enter reason for deleting this notification.');
-
-                if (!reason)
-                    return;
-
+               
                 if (vm.busy)
                     return;
 
                 try {
                     vm.busy = true;
 
-                    await vm.$util.axios.delete(`/api/reservation/${item.reservationId}/${reason}`)
+                    await vm.$util.axios.delete(`/api/notification/${item.notificationId}`)
                         .then(resp => {
-                            alert('Reservation was deleted.');
+                            vm.$toast.info('Delete NOtification', 'Notification was deleted.');
                         });
 
                 } catch (e) {

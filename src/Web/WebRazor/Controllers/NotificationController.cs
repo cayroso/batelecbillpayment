@@ -77,11 +77,15 @@ namespace WebRazor.Controllers
             //  mark as read
             if (nr != null)
             {
-                nr.DateRead = DateTime.UtcNow;
+                var now = DateTime.UtcNow;
+                if (nr.DateRead > now)
+                {
+                    nr.DateRead = now;
 
-                await _identityWebContext.SaveChangesAsync(cancellationToken);
+                    await _identityWebContext.SaveChangesAsync(cancellationToken);
+                }
 
-                dto.IsRead = true;
+                dto.IsRead = nr.IsRead;
             }
 
             return Ok(dto);
@@ -90,6 +94,8 @@ namespace WebRazor.Controllers
         [HttpGet("my-notifications")]
         public async Task<IActionResult> GetMyNotifications(bool uro, string c, int p, int s, string sf, int so, CancellationToken cancellationToken)
         {
+            var now = DateTime.UtcNow;
+
             var sql = from nr in _identityWebContext.NotificationReceivers.AsNoTracking()
                       where nr.ReceiverId == UserId
                       where !uro || nr.IsRead == false
@@ -100,7 +106,8 @@ namespace WebRazor.Controllers
                           IconClass = nr.Notification.IconClass,
                           ReferenceId = nr.Notification.ReferenceId,
                           DateSent = nr.Notification.DateSent,
-                          Subject = nr.Notification.Subject
+                          Subject = nr.Notification.Subject,
+                          IsRead = nr.DateRead < now
                       };
 
             var dto = await sql.ToPagedItemsAsync(p, s, cancellationToken);
@@ -117,7 +124,7 @@ namespace WebRazor.Controllers
             return Ok();
         }
 
-        [HttpDelete("{notificationId}/delete")]
+        [HttpDelete("{notificationId}")]
         public async Task<IActionResult> Remove(string notificationId)
         {
             var data = await _identityWebContext.Notifications.Include(e => e.Receivers)

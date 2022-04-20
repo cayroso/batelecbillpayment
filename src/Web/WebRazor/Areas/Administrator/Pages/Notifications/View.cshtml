@@ -3,6 +3,9 @@
 @{
 }
 <notifications-view uid="@Model.UserId"
-                     id="@Model.Id"
-                     url-view="/administrator/notifications/view">
+                    id="@Model.Id"
+                    role-id="administrator"
+                    url-view-announcement="/administrator/announcements/view" 
+                    url-view-billing="/administrator/billings/view" 
+                    url-view-reservation="/administrator/reservations/view">
 </notifications-view>

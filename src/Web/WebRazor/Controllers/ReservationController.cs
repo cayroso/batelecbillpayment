@@ -37,7 +37,7 @@ namespace WebRazor.Controllers
                     AccountId = e.AccountId,
                     AccountName = $"{e.Account.UserInformation.FirstLastName}"
                 })
-                .ToListAsync();
+                .FirstOrDefaultAsync();
 
             return Ok(dto);
 

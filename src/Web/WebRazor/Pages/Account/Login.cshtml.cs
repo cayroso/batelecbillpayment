@@ -1,3 +1,4 @@
+using App.Services;
 using Data.Constants;
 using Data.Identity.DbContext;
 using Data.Identity.Models.Users;
@@ -29,7 +30,7 @@ namespace WebRazor.Pages.Account
         {
         }
 
-        public async Task<IActionResult> OnPost()
+        public async Task<IActionResult> OnPost([FromServices] NotificationService _notificationService, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
             {
@@ -50,20 +51,32 @@ namespace WebRazor.Pages.Account
             //var u = await _identityWebContext.Users.FirstOrDefaultAsync(e => e.Email == Email);
             //var ui = await _identityWebContext.UserInformations.FirstOrDefaultAsync(e => e.UserId == u.Id);
 
-            var signInResult = await _signInManager.CheckPasswordSignInAsync(user, Input.Password, false);
+            var signInResult = await _signInManager.CheckPasswordSignInAsync(user, Input.Password, true);
 
             if (!signInResult.Succeeded)
             {
                 if (signInResult.IsLockedOut)
+                {
                     ErrorMessage = "Account is locked out.";
 
-                if (signInResult.IsNotAllowed)
+                    await _notificationService.DeleteNotificationByReferenceId(user.Id, cancellationToken);
+
+                    await _notificationService.AddNotification(user.Id, "error", $"User [{Input.Email}] Locked",
+                        $"{Input.Email} was locked at {DateTime.Now}.", DateTime.UtcNow,
+                        Data.Identity.Models.Notifications.EnumNotificationType.Error, Data.Identity.Models.Notifications.EnumNotificationEntityClass.Unknown,
+                        Array.Empty<string>(), new[] { ApplicationRoles.System.Name }, cancellationToken);
+
+                }
+                else if (signInResult.IsNotAllowed)
                     ErrorMessage = "Account not allowed to access the system.";
 
-                if (signInResult.RequiresTwoFactor)
+                else if (signInResult.RequiresTwoFactor)
                     ErrorMessage = "System requires two factor authentication.";
 
-                ErrorMessage = "Invalid username/email or password.";
+                else
+                    ErrorMessage = "Invalid username/email or password.";
+
+
             }
 
             if (!string.IsNullOrWhiteSpace(ErrorMessage))
@@ -71,7 +84,7 @@ namespace WebRazor.Pages.Account
 
             await _signInManager.SignInAsync(user, Input.RememberMe);
 
-            
+
             var isSystem = await _userManager.IsInRoleAsync(user, ApplicationRoles.System.Name);
             var isAdmin = await _userManager.IsInRoleAsync(user, ApplicationRoles.Administrator.Name);
             var isConsumer = await _userManager.IsInRoleAsync(user, ApplicationRoles.Consumer.Name);

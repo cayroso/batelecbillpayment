@@ -3,13 +3,16 @@
         <div class="row align-items-center">
             <div class="col">
                 <h1 class="h3 mb-sm-0">
-                    <i class="fas fa-fw fa-bullhorn me-1"></i>View Billings
+                    <i class="fas fa-fw fa-bullhorn me-1"></i>View Announcement
                 </h1>
             </div>
             <div class="col-auto">
                 <div class="d-flex flex-row">
                     <template v-if="roleId==='administrator'">
-                        <a :href="`${urlEdit}`" class="btn btn-warning">Edit</a>
+                        <!--<a :href="`${urlEdit}`" class="btn btn-warning">Edit</a>-->
+                        <button @click="remove" class="ms-1 btn btn-danger">
+                            <span class="fas fa-fw fa-trash"></span>
+                        </button>
                     </template>
                     <button @click="get" class="ms-2 btn btn-primary">
                         <span class="fas fa-fw fa-sync"></span>
@@ -111,6 +114,32 @@
                         .then(resp => {
 
                             vm.item = resp.data;
+                        });
+
+                } catch (e) {
+                    vm.$util.handleError(e);
+                } finally {
+                    vm.busy = false
+                }
+            },
+
+            async remove() {
+                const vm = this;
+
+                if (vm.busy)
+                    return;
+
+                try {
+                    vm.busy = true;
+
+                    await vm.$util.axios.delete(`/api/announcement/${vm.id}`)
+                        .then(resp => {
+                            vm.$toast.warning('Delete Announcment', 'Announcemnt was deleted.', {
+                                async onClose() {
+                                    vm.close();
+                                }
+
+                            })
                         });
 
                 } catch (e) {

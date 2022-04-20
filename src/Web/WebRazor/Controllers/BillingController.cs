@@ -9,6 +9,7 @@ using Data.Identity.Models;
 using Cayent.Core.Common.Extensions;
 using System.Net.Http.Headers;
 using Data.Identity.Models.Billings;
+using App.Services;
 
 namespace WebRazor.Controllers
 {
@@ -18,9 +19,12 @@ namespace WebRazor.Controllers
     public class BillingController : BaseController
     {
         IdentityWebContext _identityWebContext;
-        public BillingController(IdentityWebContext identityWebContext)
+        readonly NotificationService _notificationService;
+
+        public BillingController(IdentityWebContext identityWebContext, NotificationService notificationService)
         {
             _identityWebContext = identityWebContext;
+            _notificationService = notificationService;
         }
 
         [HttpGet("{billingId}")]
@@ -232,7 +236,7 @@ namespace WebRazor.Controllers
 
 
         [HttpPost("add-billing")]
-        public async Task<IActionResult> AddBilling(AddBillingInfo info)
+        public async Task<IActionResult> AddBilling(AddBillingInfo info, CancellationToken cancellationToken)
         {
             var data = new Data.Identity.Models.Billings.Billing
             {
@@ -256,6 +260,12 @@ namespace WebRazor.Controllers
             await _identityWebContext.AddAsync(data);
 
             await _identityWebContext.SaveChangesAsync();
+
+            await _notificationService.AddNotification(data.BillingId, "success", "Billing was created",
+                $"New billing was created by administrator: {User.Identity.Name}", DateTime.UtcNow,
+                Data.Identity.Models.Notifications.EnumNotificationType.Success, Data.Identity.Models.Notifications.EnumNotificationEntityClass.Billing,
+                new[] { info.AccountId}, Array.Empty<string>(), cancellationToken);
+
 
             return Ok(data.BillingId);
         }

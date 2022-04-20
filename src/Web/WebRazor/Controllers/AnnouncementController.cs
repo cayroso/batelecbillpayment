@@ -80,13 +80,13 @@ namespace WebRazor.Controllers
             await _identityWebContext.SaveChangesAsync(cancellationToken);
 
             await _notificationService.AddNotification(data.AnnouncementId, "info", "New Announcement", data.Subject, data.DateCreated,
-                    EnumNotificationType.Success, EnumNotificationEntityClass.Notification, Array.Empty<string>(), new[] { "Consumer" }, cancellationToken);
+                    EnumNotificationType.Success, EnumNotificationEntityClass.Announcement, Array.Empty<string>(), new[] { "Consumer" }, cancellationToken);
 
             return Ok(data.AnnouncementId);
         }
 
         [Authorize(Roles = "Administrator")]
-        [HttpDelete("{announcementId}/delete")]
+        [HttpDelete("{announcementId}")]
         public async Task<IActionResult> Remove(string announcementId)
         {
             var data = await _identityWebContext.Announcements

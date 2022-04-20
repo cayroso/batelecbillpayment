@@ -24,6 +24,8 @@ namespace Data.Identity.Models.Notifications
         Unknown = 0,
         Notification = 1,
         Reservation = 2,
+        Billing = 3,
+        Announcement = 4,
     }
 
     public class Notification

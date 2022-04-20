@@ -4,6 +4,9 @@
 import * as signalR from '@microsoft/signalr';
 
 export default {
+    props: {
+        //uid: { type: String, required: true },
+    },
     components: {
     },
     data() {
@@ -45,16 +48,16 @@ export default {
     },
     async mounted() {
         const vm = this;
-
+        
         if (vm.uid) {
             //await vm.connectNotificationHub();
 
-            await vm.connectChatHub();
+            //await vm.connectChatHub();
 
-            vm.$bus.$on('event:open-chat', vm.onOpenChat);
-            vm.$bus.$on('event:close-chat', vm.onCloseChat);
-            vm.$bus.$on('event:send-message', vm.onSendMessage);
-            vm.$bus.$on('event:send-team-message', vm.onSendTeamMessage);
+            //vm.$bus.$on('event:open-chat', vm.onOpenChat);
+            //vm.$bus.$on('event:close-chat', vm.onCloseChat);
+            //vm.$bus.$on('event:send-message', vm.onSendMessage);
+            //vm.$bus.$on('event:send-team-message', vm.onSendTeamMessage);
         }
     },
     methods: {
@@ -101,7 +104,7 @@ export default {
             //vm.$util.href(href);
             const referrer = document.referrer;
 
-            if (referrer && referrer.includes('/Identity/Account/Login')) {
+            if (referrer && referrer.includes('/account/Login')) {
                 history.go(-2);
             }
             else {

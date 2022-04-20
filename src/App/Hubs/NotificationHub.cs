@@ -14,6 +14,7 @@ namespace App.Hubs
         public string NotificationId { get; set; }
         public EnumNotificationType NotificationType { get; set; }
         public EnumNotificationEntityClass NotificationEntityClass { get; set; }
+        public string NotificationEntityClassText => NotificationEntityClass.ToString();
         public string IconClass { get; set; }
         public string Subject { get; set; }
         public string Content { get; set; }
@@ -25,11 +26,11 @@ namespace App.Hubs
     {
         Task OnNotificationCreated(NotificationResponse response);
 
-        Task OnReservationCreated(Notification notification);
-        Task OnReservationDeleted(Notification notification);
+        Task OnReservationCreated(NotificationResponse notification);
+        Task OnReservationDeleted(NotificationResponse notification);
 
-        Task OnBillingCreated(Notification notification);
-        Task OnBillingPaid(Notification notification);
+        Task OnBillingCreated(NotificationResponse notification);
+        Task OnBillingPaid(NotificationResponse notification);
     }
 
     [Authorize]

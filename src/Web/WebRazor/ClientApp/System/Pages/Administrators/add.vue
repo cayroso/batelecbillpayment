@@ -3,7 +3,7 @@
         <div class="row align-items-center">
             <div class="col-sm">
                 <h1 class="h3 mb-sm-0">
-                    <i class="fas fa-fw fa-money-bill me-1"></i>Add Billings
+                    <i class="fas fa-fw fa-user-shield me-1"></i>Add Administrator
                 </h1>
             </div>
             <div class="col-sm-auto">
@@ -29,25 +29,46 @@
                             <div class="col-sm-6">
 
                                 <div class="form-floating mb-3">
-                                    <input v-model="item.subject" type="text" class="form-control" id="subject" placeholder="Subject">
-                                    <label for="subject">Subject</label>
-                                    <div v-if="validations.has('subject')" class="d-block invalid-feedback">
-                                        {{validations.get('subject')}}
+                                    <input v-model="item.email" type="text" class="form-control" id="email" placeholder="Email">
+                                    <label for="email">Email</label>
+                                    <div v-if="validations.has('email')" class="d-block invalid-feedback">
+                                        {{validations.get('email')}}
                                     </div>
                                 </div>
                                 <div class="form-floating mb-3">
-                                    <textarea v-model="item.content" style="height: 100px" class="form-control" id="content" placeholder="Content"></textarea>
-                                    <label for="content">Content</label>
-                                    <div v-if="validations.has('content')" class="d-block invalid-feedback">
-                                        {{validations.get('content')}}
+                                    <input v-model="item.phoneNumber" type="tel" class="form-control" id="phoneNumber" placeholder="Phone Number">
+                                    <label for="phoneNumber">Phone Number</label>
+                                    <div v-if="validations.has('phoneNumber')" class="d-block invalid-feedback">
+                                        {{validations.get('phoneNumber')}}
+                                    </div>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input v-model="item.firstName" type="text" class="form-control" id="firstName" placeholder="First Name">
+                                    <label for="firstName">First Name</label>
+                                    <div v-if="validations.has('firstName')" class="d-block invalid-feedback">
+                                        {{validations.get('firstName')}}
+                                    </div>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input v-model="item.middleName" type="text" class="form-control" id="middleName" placeholder="Middle Name">
+                                    <label for="middleName">Middle Name</label>
+                                    <div v-if="validations.has('middleName')" class="d-block invalid-feedback">
+                                        {{validations.get('middleName')}}
+                                    </div>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input v-model="item.lastName" type="text" class="form-control" id="lastName" placeholder="Last Name">
+                                    <label for="lastName">Last Name</label>
+                                    <div v-if="validations.has('lastName')" class="d-block invalid-feedback">
+                                        {{validations.get('lastName')}}
                                     </div>
                                 </div>
 
                                 <div class="form-floating mb-3">
-                                    <input v-model="item.datePost" type="date" class="form-control" id="datePost" placeholder="Post Date">
-                                    <label for="datePost">Post Date</label>
-                                    <div v-if="validations.has('datePost')" class="d-block invalid-feedback">
-                                        {{validations.get('datePost')}}
+                                    <input v-model="item.password" type="password" class="form-control" id="password" placeholder="Password">
+                                    <label for="password">Password</label>
+                                    <div v-if="validations.has('password')" class="d-block invalid-feedback">
+                                        {{validations.get('password')}}
                                     </div>
                                 </div>
                             </div>
@@ -73,12 +94,15 @@
             return {
                 isDirty: false,
                 validations: new Map(),
-                lookups: {                    
+                lookups: {
                 },
                 item: {
-                    subject: "",
-                    content: "",                    
-                    datePost: this.$moment().format('YYYY-MM-DD'),                    
+                    email: null,
+                    phoneNumber: null,
+                    firstName: null,
+                    middleName: null,
+                    lastName: null,
+                    password: null,
                 }
             };
         },
@@ -94,16 +118,28 @@
 
                 const validations = new Map();
 
-                if (!item.subject) {
-                    validations.set('subject', 'Subject is required.');
+                if (!item.email) {
+                    validations.set('email', 'Email is required.');
                 }
 
-                if (!item.content) {
-                    validations.set('content', 'Content is required.');
+                if (!item.phoneNumber) {
+                    validations.set('phoneNumber', 'Phone Number is required.');
                 }
-                
-                if (!item.datePost) {
-                    validations.set('datePost', 'Post Date is required.');
+
+                if (!item.firstName) {
+                    validations.set('firstName', 'First Name is required.');
+                }
+
+                if (!item.middleName) {
+                    validations.set('middleName', 'Middle Name is required.');
+                }
+
+                if (!item.lastName) {
+                    validations.set('lastName', 'Last Name is required.');
+                }
+
+                if (!item.password) {
+                    validations.set('password', 'Password is required.');
                 }
 
 
@@ -150,21 +186,23 @@
                     vm.busy = true;
 
                     const payload = vm.$util.clone(vm.item);
-                    //payload.salutation = payload.salutation === null ? 0 : payload.salutation;
-                    //payload.dateOfInitialContact = moment(payload.dateOfInitialContact).utc();
-                    //payload.annualRevenue = payload.annualRevenue === null ? 0 : payload.annualRevenue;
-                    //payload.rating = payload.rating === null ? 0 : payload.rating;
 
-                    await vm.$util.axios.post(`/api/announcement/add/`, payload)
+                    await vm.$util.axios.post(`/api/account/administrator/add/`, payload)
                         .then(resp => {
-                            alert('New Announcement Created.');
-                            //vm.$bvToast.toast('Contact created.', { title: 'Add Contact', variant: 'success', toaster: 'b-toaster-bottom-right' });
+                            vm.$toast.success('Add Administrator', 'New administrator created', {
+                                async onClose() {
+                                    const url = `${vm.urlView}/${resp.data}`;
+                                    vm.$util.href(url);
+                                }
+                            })
+                            //alert('New Announcement Created.');
+                            ////vm.$bvToast.toast('Contact created.', { title: 'Add Contact', variant: 'success', toaster: 'b-toaster-bottom-right' });
 
-                            setTimeout(() => {
-                                const url = `${vm.urlView}/${resp.data}`;
-                                vm.$util.href(url);
-                                //vm.$router.push({ name: 'contactsView', params: { id: resp.data } });
-                            }, 500);
+                            //setTimeout(() => {
+                            //    const url = `${vm.urlView}/${resp.data}`;
+                            //    vm.$util.href(url);
+                            //    //vm.$router.push({ name: 'contactsView', params: { id: resp.data } });
+                            //}, 500);
                         });
 
                 } catch (e) {

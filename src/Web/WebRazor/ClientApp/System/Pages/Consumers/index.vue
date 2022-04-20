@@ -44,7 +44,7 @@
                     <th>Phone</th>
                     <th>Account Number</th>
                     <th>Meter Number</th>
-                    <th></th>
+                    <th>Is Locked</th>
                 </template>
                 <template #table-row="row">
                     <td v-text="getRowNumber(row.index)" class="text-center"></td>
@@ -66,55 +66,92 @@
                         {{row.item.meterNumber}}
                     </td>
                     <th>
-                        <template v-if="row.item.isLocked">
-                            <button @click="lockUnlockUser(row.item.userId, false)" class="btn btn-sm btn-outline-primary">
-                                <i class="fa-solid fa-unlock"></i>
-                                Unlock
-                            </button>
-                        </template>
-                        <template v-else>
-                            <button @click="lockUnlockUser(row.item.userId, true)" class="btn btn-sm btn-outline-warning">
-                                <i class="fa-solid fa-lock"></i>
-                                Lock
-                            </button>
-                        </template>
+                        <div v-if="row.item.expand">
+                            <template v-if="row.item.isLocked">
+                                <button @click="lockUnlockUser(row.item.userId, false)" class="btn btn-sm btn-outline-primary">
+                                    <i class="fa-solid fa-unlock"></i>
+                                    Unlock
+                                </button>
+                            </template>
+                            <template v-else>
+                                <button @click="lockUnlockUser(row.item.userId, true)" class="btn btn-sm btn-outline-warning">
+                                    <i class="fa-solid fa-lock"></i>
+                                    Lock
+                                </button>
+                            </template>
+                        </div>
+                        <div v-else>
+                            <span v-if="row.item.isLocked" class="fa-solid fa-lock text-danger"></span>
+                        </div>
                     </th>
                 </template>
 
                 <template #table-list="row">
                     <div>
-                        <div class="form-group mb-0 row no-gutters">
-                            <label class="col-3 col-form-label">Name</label>
-                            <div class="col align-self-center">
-                                <a href="#" @click.prevent="$refs.modalViewContact.open(row.item.contactId)">
-                                    {{row.item.number}}
-                                </a>
-                            </div>
-                        </div>
-                        <div class="form-group mb-0 row no-gutters">
-                            <label class="col-3 col-form-label">Status</label>
-                            <div class="col align-self-center">
-                                <div>{{row.item.statusText}}</div>
-                            </div>
-                        </div>
-                        <div class="form-group mb-0 row no-gutters">
-                            <label class="col-3 col-form-label">Email</label>
-                            <div class="col align-self-center">
-                                {{row.item.email}}
-                            </div>
-                        </div>
-                        <div class="form-group mb-0 row no-gutters">
-                            <label class="col-3 col-form-label">Contact #</label>
-                            <div class="col">
+                        <div class="row mb-3">
+                            <label for="subject" class="col-sm-2 col-form-label">Name</label>
+                            <div class="col-sm-10">
                                 <div class="form-control-plaintext">
-
+                                    <a :href="`${urlView}/${row.item.userId}`">
+                                        {{row.item.firstLastName}}
+                                    </a>
                                 </div>
                             </div>
                         </div>
-                        <div class="form-group mb-0 row no-gutters">
-                            <!--<label class="col-3 col-form-label"></label>-->
-                            <div class="offset-3 col align-self-center">
-                                <button @click="addTask(row.item)" class="btn btn-sm btn-outline-primary">Add Task</button>
+                        <div class="row mb-3">
+                            <label for="subject" class="col-sm-2 col-form-label">Email</label>
+                            <div class="col-sm-10">
+                                <div class="form-control-plaintext">
+                                    {{row.item.email}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label for="subject" class="col-sm-2 col-form-label">Phone Number</label>
+                            <div class="col-sm-10">
+                                <div class="form-control-plaintext">
+                                    {{row.item.phoneNumber}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label for="subject" class="col-sm-2 col-form-label">Account Number</label>
+                            <div class="col-sm-10">
+                                <div class="form-control-plaintext">
+                                    {{row.item.accountNumber}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label for="subject" class="col-sm-2 col-form-label">Meter Number</label>
+                            <div class="col-sm-10">
+                                <div class="form-control-plaintext">
+                                    {{row.item.meterNumber}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label for="subject" class="col-sm-2 col-form-label">Is Locked</label>
+                            <div class="col-sm-10">
+                                <div class="align-self-center">
+                                    <div v-if="row.item.expand">
+                                        <template v-if="row.item.isLocked">
+                                            <button @click="lockUnlockUser(row.item.userId, false)" class="btn btn-sm btn-outline-primary">
+                                                <i class="fa-solid fa-unlock"></i>
+                                                Unlock
+                                            </button>
+                                        </template>
+                                        <template v-else>
+                                            <button @click="lockUnlockUser(row.item.userId, true)" class="btn btn-sm btn-outline-warning">
+                                                <i class="fa-solid fa-lock"></i>
+                                                Lock
+                                            </button>
+                                        </template>
+                                    </div>
+                                    <div v-else>
+                                        <span v-if="row.item.isLocked" class="fa-solid fa-lock text-danger"></span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

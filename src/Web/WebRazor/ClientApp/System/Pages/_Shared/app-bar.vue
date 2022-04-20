@@ -15,7 +15,7 @@
                     </li>                    
                     <li class="nav-item">
                         <a class="nav-link" href="/system/administrators">
-                            <i class="fa-solid fa-calendar-check me-2" aria-hidden="true"></i>Administrators
+                            <i class="fa-solid fa-user-shield me-2" aria-hidden="true"></i>Administrators
                         </a>
                     </li>
                     <li class="nav-item">

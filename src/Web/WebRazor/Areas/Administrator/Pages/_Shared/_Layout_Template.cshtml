@@ -23,15 +23,19 @@
     <div id="root">
     </div>
     <script id="app" type="text/x-template">
-        <div v-cloak>
+        <div v-cloak uid="fooo">
 
-            <AppBar app-name="@appName"/>
+            <AppBar app-name="@appName" />
 
             <div class="container my-2">
         @RenderBody()
 
             </div>
             <Toasts></Toasts>
+            <Notification uid="@uid"
+                    url-view-announcement="/administrator/announcements/view"
+                    url-view-billing="/administrator/billings/view"
+                    url-view-reservation="/administrator/reservations/view"></Notification>
         </div>
     </script>
 

@@ -2,7 +2,7 @@
 <script>
     'use strict';
     import appMixin from '../../../_Core/Mixins/appMixin';
-
+    
     //import modalViewChat from '../../../_Core/Modals/Chats/view.vue';
 
     //import SystemBar from './system-bar.vue';
@@ -27,10 +27,10 @@
 
     import ReservationsIndex from '../Reservations/index.vue';
     import ReservationsView from '../Reservations/view.vue';
-
+    
     export default {
         template: '#app',
-        //mixins: [appMixin],
+        mixins: [appMixin],
         components: {
 
             //modalViewChat,
@@ -57,8 +57,7 @@
             ReservationsIndex,
             ReservationsView,
         },
-        props: {
-            uid: String,
+        props: {            
             appName: String,
             urlProfilePicture: String,
         },

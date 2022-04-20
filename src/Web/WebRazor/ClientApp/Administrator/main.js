@@ -9,6 +9,7 @@ import { createApp } from 'vue';
 import App from './Pages/_Shared/app.vue';
 import pluginCommon from '../_Core/Plugins/common';
 import pluginToasts from '../_Core/Plugins/toasts';
+import Notification from '../_Core/Components/Notifications/Notification.vue';
 
 //import MomentVue from 'vue-moment';
 
@@ -41,6 +42,7 @@ const app = createApp(App);
 app.use(pluginCommon);
 app.use(pluginToasts);
 
+app.component('Notification', Notification);
 app.component('m-pagination', Pagination);
 app.component('sort-field', SortField);
 app.component('table-list', TableList);

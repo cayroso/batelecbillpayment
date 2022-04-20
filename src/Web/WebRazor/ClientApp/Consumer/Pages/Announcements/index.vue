@@ -42,38 +42,24 @@
 
                 <template #table-list="row">
                     <div>
-                        <div class="form-group mb-0 row no-gutters">
-                            <label class="col-3 col-form-label">Name</label>
-                            <div class="col align-self-center">
-                                <a href="#" @click.prevent="$refs.modalViewContact.open(row.item.contactId)">
-                                    {{row.item.number}}
-                                </a>
-                            </div>
-                        </div>
-                        <div class="form-group mb-0 row no-gutters">
-                            <label class="col-3 col-form-label">Status</label>
-                            <div class="col align-self-center">
-                                <div>{{row.item.statusText}}</div>
-                            </div>
-                        </div>
-                        <div class="form-group mb-0 row no-gutters">
-                            <label class="col-3 col-form-label">Email</label>
-                            <div class="col align-self-center">
-                                {{row.item.email}}
-                            </div>
-                        </div>
-                        <div class="form-group mb-0 row no-gutters">
-                            <label class="col-3 col-form-label">Contact #</label>
-                            <div class="col">
-                                <div class="form-control-plaintext">
-
+                        <div>
+                            <div class="row mb-3">
+                                <label for="subject" class="col-sm-2 col-form-label">Subject</label>
+                                <div class="col-sm-10">
+                                    <div class="form-control-plaintext">
+                                        <a :href="`${urlView}/${row.item.announcementId}`">
+                                            {{row.item.subject}}
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="form-group mb-0 row no-gutters">
-                            <!--<label class="col-3 col-form-label"></label>-->
-                            <div class="offset-3 col align-self-center">
-                                <button @click="addTask(row.item)" class="btn btn-sm btn-outline-primary">Add Task</button>
+                            <div class="row mb-3">
+                                <label for="subject" class="col-sm-2 col-form-label">Date</label>
+                                <div class="col-sm-10">
+                                    <div class="form-control-plaintext">
+                                        {{$moment(row.item.dateCreated).calendar()}}
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

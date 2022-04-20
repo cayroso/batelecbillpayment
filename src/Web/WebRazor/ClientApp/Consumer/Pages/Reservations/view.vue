@@ -1,18 +1,24 @@
 ﻿<template>
     <div v-cloak>
-
+        <reservations-view :uid="uid"
+                           :id="id"
+                           :roleId="roleId"></reservations-view>
     </div>
 </template>
 <script>
-    import pageMixin from '../../../_Core/Mixins/pageMixin';
+    import reservationsView from '../../../_Common/Components/Reservations/view.vue';
 
     export default {
-        mixins: [pageMixin],
+        //mixins: [pageMixin],
 
         props: {
-            uid: String,
+            uid: { type: String, required: true },
+            id: { type: String, required: true },
+            roleId: { type: String, required: true },
         },
-
+        components: {
+            reservationsView
+        },
         data() {
             return {
 

@@ -1,41 +1,14 @@
-@using System.Security.Claims
-@{
+@using System.Security.Claims @{ var appName = "Batelec Billing Payment"; var theme = User.FindFirst("Profile:Theme")?.Value; var uid = User.FindFirst(ClaimTypes.NameIdentifier)?.Value; var urlProfilePicture = string.Empty; }<!doctype html><html lang="en"><head><base href="~/"/><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,minimal-ui"/><title>@ViewData["Title"] - @appName</title><script defer="defer" src="/app/203-0b2661fa0b8f60f3bd21.js"></script><script defer="defer" src="/app/287-d26a6e0ca8884f8b5438.js"></script><script defer="defer" src="/app/257-7e4de7cf3cd04789c996.js"></script><script defer="defer" src="/app/administrator-7e8e1a59a2eba202ef7f.js"></script><link href="/app/203-cbb67ddb6a80010ce463.css" rel="stylesheet"><link href="/app/287-471881b539c1b12bb0e5.css" rel="stylesheet"><link href="/app/administrator-5fd50c8638c67b2a6ac3.css" rel="stylesheet"></head><body id="top" class="bg-light"><div id="root"></div><script id="app" type="text/x-template"><div v-cloak uid="fooo">
 
-    var appName = "Batelec Billing Payment";
-    var theme = User.FindFirst("Profile:Theme")?.Value;
-    var uid = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-    var urlProfilePicture = string.Empty;
-}
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <base href="~/" />
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui" />
-    <title>@ViewData["Title"] - @appName</title>
-
-    <script defer src="/app/vendor-node_modules_microsoft_signalr_dist_esm_HubConnectionBuilder_js-node_modules_axios_ind-9d7fdf-e79d787f69b76228163e.js"></script><script defer src="/app/ClientApp__Core_Mixins_appMixin_js-ClientApp__Core_Mixins_navbarMixin_js-ClientApp__Core_Mixi-c84e07-d715976c57a5a2331437.js"></script><script defer src="/app/administrator-2a2ea9bc740c4288df2e.js"></script><link href="/app/vendor-node_modules_microsoft_signalr_dist_esm_HubConnectionBuilder_js-node_modules_axios_ind-9d7fdf-2a60d4984d8240d30716.css" rel="stylesheet"><link href="/app/ClientApp__Core_Mixins_appMixin_js-ClientApp__Core_Mixins_navbarMixin_js-ClientApp__Core_Mixi-c84e07-5f97ccb4ae1f759c3616.css" rel="stylesheet"><link href="/app/administrator-168e9572fa22c4402582.css" rel="stylesheet">
-
-</head>
-<body id="top" class="bg-light">
-    <div id="root">
-    </div>
-    <script id="app" type="text/x-template">
-        <div v-cloak>
-
-            <AppBar app-name="@appName"/>
+            <AppBar app-name="@appName" />
 
             <div class="container my-2">
         @RenderBody()
 
             </div>
             <Toasts></Toasts>
-        </div>
-    </script>
-
-    
-        @RenderSection("Scripts", required: false)
-</body>
-</html>
+            <Notification uid="@uid"
+                    url-view-announcement="/administrator/announcements/view"
+                    url-view-billing="/administrator/billings/view"
+                    url-view-reservation="/administrator/reservations/view"></Notification>
+        </div></script>@RenderSection("Scripts", required: false)</body></html>

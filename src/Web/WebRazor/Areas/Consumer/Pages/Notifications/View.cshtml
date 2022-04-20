@@ -1,4 +1,11 @@
 ﻿@page "{id}"
 @model WebRazor.Areas.Consumer.Pages.Notifications.ViewModel
-@{
+@{    
 }
+<notifications-view uid="@Model.UserId"
+                    id="@Model.Id"
+                    role-id="consumer"
+                    url-view-announcement="/consumer/announcements/view" 
+                    url-view-billing="/consumer/billings/view" 
+                    url-view-reservation="/consumer/reservations/view">
+</notifications-view>

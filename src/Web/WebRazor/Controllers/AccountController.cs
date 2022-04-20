@@ -132,14 +132,14 @@ namespace WebRazor.Controllers
             {
                 var now = DateTime.MaxValue.Truncate().AsUtc();
 
-                await _userManager.SetLockoutEnabledAsync(user, true);
+                //await _userManager.SetLockoutEnabledAsync(user, true);
                 await _userManager.SetLockoutEndDateAsync(user, now);
             }
             else
             {
                 var now = DateTime.UtcNow.Truncate().AsUtc();
 
-                await _userManager.SetLockoutEnabledAsync(user, false);
+                //await _userManager.SetLockoutEnabledAsync(user, false);
                 await _userManager.SetLockoutEndDateAsync(user, now.AddDays(-1));
             }
 
