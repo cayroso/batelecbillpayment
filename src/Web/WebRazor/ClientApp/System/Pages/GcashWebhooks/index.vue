@@ -13,7 +13,6 @@
                             <i class="fas fa-plus me-1"></i>Add
                         </a>
                     </div>-->
-
                     <!--<div v-if="filter.visible" class="mr-1">
                         <button @click="resetDates" class="btn btn-primary">
                             <i class="fas fa-sync mr-1"></i>
@@ -36,52 +35,52 @@
             </div>
         </div>
         <div class="mt-2 table-responsive">
-            <table-list :header="{key: 'userId', columns:[]}" :items="filter.items" :getRowNumber="getRowNumber" :setSelected="setSelected" :isSelected="isSelected" table-css="">
+            <table-list :header="{key: 'id', columns:[]}" :items="filter.items" :getRowNumber="getRowNumber" :setSelected="setSelected" :isSelected="isSelected" table-css="">
                 <template #header>
                     <th class="text-center">#</th>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Phone</th>
-                    <th>Account Number</th>
-                    <th>Meter Number</th>
-                    <th>Is Locked</th>
+                    <th>Url</th>
+                    <th>Status</th>
+                    <th>Live Mode</th>
+                    <th>Events</th>
+                    <th>Secret Key</th>
+                    <th></th>
                 </template>
                 <template #table-row="row">
                     <td v-text="getRowNumber(row.index)" class="text-center"></td>
                     <td>
-                        <a :href="`${urlView}/${row.item.userId}`">
-                            {{row.item.firstLastName}}
+                        <a :href="`${urlView}/${row.item.id}`">
+                            {{row.item.url}}
                         </a>
                     </td>
                     <td>
-                        {{row.item.email}}
+                        {{row.item.status}}
                     </td>
                     <td>
-                        {{row.item.phoneNumber}}
+                        {{row.item.liveMode}}
                     </td>
                     <td>
-                        {{row.item.accountNumber}}
+                        {{row.item.events}}
                     </td>
                     <td>
-                        {{row.item.meterNumber}}
+                        {{row.item.secret_Key}}
                     </td>
                     <th>
                         <div v-if="row.item.expand">
-                            <template v-if="row.item.isLocked">
-                                <button @click="lockUnlockUser(row.item.userId, false)" class="btn btn-sm btn-outline-primary">
-                                    <i class="fa-solid fa-unlock"></i>
-                                    Unlock
+                            <template v-if="row.item.status==='enabled'">
+                                <button @click="enableDisableWebHook(row.item.id, false)" class="btn btn-sm btn-outline-danger">
+                                    <i class="fa-solid fa-lock"></i>
+                                    Disable
                                 </button>
                             </template>
                             <template v-else>
-                                <button @click="lockUnlockUser(row.item.userId, true)" class="btn btn-sm btn-outline-warning">
-                                    <i class="fa-solid fa-lock"></i>
-                                    Lock
+                                <button @click="enableDisableWebHook(row.item.id, true)" class="btn btn-sm btn-outline-success">
+                                    <i class="fa-solid fa-unlock"></i>
+                                    Enable
                                 </button>
                             </template>
                         </div>
                         <div v-else>
-                            <span v-if="row.item.isLocked" class="fa-solid fa-lock text-danger"></span>
+                            <span v-if="row.item.status!=='enabled'" class="fa-solid fa-lock text-danger"></span>
                         </div>
                     </th>
                 </template>
@@ -89,67 +88,67 @@
                 <template #table-list="row">
                     <div>
                         <div class="row mb-3">
-                            <label for="subject" class="col-sm-2 col-form-label">Name</label>
+                            <label for="subject" class="col-sm-2 col-form-label">Url</label>
                             <div class="col-sm-10">
                                 <div class="form-control-plaintext">
-                                    <a :href="`${urlView}/${row.item.userId}`">
-                                        {{row.item.firstLastName}}
+                                    <a :href="`${urlView}/${row.item.id}`">
+                                        {{row.item.url}}
                                     </a>
                                 </div>
                             </div>
                         </div>
                         <div class="row mb-3">
-                            <label for="subject" class="col-sm-2 col-form-label">Email</label>
+                            <label for="subject" class="col-sm-2 col-form-label">Status</label>
                             <div class="col-sm-10">
                                 <div class="form-control-plaintext">
-                                    {{row.item.email}}
+                                    {{row.item.status}}
                                 </div>
                             </div>
                         </div>
                         <div class="row mb-3">
-                            <label for="subject" class="col-sm-2 col-form-label">Phone Number</label>
+                            <label for="subject" class="col-sm-2 col-form-label">Live Mode</label>
                             <div class="col-sm-10">
                                 <div class="form-control-plaintext">
-                                    {{row.item.phoneNumber}}
+                                    {{row.item.liveMode}}
                                 </div>
                             </div>
                         </div>
                         <div class="row mb-3">
-                            <label for="subject" class="col-sm-2 col-form-label">Account Number</label>
+                            <label for="subject" class="col-sm-2 col-form-label">Events</label>
                             <div class="col-sm-10">
                                 <div class="form-control-plaintext">
-                                    {{row.item.accountNumber}}
+                                    {{row.item.events}}
                                 </div>
                             </div>
                         </div>
                         <div class="row mb-3">
-                            <label for="subject" class="col-sm-2 col-form-label">Meter Number</label>
+                            <label for="subject" class="col-sm-2 col-form-label">Secret Key</label>
                             <div class="col-sm-10">
                                 <div class="form-control-plaintext">
-                                    {{row.item.meterNumber}}
+                                    {{row.item.secret_Key}}
                                 </div>
                             </div>
                         </div>
                         <div class="row mb-3">
-                            <label for="subject" class="col-sm-2 col-form-label">Is Locked</label>
+                            <label for="subject" class="col-sm-2 col-form-label"></label>
                             <div class="col-sm-10">
                                 <div class="align-self-center">
                                     <div v-if="row.item.expand">
-                                        <template v-if="row.item.isLocked">
-                                            <button @click="lockUnlockUser(row.item.userId, false)" class="btn btn-sm btn-outline-primary">
-                                                <i class="fa-solid fa-unlock"></i>
-                                                Unlock
+                                        <template v-if="row.item.status==='enabled'">
+                                            <button @click="enableDisableWebHook(row.item.id, false)" class="btn btn-sm btn-outline-danger">
+                                                <i class="fa-solid fa-lock"></i>
+                                                Disable
                                             </button>
                                         </template>
                                         <template v-else>
-                                            <button @click="lockUnlockUser(row.item.userId, true)" class="btn btn-sm btn-outline-warning">
-                                                <i class="fa-solid fa-lock"></i>
-                                                Lock
+                                            <button @click="enableDisableWebHook(row.item.id, true)" class="btn btn-sm btn-outline-success">
+                                                <i class="fa-solid fa-unlock"></i>
+                                                Enable
                                             </button>
                                         </template>
                                     </div>
                                     <div v-else>
-                                        <span v-if="row.item.isLocked" class="fa-solid fa-lock text-danger"></span>
+                                        <span v-if="row.item.status!=='enabled'" class="fa-solid fa-lock text-danger"></span>
                                     </div>
                                 </div>
                             </div>
@@ -181,7 +180,7 @@
             return {
                 //moment: moment,
 
-                baseUrl: `/api/account/consumers`,
+                baseUrl: `/api/gcash/webhooks`,
                 lookups: {
 
                 },
@@ -275,33 +274,28 @@
                 }
             },
 
-            async lockUnlockUser(id, lock) {
+            async enableDisableWebHook(id, flag) {
                 const vm = this;
-                let answer = confirm('Are you sure you wnat to lock this consumer?');
+                var msg = `Are you sure you want to ${(flag ? 'enable' : 'disable')} this webhook?`;
+
+                let answer = confirm(msg);
 
                 if (answer === true) {
                     try {
                         vm.busy = true;
 
 
-                        let url = `/api/account/lock/`;
-                        let payload = {
-                            userId: id,
-                            lockout: true
-                        };
-                        let title = 'Lock Consumer';
-                        let message = 'Consumer successfully locked.'
+                        let url = `/api/gcash/webhooks/${id}/enable-disable/${flag}`;
+                        
+                        let title = 'Enable WebHook';
+                        let message = 'WebHook successfully enabled.'
 
-                        if (!lock) {
-                            title = 'Unlock Consumer';
-                            message = 'Consumer successfully unlocked.';
-                            payload = {
-                                userId: id,
-                                lockout: false
-                            };
+                        if (!flag) {
+                            title = 'Disable Webhook';
+                            message = 'Webhook successfully disabled.';
                         }
 
-                        await vm.$util.axios.put(url, payload)
+                        await vm.$util.axios.put(url)
                             .then(resp => {
                                 vm.$toast.success(title, message, {
                                     async onClose() {

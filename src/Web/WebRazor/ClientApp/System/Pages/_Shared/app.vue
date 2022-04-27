@@ -23,6 +23,7 @@
     import ConsumersView from '../Consumers/view.vue';
 
     import GcashWebhooksIndex from '../GcashWebhooks/index.vue';
+    import GcashWebhooksView from '../GcashWebhooks/view.vue';
 
     import NotificationsIndex from '../Notifications/index.vue';
     import NotificationsView from '../Notifications/view.vue';
@@ -51,6 +52,7 @@
             ConsumersView,
 
             GcashWebhooksIndex,
+            GcashWebhooksView,
 
             NotificationsIndex,
             NotificationsView,

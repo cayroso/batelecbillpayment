@@ -8,6 +8,7 @@ using System.Text;
 using Newtonsoft.Json;
 using Data.Identity.Models.Gcash;
 using System.Text.Json;
+using Cayent.Core.Common.Extensions;
 
 namespace WebRazor.Controllers
 {
@@ -24,7 +25,7 @@ namespace WebRazor.Controllers
             _configuration = configuration;
         }
 
-        [HttpPost]
+        [HttpPost("webhook-process")]
         public async Task<IActionResult> WebHook([FromBody] WebHookEvent info, CancellationToken cancellationToken)
         {
             if (info!.Data!.Attributes!.Type == "source.chargeable")
@@ -76,6 +77,8 @@ namespace WebRazor.Controllers
                         StatementDescriptor = paymentInfo.Data.Attributes.Statement_Descriptor,
                         Status = paymentInfo.Data.Attributes.Status,
                     };
+
+                    billing.Status = Data.Identity.Models.Billings.EnumBillingStatus.Paid;
 
                     await _identityWebContext.AddAsync(data, cancellationToken);
 
@@ -143,7 +146,7 @@ namespace WebRazor.Controllers
                 {
                     attributes = new
                     {
-                        amount = (int)(amount * 100),
+                        amount = (int)amount,
                         description = description,
                         currency = "PHP",
                         source = new
@@ -177,6 +180,11 @@ namespace WebRazor.Controllers
             };
             using (var response = await client.SendAsync(request, cancellationToken))
             {
+                if (!response.IsSuccessStatusCode)
+                {
+                    var foor = await response.Content.ReadAsStringAsync(cancellationToken);
+                }
+
                 response.EnsureSuccessStatusCode();
 
                 var result = await response.Content.ReadFromJsonAsync<PaymentSource>(cancellationToken: cancellationToken);
@@ -289,7 +297,7 @@ namespace WebRazor.Controllers
         #region Webhook
 
         [HttpGet("webhooks")]
-        public async Task<IActionResult> GetWebhooks(CancellationToken cancellationToken)
+        public async Task<IActionResult> GetWebhooks(string c, int p, int s, string sf, int so, CancellationToken cancellationToken)
         {
             var urlBase = _configuration["AppSettings:PayMongo:UrlBase"];
             var publicKey = _configuration["AppSettings:PayMongo:PublicKey"];
@@ -312,11 +320,7 @@ namespace WebRazor.Controllers
             {
                 response.EnsureSuccessStatusCode();
 
-                var foo = await response.Content.ReadFromJsonAsync<WebHooks>(options: new JsonSerializerOptions
-                {
-                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                    PropertyNameCaseInsensitive = true,
-                });
+                var foo = await response.Content.ReadFromJsonAsync<WebHooks>();
 
                 // update everything 
                 var existingWebhooks = await _identityWebContext.GcashWebhooks.ToListAsync(cancellationToken);
@@ -329,7 +333,7 @@ namespace WebRazor.Controllers
                 {
                     Id = e.Id,
                     Url = e.Attributes.Url,
-                    Events = String.Join(',', e.Attributes.Events),
+                    Events = String.Join(",", e.Attributes.Events),
                     LiveMode = e.Attributes.LiveMode,
                     Secret_Key = e.Attributes.Secret_Key,
                     Status = e.Attributes.Status
@@ -337,12 +341,17 @@ namespace WebRazor.Controllers
 
                 await _identityWebContext.SaveChangesAsync(cancellationToken);
 
-                return Ok(foo?.Data);
+                var sql = from wh in _identityWebContext.GcashWebhooks.AsNoTracking()
+                          select wh;
+
+                var dto = await sql.ToPagedItemsAsync(p, s, cancellationToken);
+
+                return Ok(dto);
             }
         }
 
-        [HttpPut("webhooks/{id}/enable")]
-        public async Task<IActionResult> EnableWebhook(string id, CancellationToken cancellationToken)
+        [HttpGet("webhooks/{id}")]
+        public async Task<IActionResult> GetWebhooks(string id, CancellationToken cancellationToken)
         {
             var urlBase = _configuration["AppSettings:PayMongo:UrlBase"];
             var publicKey = _configuration["AppSettings:PayMongo:PublicKey"];
@@ -353,8 +362,8 @@ namespace WebRazor.Controllers
             var client = new HttpClient();
             var request = new HttpRequestMessage
             {
-                Method = HttpMethod.Post,
-                RequestUri = new Uri($"{urlBase}webhooks/{id}/enable"),
+                Method = HttpMethod.Get,
+                RequestUri = new Uri($"{urlBase}webhooks/{id}"),
                 Headers =
                 {
                     { "Accept", "application/json" },
@@ -365,14 +374,53 @@ namespace WebRazor.Controllers
             {
                 response.EnsureSuccessStatusCode();
 
-                var foo = await response.Content.ReadAsStringAsync(cancellationToken);
+                var result = await response.Content.ReadFromJsonAsync<WebHookWrapper>();
 
-                return Ok(foo);
+                var foo = result.Data;
+
+                var gwh = new GcashWebhook
+                {
+                    Id = foo.Id,
+                    Url = foo.Attributes.Url,
+                    Events = String.Join(",", foo.Attributes.Events),
+                    LiveMode = foo.Attributes.LiveMode,
+                    Secret_Key = foo.Attributes.Secret_Key,
+                    Status = foo.Attributes.Status
+                };
+
+                return Ok(gwh);
+                // update everything 
+                //var existingWebhooks = await _identityWebContext.GcashWebhooks.ToListAsync(cancellationToken);
+
+                //_identityWebContext.RemoveRange(existingWebhooks);
+
+                //var items = foo.Data;
+
+                //await _identityWebContext.AddRangeAsync(items.Select(e => new GcashWebhook
+                //{
+                //    Id = e.Id,
+                //    Url = e.Attributes.Url,
+                //    Events = String.Join(", ", e.Attributes.Events),
+                //    LiveMode = e.Attributes.LiveMode,
+                //    Secret_Key = e.Attributes.Secret_Key,
+                //    Status = e.Attributes.Status
+                //}), cancellationToken: cancellationToken);
+
+                //await _identityWebContext.SaveChangesAsync(cancellationToken);
+
+                //var sql = from wh in _identityWebContext.GcashWebhooks.AsNoTracking()
+                //          select wh;
+
+                //var dto = await sql.ToPagedItemsAsync(p, s, cancellationToken);
+
+                //return Ok(dto);
             }
+
+            return Ok();
         }
 
-        [HttpPut("webhooks/{id}/disable")]
-        public async Task<IActionResult> DisableWebhook(string id, CancellationToken cancellationToken)
+        [HttpPut("webhooks/{id}/enable-disable/{flag}")]
+        public async Task<IActionResult> EnableDisableWebhook(string id, bool flag, CancellationToken cancellationToken)
         {
             var urlBase = _configuration["AppSettings:PayMongo:UrlBase"];
             var publicKey = _configuration["AppSettings:PayMongo:PublicKey"];
@@ -384,7 +432,7 @@ namespace WebRazor.Controllers
             var request = new HttpRequestMessage
             {
                 Method = HttpMethod.Post,
-                RequestUri = new Uri($"{urlBase}webhooks/{id}/disable"),
+                RequestUri = new Uri($"{urlBase}webhooks/{id}/{(flag ? "enable" : "disable")}"),
                 Headers =
                 {
                     { "Accept", "application/json" },
@@ -448,9 +496,14 @@ namespace WebRazor.Controllers
             };
             using (var response = await client.SendAsync(request, cancellationToken))
             {
-                response.EnsureSuccessStatusCode();
+                //response.EnsureSuccessStatusCode();
 
-                var result = await response.Content.ReadAsStringAsync(cancellationToken);
+                if (!response.IsSuccessStatusCode)
+                {
+                    var result = await response.Content.ReadAsStringAsync(cancellationToken);
+
+                    return BadRequest(result);
+                }
             }
 
             return Ok();
@@ -478,6 +531,11 @@ namespace WebRazor.Controllers
             }
 
 
+        }
+
+        public class WebHookWrapper
+        {
+            public WebHooks.WebHook Data { get; set; }
         }
 
         public class EditWebhookInfo
