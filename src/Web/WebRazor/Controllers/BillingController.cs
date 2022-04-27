@@ -10,6 +10,9 @@ using Cayent.Core.Common.Extensions;
 using System.Net.Http.Headers;
 using Data.Identity.Models.Billings;
 using App.Services;
+using System.Text;
+using Newtonsoft.Json;
+using Data.Identity.Models.Gcash;
 
 namespace WebRazor.Controllers
 {
@@ -152,7 +155,7 @@ namespace WebRazor.Controllers
 
                       select new ViewBillingInfo
                       {
-                          GCashSourceResourceId = e.GcashResource!.GcashResourceId,                          
+                          GCashSourceResourceId = e.GcashResource!.GcashResourceId,
                           Status = (int)e.Status,
                           GCashCheckoutUrl = e.GcashResource!.CheckoutUrl,
                           DateEnd = e.DateEnd,
@@ -264,7 +267,7 @@ namespace WebRazor.Controllers
             await _notificationService.AddNotification(data.BillingId, "success", "Billing was created",
                 $"New billing was created by administrator: {User.Identity.Name}", DateTime.UtcNow,
                 Data.Identity.Models.Notifications.EnumNotificationType.Success, Data.Identity.Models.Notifications.EnumNotificationEntityClass.Billing,
-                new[] { info.AccountId}, Array.Empty<string>(), cancellationToken);
+                new[] { info.AccountId }, Array.Empty<string>(), cancellationToken);
 
 
             return Ok(data.BillingId);
@@ -297,25 +300,54 @@ namespace WebRazor.Controllers
         }
 
         [HttpPost("{id}/create-resource")]
-        public async Task<IActionResult> CreateBillingResource(string id)
+        public async Task<IActionResult> CreateBillingResource([FromServices] IConfiguration configuration, string id, CancellationToken cancellationToken)
         {
-            var item = await _identityWebContext.Billings.FirstOrDefaultAsync(e => e.BillingId == id);
+            var item = await _identityWebContext.Billings.FirstOrDefaultAsync(e => e.BillingId == id, cancellationToken);
 
             if (item == null)
                 return NotFound("Billing not found.");
 
+            var urlBase = configuration["AppSettings:PayMongo:UrlBase"];
+            var publicKey = configuration["AppSettings:PayMongo:PublicKey"];
+            var secretKey = configuration["AppSettings:PayMongo:SecretKey"];
+            var urlSuccess = configuration["AppSettings:Payment:UrlSuccess"] + item.BillingId;
+            var urlFailed = configuration["AppSettings:Payment:UrlFailed"] + item.BillingId;
+
             var http = new HttpClient();
+
+            var bytes = Encoding.UTF8.GetBytes($"{publicKey}:");
+            var base64 = Convert.ToBase64String(bytes);
+
+            var requestContent = new
+            {
+                data = new
+                {
+                    attributes = new
+                    {
+                        type = "gcash",
+                        amount = (int)(item.Amount * 100),
+                        currency = "PHP",
+                        redirect = new
+                        {
+                            success = urlSuccess,
+                            failed = urlFailed,
+                        }
+                    }
+                }
+            };
+
+            var sstring = JsonConvert.SerializeObject(requestContent);
 
             var request = new HttpRequestMessage
             {
                 Method = HttpMethod.Post,
-                RequestUri = new Uri("https://api.paymongo.com/v1/sources"),
+                RequestUri = new Uri($"{urlBase}sources"),
                 Headers =
             {
                 { "Accept", "application/json" },
-                { "Authorization", "Basic cGtfdGVzdF9lbnlCR1VWRUtLRW1qRzRMNVhpazZ4cXk6" },
+                { "Authorization", $"Basic {base64}" },
             },
-                Content = new StringContent("{\"data\":{\"attributes\":{\"amount\":" + (item.Amount * 100).ToString() + ",\"redirect\":{\"success\":\"https://localhost:7104/gcash/success/" + item.BillingId + "\",\"failed\":\"https://localhost:7104/gcash/failed/" + item.BillingId + "\"},\"type\":\"gcash\",\"currency\":\"PHP\"}}}")
+                Content = new StringContent(sstring)
                 {
                     Headers =
                 {
@@ -323,10 +355,10 @@ namespace WebRazor.Controllers
                 }
                 }
             };
-            using (var response = await http.SendAsync(request))
+            using (var response = await http.SendAsync(request, cancellationToken))
             {
 
-                var body = await response.Content.ReadAsStringAsync();
+                var body = await response.Content.ReadAsStringAsync(cancellationToken: cancellationToken);
 
                 response.EnsureSuccessStatusCode();
 
@@ -344,9 +376,9 @@ namespace WebRazor.Controllers
                     Status = dataAttributes.Status,
                 };
 
-                await _identityWebContext.AddAsync(gcashResource);
+                await _identityWebContext.AddAsync(gcashResource, cancellationToken);
 
-                await _identityWebContext.SaveChangesAsync();
+                await _identityWebContext.SaveChangesAsync(cancellationToken);
             }
 
             return Ok();

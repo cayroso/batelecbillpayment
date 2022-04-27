@@ -56,6 +56,22 @@ namespace Data.migrations.identity
                 });
 
             migrationBuilder.CreateTable(
+                name: "GcashWebhook",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "TEXT", maxLength: 36, nullable: false),
+                    LiveMode = table.Column<bool>(type: "INTEGER", nullable: false),
+                    Secret_Key = table.Column<string>(type: "TEXT", nullable: false),
+                    Status = table.Column<string>(type: "TEXT", nullable: false),
+                    Url = table.Column<string>(type: "TEXT", nullable: false),
+                    Events = table.Column<string>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_GcashWebhook", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Notification",
                 columns: table => new
                 {
@@ -652,6 +668,9 @@ namespace Data.migrations.identity
 
             migrationBuilder.DropTable(
                 name: "GcashResource");
+
+            migrationBuilder.DropTable(
+                name: "GcashWebhook");
 
             migrationBuilder.DropTable(
                 name: "LoginAudit");

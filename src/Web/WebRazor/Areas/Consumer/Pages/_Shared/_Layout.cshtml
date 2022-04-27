@@ -1,4 +1,29 @@
-@using System.Security.Claims @{ var appName = "Batelec Billing Payment"; var theme = User.FindFirst("Profile:Theme")?.Value; var uid = User.FindFirst(ClaimTypes.NameIdentifier)?.Value; var urlProfilePicture = string.Empty; }<!doctype html><html lang="en"><head><base href="~/"/><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,minimal-ui"/><title>@ViewData["Title"] - @appName</title><script defer="defer" src="/app/203-0b2661fa0b8f60f3bd21.js"></script><script defer="defer" src="/app/287-d26a6e0ca8884f8b5438.js"></script><script defer="defer" src="/app/257-7e4de7cf3cd04789c996.js"></script><script defer="defer" src="/app/933-91f686c16750611149c1.js"></script><script defer="defer" src="/app/consumer-f9c38d5bd0037fcbbbac.js"></script><link href="/app/203-cbb67ddb6a80010ce463.css" rel="stylesheet"><link href="/app/287-471881b539c1b12bb0e5.css" rel="stylesheet"><link href="/app/consumer-5fd50c8638c67b2a6ac3.css" rel="stylesheet"></head><body id="top" class="bg-light"><div id="root"></div><script id="app" type="text/x-template"><div v-cloak>
+@using System.Security.Claims
+@{
+
+    var appName = "Batelec Billing Payment";
+    var theme = User.FindFirst("Profile:Theme")?.Value;
+    var uid = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+    var urlProfilePicture = string.Empty;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <base href="~/" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui" />
+    <title>@ViewData["Title"] - @appName</title>
+
+    <script defer src="/app/vendor-node_modules_microsoft_signalr_dist_esm_HubConnectionBuilder_js-node_modules_axios_ind-9d7fdf-e79d787f69b76228163e.js"></script><script defer src="/app/ClientApp__Core_Mixins_appMixin_js-ClientApp__Core_Mixins_navbarMixin_js-ClientApp__Core_Plug-ba058a-eb8f8cd8163c2fdd9444.js"></script><script defer src="/app/ClientApp__Common_Components_Reservations_index_vue-ClientApp__Common_Components_Reservations-aa56ab-a9c64788483c33ee53af.js"></script><script defer src="/app/consumer-8e9015ade07f9d2223c9.js"></script><link href="/app/vendor-node_modules_microsoft_signalr_dist_esm_HubConnectionBuilder_js-node_modules_axios_ind-9d7fdf-2a60d4984d8240d30716.css" rel="stylesheet"><link href="/app/ClientApp__Core_Mixins_appMixin_js-ClientApp__Core_Mixins_navbarMixin_js-ClientApp__Core_Plug-ba058a-a689ccedb3c1a0659129.css" rel="stylesheet"><link href="/app/consumer-168e9572fa22c4402582.css" rel="stylesheet">
+
+</head>
+<body id="top" class="bg-light">
+    <div id="root">
+    </div>
+    <script id="app" type="text/x-template">
+        <div v-cloak>
             <AppBar app-name="@appName"/>
             <div class="container my-2">
         @RenderBody()
@@ -8,4 +33,10 @@
                     url-view-announcement="/consumer/announcements/view"
                     url-view-billing="/consumer/billings/view"
                     url-view-reservation="/consumer/reservations/view"></Notification>
-        </div></script>@RenderSection("Scripts", required: false)</body></html>
+        </div>
+    </script>
+
+    
+        @RenderSection("Scripts", required: false)
+</body>
+</html>

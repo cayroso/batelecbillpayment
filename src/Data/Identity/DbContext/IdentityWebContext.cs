@@ -3,6 +3,7 @@ using Data.Identity.Models;
 using Data.Identity.Models.Announcements;
 using Data.Identity.Models.Billings;
 using Data.Identity.Models.Fileuploads;
+using Data.Identity.Models.Gcash;
 using Data.Identity.Models.Notifications;
 using Data.Identity.Models.Reservations;
 using Data.Identity.Models.Users;
@@ -55,6 +56,7 @@ namespace Data.Identity.DbContext
         public DbSet<NotificationReceiver> NotificationReceivers { get; set; }
         public DbSet<Reservation> Reservations { get; set; }
 
+        public DbSet<GcashWebhook> GcashWebhooks { get; set; }
 
         public IdentityWebContext(DbContextOptions<IdentityWebContext> options, IConfiguration configuration)
             : base(options)
@@ -222,6 +224,7 @@ namespace Data.Identity.DbContext
             builder.ApplyConfiguration(new NotificationConfiguration());
             builder.ApplyConfiguration(new NotificationReceiverConfiguration());
             builder.ApplyConfiguration(new ReservationConfiguration());
+            builder.ApplyConfiguration(new GcashWebhookConfiguration());
         }
     }
 }

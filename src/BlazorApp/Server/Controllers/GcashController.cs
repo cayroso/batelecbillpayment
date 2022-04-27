@@ -12,6 +12,7 @@ using BlazorApp.Shared.GCash;
 using Data.Identity.Models;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using Data.Identity.Models.Gcash;
 
 namespace BlazorApp.Server.Controllers
 {

@@ -12,7 +12,7 @@
                         <a class="nav-link" href="/system">
                             <i class="fas fa-dashboard me-2" aria-hidden="true"></i>Dashboard
                         </a>
-                    </li>                    
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/system/administrators">
                             <i class="fa-solid fa-user-shield me-2" aria-hidden="true"></i>Administrators
@@ -21,6 +21,11 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/system/consumers">
                             <i class="fa-solid fa-users me-2" aria-hidden="true"></i>Consumers
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/system/gcashwebhooks">
+                            <i class="fa-solid fa-bell me-2" aria-hidden="true"></i>Gcash Webhooks
                         </a>
                     </li>
                     <li class="nav-item">

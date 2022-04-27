@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using BlazorApp.Shared.GCash;
 using BlazorApp.Shared.Billing;
 using Data.Identity.Models;
+using Data.Identity.Models.Gcash;
 
 namespace BlazorApp.Server.Controllers
 {

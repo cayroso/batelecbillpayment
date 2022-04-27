@@ -26,6 +26,7 @@ namespace WebRazor.Controllers
         [HttpGet("info")]
         public async Task<IActionResult> GetInfo()
         {
+            
             var user = await _identityWebContext.Users.SingleOrDefaultAsync(e => e.Id == UserId);
             var userInfo = await _identityWebContext.UserInformations.SingleOrDefaultAsync(e => e.UserId == UserId);
             var account = await _identityWebContext.Accounts.SingleOrDefaultAsync(e => e.AccountId == UserId);

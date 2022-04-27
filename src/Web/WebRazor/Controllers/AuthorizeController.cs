@@ -98,7 +98,7 @@ namespace WebRazor.Controllers
             });
         }
 
-        [Authorize]
+       
         [HttpPost]
         public async Task<IActionResult> Logout()
         {
@@ -106,6 +106,7 @@ namespace WebRazor.Controllers
             return Ok();
         }
 
+        [Authorize]
         [HttpGet]
         public UserInfo UserInfo()
         {

@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.migrations.identity
 {
     [DbContext(typeof(IdentityWebContext))]
-    [Migration("20220325172859_Initial")]
+    [Migration("20220427065445_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -271,7 +271,7 @@ namespace Data.migrations.identity
                     b.ToTable("Fileupload", (string)null);
                 });
 
-            modelBuilder.Entity("Data.Identity.Models.GcashPayment", b =>
+            modelBuilder.Entity("Data.Identity.Models.Gcash.GcashPayment", b =>
                 {
                     b.Property<string>("GcashPaymentId")
                         .HasMaxLength(36)
@@ -348,7 +348,7 @@ namespace Data.migrations.identity
                     b.ToTable("GcashPayment", (string)null);
                 });
 
-            modelBuilder.Entity("Data.Identity.Models.GcashResource", b =>
+            modelBuilder.Entity("Data.Identity.Models.Gcash.GcashResource", b =>
                 {
                     b.Property<string>("GcashResourceId")
                         .HasMaxLength(36)
@@ -378,6 +378,36 @@ namespace Data.migrations.identity
                         .IsUnique();
 
                     b.ToTable("GcashResource", (string)null);
+                });
+
+            modelBuilder.Entity("Data.Identity.Models.Gcash.GcashWebhook", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasMaxLength(36)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Events")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("LiveMode")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Secret_Key")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("GcashWebhook", (string)null);
                 });
 
             modelBuilder.Entity("Data.Identity.Models.LoginAudit", b =>
@@ -894,22 +924,22 @@ namespace Data.migrations.identity
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Data.Identity.Models.GcashPayment", b =>
+            modelBuilder.Entity("Data.Identity.Models.Gcash.GcashPayment", b =>
                 {
                     b.HasOne("Data.Identity.Models.Billings.Billing", "Billing")
                         .WithOne("GcashPayment")
-                        .HasForeignKey("Data.Identity.Models.GcashPayment", "BillingId")
+                        .HasForeignKey("Data.Identity.Models.Gcash.GcashPayment", "BillingId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Billing");
                 });
 
-            modelBuilder.Entity("Data.Identity.Models.GcashResource", b =>
+            modelBuilder.Entity("Data.Identity.Models.Gcash.GcashResource", b =>
                 {
                     b.HasOne("Data.Identity.Models.Billings.Billing", "Billing")
                         .WithOne("GcashResource")
-                        .HasForeignKey("Data.Identity.Models.GcashResource", "BillingId")
+                        .HasForeignKey("Data.Identity.Models.Gcash.GcashResource", "BillingId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
