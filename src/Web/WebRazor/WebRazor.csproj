@@ -21,6 +21,7 @@
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="6.0.0" />
 		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.2" />
 		<PackageReference Include="Twilio" Version="5.74.0" />
+		<PackageReference Include="WebEssentials.AspNetCore.PWA" Version="1.0.65" />
 	</ItemGroup>
 
 	<!--<ItemGroup>
@@ -46,6 +47,15 @@
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
 	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+	  </Content>
+	  <Content Update="wwwroot\img\192x192.png">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Update="wwwroot\img\512x512.png">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Update="wwwroot\manifest.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Content>
 	</ItemGroup>
 

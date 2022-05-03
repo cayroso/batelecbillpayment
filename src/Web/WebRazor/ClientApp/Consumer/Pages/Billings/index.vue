@@ -53,7 +53,7 @@
                         <label for="subject" class="col-sm-2 col-form-label">Billing Number</label>
                         <div class="col-sm-10">
                             <div class="form-control-plaintext">
-                                <a :href="`/administrator/billings/view/${row.item.billingId}`">
+                                <a :href="`${urlView}/${row.item.billingId}`">
                                     {{row.item.number}}
                                 </a>
                             </div>

@@ -1,0 +1,20 @@
+{
+  "background_color": "green",
+  "description": "Batelec Billing Payment Description",
+  "display": "standalone",
+  "icons": [
+    {
+      "src": "/img/192x192.png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/img/512x512.png",
+      "sizes": "512x512"
+    }
+  ],
+  "name": "Batelec Billing Payment System",
+  "scope": "/",
+  "short_name": "BBPS",
+  "start_url": "/",
+  "theme_color": "#ffffff"
+}

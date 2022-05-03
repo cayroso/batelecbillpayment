@@ -61,6 +61,9 @@ builder.Services.AddScoped<App.Services.NotificationService>();
 //builder.Services.AddTransient<ChatHub>();
 //builder.Services.AddTransient<NotificationHub>();
 
+//#if !DEBUG
+builder.Services.AddProgressiveWebApp();
+//#endif
 
 
 StartupExtension.RegisterCQRS(builder.Services, builder.Configuration);

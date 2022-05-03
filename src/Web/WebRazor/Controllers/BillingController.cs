@@ -444,7 +444,14 @@ namespace WebRazor.Controllers
                         $"{en}{en}{url}";
                     var toPhoneNumber = user.PhoneNumber;
 
-                    await SendSms(fromPhoneNumber, message, toPhoneNumber);
+                    try
+                    {
+                        await SendSms(fromPhoneNumber, message, toPhoneNumber);
+                    }
+                    catch (Exception ex)
+                    {
+                        // swallow exception
+                    }
                 }
 
                 await _identityWebContext.SaveChangesAsync(cancellationToken);
