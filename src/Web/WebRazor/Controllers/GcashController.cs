@@ -28,15 +28,36 @@ namespace WebRazor.Controllers
         [HttpPost("webhook-process")]
         public async Task<IActionResult> WebHook([FromBody] WebHookEvent info, CancellationToken cancellationToken)
         {
-            if (info!.Data!.Attributes!.Type == "source.chargeable")
+            var eventType = info!.Data!.Attributes!.Type;
+
+            if (eventType == "source.chargeable")
             {
                 await SourceChargableAsync(info, cancellationToken);
+
+                return Ok();
+            }
+            else if (eventType == "payment.paid")
+            {                
+                var sourceId = info.Data.Attributes.Data.Id;
+                var gcashPayment = await _identityWebContext.GcashPayments.FirstOrDefaultAsync(e => e.GcashPaymentId == sourceId, cancellationToken);
+
+                if (gcashPayment != null)
+                {
+                    var billing = await _identityWebContext.Billings.FirstAsync(e => e.BillingId == gcashPayment.BillingId, cancellationToken);
+                    
+                    billing.Status = Data.Identity.Models.Billings.EnumBillingStatus.Paid;
+
+                    await _identityWebContext.SaveChangesAsync(cancellationToken);
+
+                    return Ok();
+                }
             }
             else
             {
-
+                return Ok();
             }
-            return Ok();
+
+            return BadRequest();
         }
 
         async Task SourceChargableAsync(WebHookEvent info, CancellationToken cancellationToken)
@@ -54,6 +75,10 @@ namespace WebRazor.Controllers
                 var sourceResource = await GetSourceResourceAsync(gcashResource.GcashResourceId, cancellationToken);
                 var status = sourceResource.Data.Attributes.Status;
 
+                //  check if we already processed this
+                if (gcashResource.Status == "paid")
+                    return;
+
                 if (status == "chargeable")
                 {
                     var postedPayment = await PostGcashPaymentAsync(gcashResource.GcashResourceId, gcashResource.Amount, $"Payment for Batelec Bill# {billing.Number}", cancellationToken);
@@ -62,7 +87,7 @@ namespace WebRazor.Controllers
 
                     var data = new GcashPayment
                     {
-                        GcashPaymentId = GuidStr(),
+                        GcashPaymentId = paymentInfo.Data.Id,
                         BillingId = gcashResource.BillingId,
                         //GcashResourceId = gcashResource.GcashResourceId,
 
@@ -78,7 +103,7 @@ namespace WebRazor.Controllers
                         Status = paymentInfo.Data.Attributes.Status,
                     };
 
-                    billing.Status = Data.Identity.Models.Billings.EnumBillingStatus.Paid;
+                    //billing.Status = Data.Identity.Models.Billings.EnumBillingStatus.Paid;
 
                     await _identityWebContext.AddAsync(data, cancellationToken);
 
@@ -100,7 +125,8 @@ namespace WebRazor.Controllers
             }
         }
 
-        async Task<SourceResource> GetSourceResourceAsync(string resourceId, CancellationToken cancellationToken)
+        [HttpGet("resource/{resourceId}")]
+        public async Task<SourceResource> GetSourceResourceAsync(string resourceId, CancellationToken cancellationToken)
         {
             var urlBase = _configuration["AppSettings:PayMongo:UrlBase"];
             var publicKey = _configuration["AppSettings:PayMongo:PublicKey"];
@@ -223,7 +249,7 @@ namespace WebRazor.Controllers
             }
         }
 
-        internal class SourceResource
+        public class SourceResource
         {
             public SourceResourceInfo Data { get; set; }
 

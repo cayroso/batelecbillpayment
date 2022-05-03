@@ -74,7 +74,7 @@
         <div class="mt-2">
             <div class="card shadow-sm">
                 <div class="card-header bg-info text-white">
-                    <!--Personal Information-->
+                    Billing Details
                 </div>
                 <div class="card-body">
                     <form class="needs-validation" novalidate>
@@ -189,8 +189,53 @@
                             </div>
 
                         </div>
+
+
                     </form>
                 </div>
+            </div>
+
+            <div v-if="item.payment && item.payment.gcashPaymentId">
+                <div class="card shadow-sm mt-2">
+                    <div class="card-header bg-success text-white">
+                        Payment Details
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md">
+                                <div class="form-floating mb-3">
+                                    <div class="form-control" id="amount">
+                                        {{item.payment.amount}}
+                                    </div>
+                                    <label for="amount">Amount</label>
+
+                                </div>
+                            </div>
+                            <div class="col-md">
+                                <div class="form-floating mb-3">
+                                    <div class="form-control" id="fee">
+                                        {{item.payment.fee}}
+                                    </div>
+                                    <label for="fee">Fee</label>
+
+                                </div>
+                            </div>
+                            <div class="col-md">
+                                <div class="form-floating mb-3">
+                                    <div class="form-control" id="netAmount">
+                                        {{item.payment.netAmount}}
+                                    </div>
+                                    <label for="netAmount">Ne Amount</label>
+
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                    </div>
+                </div>
+
             </div>
         </div>
 

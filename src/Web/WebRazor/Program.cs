@@ -1,5 +1,6 @@
 using App.Hubs;
 using Data.App.DbContext;
+using Data.Constants;
 using Data.Identity.DbContext;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
@@ -13,7 +14,13 @@ builder.Services.AddDbContext<AppDbContext>(opt => { });
 
 builder.Services.AddSignalR();
 builder.Services.AddControllersWithViews();
-builder.Services.AddRazorPages();
+builder.Services.AddRazorPages()
+    .AddRazorPagesOptions(opt =>
+    {
+        opt.Conventions.AuthorizeAreaFolder("System", "/", ApplicationRoles.SystemRoleName);
+        opt.Conventions.AuthorizeAreaFolder("Administrator", "/", ApplicationRoles.AdministratorRoleName);
+        opt.Conventions.AuthorizeAreaFolder("Consumer", "/", ApplicationRoles.ConsumerRoleName);
+    });
 builder.Services.AddResponseCompression(opts =>
 {
     opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
@@ -33,11 +40,27 @@ builder.Services.AddSignalR().AddNewtonsoftJsonProtocol(options =>
     //options.PayloadSerializerSettings.Culture = cultureInfo;
 });
 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy(ApplicationRoles.SystemRoleName, policy =>
+       policy.RequireAssertion(context =>
+           context.User.HasClaim(c => c.Type == System.Security.Claims.ClaimTypes.Role && c.Value == ApplicationRoles.SystemRoleName)));
+
+    options.AddPolicy(ApplicationRoles.AdministratorRoleName, policy =>
+       policy.RequireAssertion(context =>
+           context.User.HasClaim(c => c.Type == System.Security.Claims.ClaimTypes.Role && c.Value == ApplicationRoles.AdministratorRoleName)));
+
+    options.AddPolicy(ApplicationRoles.ConsumerRoleName, policy =>
+       policy.RequireAssertion(context =>
+           context.User.HasClaim(c => c.Type == System.Security.Claims.ClaimTypes.Role && c.Value == ApplicationRoles.ConsumerRoleName)));
+});
+
 //builder.Services.AddScoped<App.Services.ChatService>();
 builder.Services.AddScoped<App.Services.NotificationService>();
 
 //builder.Services.AddTransient<ChatHub>();
 //builder.Services.AddTransient<NotificationHub>();
+
 
 
 StartupExtension.RegisterCQRS(builder.Services, builder.Configuration);

@@ -72,21 +72,40 @@ namespace Blazor.Server.Identity
                     //options.Cookie.Expiration = TimeSpan.FromMinutes(SESSIONEXPIRATIONINMINUTES);
                     // If the LoginPath isn't set, ASP.NET Core defaults 	
                     // the path to /Account/Login.	
-                    //options.LoginPath = "/Identity/Account/Login";
+                    options.LoginPath = "/Account/Login";
                     //options.LogoutPath = "/Identity/Account/Logout";
                     // If the AccessDeniedPath isn't set, ASP.NET Core defaults 	
                     // the path to /Account/AccessDenied.	
-                    //options.AccessDeniedPath = "/Identity/Account/AccessDenied";
-                    //options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
+                    options.AccessDeniedPath = "/Account/AccessDenied";
+                    options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
 
 
-                    options.Events.OnRedirectToLogin = ReplaceRedirector(StatusCodes.Status401Unauthorized, options.Events.OnRedirectToLogin);
-                    options.Events.OnRedirectToAccessDenied = ReplaceRedirector(StatusCodes.Status403Forbidden, options.Events.OnRedirectToAccessDenied);
+                    //options.Events.OnRedirectToLogin = ReplaceRedirector(StatusCodes.Status401Unauthorized, options.Events.OnRedirectToLogin);
+                    //options.Events.OnRedirectToAccessDenied = ReplaceRedirector(StatusCodes.Status403Forbidden, options.Events.OnRedirectToAccessDenied);
+                    options.Events.OnRedirectToLogin += new Func<Microsoft.AspNetCore.Authentication.RedirectContext<Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationOptions>, Task>((a) =>
+                    {
+                        if (IsApiRequest(a.Request))
+                            a.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                        return Task.CompletedTask;
+                    });
+                    options.Events.OnRedirectToAccessDenied += new Func<Microsoft.AspNetCore.Authentication.RedirectContext<Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationOptions>, Task>((a) =>
+                    {
+                        if (IsApiRequest(a.Request))
+                            a.Response.StatusCode = StatusCodes.Status401Unauthorized;// 401;
+
+                        return Task.CompletedTask;
+                    });
                 });
 
                 // Add application services.	
                 services.AddTransient<IEmailSender, EmailSender>();
             });
+        }
+
+        private bool IsApiRequest(HttpRequest request)
+        {
+            string apiPath = "/api/";//  VirtualPathUtility.ToAbsolute("~/api/");
+            return request.Path.Value.StartsWith(apiPath);// request.Uri.LocalPath.StartsWith(apiPath);
         }
 
         static Func<RedirectContext<CookieAuthenticationOptions>, Task> ReplaceRedirector(int statusCode, Func<RedirectContext<CookieAuthenticationOptions>, Task> existingRedirector) => context =>

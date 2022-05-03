@@ -30,7 +30,7 @@ namespace WebRazor.Pages.Account
         {
         }
 
-        public async Task<IActionResult> OnPost([FromServices] NotificationService _notificationService, CancellationToken cancellationToken)
+        public async Task<IActionResult> OnPost([FromServices] NotificationService _notificationService, string returnUrl, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
             {
@@ -92,6 +92,9 @@ namespace WebRazor.Pages.Account
             var onlySystem = isSystem && !isAdmin && !isConsumer;
             var onlyAdmin = !isSystem && isAdmin && !isConsumer;
             var onlyConsumer = !isSystem && !isAdmin && isConsumer;
+            
+            if (!string.IsNullOrWhiteSpace(returnUrl))
+                return LocalRedirect(returnUrl);
 
             if (onlySystem)
                 return Redirect("/system");

@@ -13,6 +13,8 @@ using App.Services;
 using System.Text;
 using Newtonsoft.Json;
 using Data.Identity.Models.Gcash;
+using Twilio;
+using Twilio.Rest.Api.V2010.Account;
 
 namespace WebRazor.Controllers
 {
@@ -23,15 +25,17 @@ namespace WebRazor.Controllers
     {
         IdentityWebContext _identityWebContext;
         readonly NotificationService _notificationService;
+        readonly IConfiguration _configuration;
 
-        public BillingController(IdentityWebContext identityWebContext, NotificationService notificationService)
+        public BillingController(IdentityWebContext identityWebContext, NotificationService notificationService, IConfiguration configuration)
         {
             _identityWebContext = identityWebContext;
             _notificationService = notificationService;
+            _configuration = configuration;
         }
 
         [HttpGet("{billingId}")]
-        public async Task<IActionResult> Get(string billingId)
+        public async Task<IActionResult> Get(string billingId, CancellationToken cancellationToken)
         {
             var isAdmin = User.IsInRole(ApplicationRoles.AdministratorRoleName);
 
@@ -77,10 +81,23 @@ namespace WebRazor.Controllers
                         NetAmount = e.GcashPayment == null ? 0 : e.GcashPayment!.NetAmount / 100,
                     }
                 })
-                .FirstOrDefaultAsync();
+                .FirstOrDefaultAsync(cancellationToken);
 
             if (dto == null)
                 return BadRequest("Billing not found.");
+
+            //if(!string.IsNullOrWhiteSpace(dto.GCashSourceResourceId))
+            //{
+            //    //  check if not expired
+            //    var gcashResource = await GetGcashResource(dto.GCashSourceResourceId, cancellationToken);
+
+            //    if(gcashResource.Data.Attributes.Status != "dddd")
+            //    {
+
+            //    }
+            //}
+
+
 
             return Ok(dto);
         }
@@ -302,16 +319,30 @@ namespace WebRazor.Controllers
         [HttpPost("{id}/create-resource")]
         public async Task<IActionResult> CreateBillingResource([FromServices] IConfiguration configuration, string id, CancellationToken cancellationToken)
         {
-            var item = await _identityWebContext.Billings.FirstOrDefaultAsync(e => e.BillingId == id, cancellationToken);
+            var item = await _identityWebContext.Billings
+                .Include(e => e.GcashResource)
+                .Include(e => e.GcashPayment)
+                .FirstOrDefaultAsync(e => e.BillingId == id, cancellationToken);
 
             if (item == null)
                 return NotFound("Billing not found.");
 
+            if (item.GcashResource != null)
+            {
+                _identityWebContext.Remove(item.GcashResource);
+
+                if (item.GcashPayment != null)
+                    _identityWebContext.Remove(item.GcashPayment);
+            }
+
             var urlBase = configuration["AppSettings:PayMongo:UrlBase"];
             var publicKey = configuration["AppSettings:PayMongo:PublicKey"];
             var secretKey = configuration["AppSettings:PayMongo:SecretKey"];
-            var urlSuccess = configuration["AppSettings:Payment:UrlSuccess"] + item.BillingId;
-            var urlFailed = configuration["AppSettings:Payment:UrlFailed"] + item.BillingId;
+            //var urlSuccess = configuration["AppSettings:Payment:UrlSuccess"] + item.BillingId;
+            //var urlFailed = configuration["AppSettings:Payment:UrlFailed"] + item.BillingId;
+
+            var urlSuccess = Url.PageLink("/Billings/CheckoutSuccess", values: new { area = "Consumer", id = item.BillingId });
+            var urlFailed = Url.PageLink("/Billings/CheckoutFailed", values: new { area = "Consumer", id = item.BillingId });
 
             var http = new HttpClient();
 
@@ -396,10 +427,64 @@ namespace WebRazor.Controllers
             {
                 item.Status = status;
 
+                if (item.Status == EnumBillingStatus.Unpaid)
+                {
+                    var user = await _identityWebContext.Users.FirstAsync(e => e.Id == item.AccountId);
+
+
+                    var url = Url.PageLink("/Billings/View", values: new { area = "Consumer", id = item.BillingId });
+
+                    var fromPhoneNumber = _configuration["Twilio:DefaultPhoneNumber"];
+                    var en = Environment.NewLine;
+                    var message = $"-{en}{en}Your billing {item.Number} is now ready for payment." +
+                        $"{en}Amount: Php{item.Amount}" +
+                        $"{en}From: {item.DateStart.Date.ToShortDateString()}." +
+                        $"{en}To: {item.DateEnd.Date.ToShortDateString()}." +
+                        $"{en}Due: {item.DateDue.Date.ToShortDateString()}." +
+                        $"{en}{en}{url}";
+                    var toPhoneNumber = user.PhoneNumber;
+
+                    await SendSms(fromPhoneNumber, message, toPhoneNumber);
+                }
+
                 await _identityWebContext.SaveChangesAsync(cancellationToken);
             }
 
             return Ok();
+        }
+
+        async Task SendSms(string fromPhoneNumber, string message, string toPhoneNumber)
+        {
+            var accountSid = _configuration["Twilio:AccountSID"];
+            var authToken = _configuration["Twilio:AuthToken"];
+            TwilioClient.Init(accountSid, authToken);
+
+            try
+            {
+                var xxx = MessageResource.Create(
+                    body: message,
+                    from: new Twilio.Types.PhoneNumber(fromPhoneNumber),
+                    to: new Twilio.Types.PhoneNumber(toPhoneNumber)
+                );
+
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+
+
+        }
+
+        async Task<GcashController.SourceResource> GetGcashResource(string resourceId, CancellationToken cancellationToken)
+        {
+            var ctrl = new GcashController(_identityWebContext, _configuration);
+
+            var resource = await ctrl.GetSourceResourceAsync(resourceId, cancellationToken);
+
+            return resource;
+
         }
     }
 }

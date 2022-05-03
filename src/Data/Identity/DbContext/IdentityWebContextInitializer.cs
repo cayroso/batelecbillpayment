@@ -293,8 +293,231 @@ namespace Data.Identity.DbContext
 
             ctx.AddRange(account1Billings);
             ctx.AddRange(reservations);
+
+            CreateConsumer1(ctx, tenant, token1);
+            CreateConsumer2(ctx, tenant, token1);
+            CreateConsumer3(ctx, tenant, token1);
         }
 
+        static void CreateConsumer1(IdentityWebContext ctx, Tenant tenant, string token)
+        {
+            //  sample consumer
+            var consumerEmail = "selwyn@bbp.com";
+            var consumer1 = new IdentityWebUser
+            {
+                Id = consumerEmail,
+                UserName = consumerEmail,
+                NormalizedUserName = consumerEmail.ToUpper(),
+
+                Email = consumerEmail,
+                NormalizedEmail = consumerEmail.ToUpper(),
+                EmailConfirmed = true,
+                PhoneNumber = "+639076126930",
+                PhoneNumberConfirmed = true,
+
+                LockoutEnabled = false,
+                LockoutEnd = null,
+                PasswordHash = "AQAAAAEAACcQAAAAEKGIieH17t5bYXa5tUfxRwN9UIEwApTKbQBRaUtIHplIUG2OfYxvBS8uvKy5E2Stsg==",
+                SecurityStamp = "6SADCY3NMMLOHA2S26ZJCEWGHWSQUYRM",
+                TwoFactorEnabled = false,
+                AccessFailedCount = 0,
+                TenantId = tenant.TenantId,
+                ConcurrencyStamp = token,
+                UserInformation = new UserInformation
+                {
+                    FirstName = "Selwyn",
+                    LastName = "Santos",
+                    ConcurrencyToken = token,
+                    Theme = "https://bootswatch.com/4/spacelab/bootstrap.min.css"
+                }
+            };
+            var consumerRole1 = new IdentityUserRole<string>
+            {
+                UserId = consumer1.Id,
+                RoleId = ApplicationRoles.Consumer.Id
+            };
+
+            var account1 = new Account
+            {
+                AccountId = consumer1.Id,
+                AccountNumber = "Account 001",
+                Address = "123 Main Street",
+                ConsumerType = "ConsumerType",
+                MeterNumber = "Meter #001",
+            };
+
+            var now = DateTime.UtcNow;
+            var dateStart = DateTime.UtcNow.AddDays(now.Day);
+            var dateEnd = dateStart.AddMonths(1);
+
+            var account1Billings = new[] {
+                new Billing
+                {
+                    BillingId = Guid.NewGuid().ToString(),
+                    AccountId = account1.AccountId,
+                    Amount = 1000,
+                    DateStart = dateStart,
+                    DateEnd = dateEnd,
+                    DateDue = dateEnd.AddDays(5),
+                    Month = now.Month.ToString(),
+                    Year = now.Year.ToString(),
+                    Number = Guid.NewGuid().ToString(),
+                    KilloWattHourUsed = 102, Multiplier = 1,
+                    PresentReading = 100, PreviousReading = 50,
+                    Reader = "Reader#001", ReadingDate = now,
+                },
+            };
+
+            ctx.AddRange(consumer1, consumerRole1, account1);
+            ctx.AddRange(account1Billings);
+        }
+
+        static void CreateConsumer2(IdentityWebContext ctx, Tenant tenant, string token)
+        {
+            //  sample consumer
+            var consumerEmail = "elizabeth@bbp.com";
+            var consumer1 = new IdentityWebUser
+            {
+                Id = consumerEmail,
+                UserName = consumerEmail,
+                NormalizedUserName = consumerEmail.ToUpper(),
+
+                Email = consumerEmail,
+                NormalizedEmail = consumerEmail.ToUpper(),
+                EmailConfirmed = true,
+                PhoneNumber = "+639656905272",
+                PhoneNumberConfirmed = true,
+
+                LockoutEnabled = false,
+                LockoutEnd = null,
+                PasswordHash = "AQAAAAEAACcQAAAAEKGIieH17t5bYXa5tUfxRwN9UIEwApTKbQBRaUtIHplIUG2OfYxvBS8uvKy5E2Stsg==",
+                SecurityStamp = "6SADCY3NMMLOHA2S26ZJCEWGHWSQUYRM",
+                TwoFactorEnabled = false,
+                AccessFailedCount = 0,
+                TenantId = tenant.TenantId,
+                ConcurrencyStamp = token,
+                UserInformation = new UserInformation
+                {
+                    FirstName = "Elizabeth",
+                    LastName = "Dela Rosa",
+                    ConcurrencyToken = token,
+                    Theme = "https://bootswatch.com/4/spacelab/bootstrap.min.css"
+                }
+            };
+            var consumerRole1 = new IdentityUserRole<string>
+            {
+                UserId = consumer1.Id,
+                RoleId = ApplicationRoles.Consumer.Id
+            };
+
+            var account1 = new Account
+            {
+                AccountId = consumer1.Id,
+                AccountNumber = "Account 002",
+                Address = "123 Main Street",
+                ConsumerType = "ConsumerType",
+                MeterNumber = "Meter #002",
+            };
+
+            var now = DateTime.UtcNow;
+            var dateStart = DateTime.UtcNow.AddDays(now.Day);
+            var dateEnd = dateStart.AddMonths(1);
+
+            var account1Billings = new[] {
+                new Billing
+                {
+                    BillingId = Guid.NewGuid().ToString(),
+                    AccountId = account1.AccountId,
+                    Amount = 1000,
+                    DateStart = dateStart,
+                    DateEnd = dateEnd,
+                    DateDue = dateEnd.AddDays(5),
+                    Month = now.Month.ToString(),
+                    Year = now.Year.ToString(),
+                    Number = Guid.NewGuid().ToString(),
+                    KilloWattHourUsed = 102, Multiplier = 1,
+                    PresentReading = 100, PreviousReading = 50,
+                    Reader = "Reader#021", ReadingDate = now,
+                },
+            };
+
+            ctx.AddRange(consumer1, consumerRole1, account1);
+            ctx.AddRange(account1Billings);
+        }
+
+        static void CreateConsumer3(IdentityWebContext ctx, Tenant tenant, string token)
+        {
+            //  sample consumer
+            var consumerEmail = "jericho@bbp.com";
+            var consumer1 = new IdentityWebUser
+            {
+                Id = consumerEmail,
+                UserName = consumerEmail,
+                NormalizedUserName = consumerEmail.ToUpper(),
+
+                Email = consumerEmail,
+                NormalizedEmail = consumerEmail.ToUpper(),
+                EmailConfirmed = true,
+                PhoneNumber = "+639502390692",
+                PhoneNumberConfirmed = true,
+
+                LockoutEnabled = false,
+                LockoutEnd = null,
+                PasswordHash = "AQAAAAEAACcQAAAAEKGIieH17t5bYXa5tUfxRwN9UIEwApTKbQBRaUtIHplIUG2OfYxvBS8uvKy5E2Stsg==",
+                SecurityStamp = "6SADCY3NMMLOHA2S26ZJCEWGHWSQUYRM",
+                TwoFactorEnabled = false,
+                AccessFailedCount = 0,
+                TenantId = tenant.TenantId,
+                ConcurrencyStamp = token,
+                UserInformation = new UserInformation
+                {
+                    FirstName = "Jericho",
+                    MiddleName = "Austria",
+                    LastName = "Delos Santos",
+                    ConcurrencyToken = token,
+                    Theme = "https://bootswatch.com/4/spacelab/bootstrap.min.css"
+                }
+            };
+            var consumerRole1 = new IdentityUserRole<string>
+            {
+                UserId = consumer1.Id,
+                RoleId = ApplicationRoles.Consumer.Id
+            };
+
+            var account1 = new Account
+            {
+                AccountId = consumer1.Id,
+                AccountNumber = "Account 003",
+                Address = "123 Main Street",
+                ConsumerType = "ConsumerType",
+                MeterNumber = "Meter #003",
+            };
+
+            var now = DateTime.UtcNow;
+            var dateStart = DateTime.UtcNow.AddDays(now.Day);
+            var dateEnd = dateStart.AddMonths(1);
+
+            var account1Billings = new[] {
+                new Billing
+                {
+                    BillingId = Guid.NewGuid().ToString(),
+                    AccountId = account1.AccountId,
+                    Amount = 1000,
+                    DateStart = dateStart,
+                    DateEnd = dateEnd,
+                    DateDue = dateEnd.AddDays(5),
+                    Month = now.Month.ToString(),
+                    Year = now.Year.ToString(),
+                    Number = Guid.NewGuid().ToString(),
+                    KilloWattHourUsed = 102, Multiplier = 1,
+                    PresentReading = 100, PreviousReading = 50,
+                    Reader = "Reader#1241", ReadingDate = now,
+                },
+            };
+
+            ctx.AddRange(consumer1, consumerRole1, account1);
+            ctx.AddRange(account1Billings);
+        }
         static void CreateBrances(IdentityWebContext ctx)
         {
             var branches = new[]
