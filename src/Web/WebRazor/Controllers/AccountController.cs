@@ -147,11 +147,13 @@ namespace WebRazor.Controllers
             return Ok();
         }
 
-        //[HttpPut("unlockout")]
-        //public async Task<IActionResult> UnlockoutUser(string userId, CancellationToken cancellationToken)
-        //{
-        //    var user = await _userManager.FindByIdAsync(userId);
 
+        //[HttpPut("reset-password")]
+        //public async Task<IActionResult> ResetPassword(string userId, CancellationToken cancellationToken)
+        //{            
+        //    var user = await _userManager.FindByIdAsync(userId);
+         
+        //    var token = await _userManager.GenerateTwoFactorTokenAsync()
         //    if (user == null)
         //        return NotFound("User not found.");
 

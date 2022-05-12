@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
+using SendGrid.Extensions.DependencyInjection;
+using SendGrid;
+using SendGrid.Helpers.Mail;
 
 [assembly: HostingStartup(typeof(Blazor.Server.Identity.IdentityHostingStartup))]
 namespace Blazor.Server.Identity
@@ -99,6 +102,12 @@ namespace Blazor.Server.Identity
 
                 // Add application services.	
                 services.AddTransient<IEmailSender, EmailSender>();
+
+                services.AddSendGrid(options =>
+                {
+                    //options.ApiKey = "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";
+                    options.ApiKey = "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";
+                });
             });
         }
 
@@ -121,9 +130,64 @@ namespace Blazor.Server.Identity
 
     public sealed class EmailSender : IEmailSender
     {
-        Task IEmailSender.SendEmailAsync(string email, string subject, string htmlMessage)
+        readonly IConfiguration _configuration;
+        readonly ISendGridClient _client;
+
+        public EmailSender(IConfiguration configuration, ISendGridClient client)
         {
-            return Task.CompletedTask;
+            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+            _client = client ?? throw new ArgumentNullException(nameof(client));
+        }
+
+
+        async Task IEmailSender.SendEmailAsync(string email, string subject, string htmlMessage)
+        {
+            //using mailgun
+            //using var client = new HttpClient
+            //{
+            //    BaseAddress = new Uri("https://api.mailgun.net/v3/")
+            //};
+            //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(Encoding.ASCII.GetBytes("api:371a94ef4df4f9c606b495aefa611214-65b08458-1847d694")));
+
+            //var content = new FormUrlEncodedContent(new[]
+            //{
+            //        new KeyValuePair<string, string>("from", "postmaster@sandbox25884ca30c934aa79d4724fcecaaf539.mailgun.org"),
+            //        new KeyValuePair<string, string>("to", email),
+            //        new KeyValuePair<string, string>("subject", subject),
+            //        new KeyValuePair<string, string>("html", htmlMessage)
+            //    });
+
+            //await client.PostAsync("sandbox25884ca30c934aa79d4724fcecaaf539.mailgun.org/messages", content).ConfigureAwait(false);
+
+            //  using sendgrid
+            var from = new EmailAddress("caydev2010@gmail.com", "Batelec Billing Payment System");
+            var to = new EmailAddress(email);
+
+            var msg = new SendGridMessage()
+            {
+                From = from,
+                Subject = subject,
+                //PlainTextContent = plainTextContent,
+                HtmlContent = htmlMessage
+            };
+            //msg.AddContent(MimeType.Text, "and easy to do anywhere, even with C#");
+            //foreach (var email in emails)
+            {
+                msg.AddTo(to);
+            }
+            //msg.MailSettings = new MailSettings
+            //{
+            //    SandboxMode = new SandboxMode
+            //    {
+            //        Enable = true
+            //    },
+            //};
+
+            Console.WriteLine($"Sending email with payload: \n{msg.Serialize()}");
+            var response = await _client.SendEmailAsync(msg);
+
+            Console.WriteLine($"Response: {response.StatusCode}");
+            Console.WriteLine(response.Headers);
         }
     }
 }

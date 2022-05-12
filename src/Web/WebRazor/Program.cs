@@ -29,7 +29,7 @@ builder.Services.AddResponseCompression(opts =>
 builder.Services.Configure<RouteOptions>(opt =>
 {
     opt.LowercaseUrls = true;
-    opt.LowercaseQueryStrings = true;
+    opt.LowercaseQueryStrings = false;
 });
 
 builder.Services.AddSignalR().AddNewtonsoftJsonProtocol(options =>
