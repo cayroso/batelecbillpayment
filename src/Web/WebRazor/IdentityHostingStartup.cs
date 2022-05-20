@@ -104,9 +104,8 @@ namespace Blazor.Server.Identity
                 services.AddTransient<IEmailSender, EmailSender>();
 
                 services.AddSendGrid(options =>
-                {
-                    //options.ApiKey = "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";
-                    options.ApiKey = "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";
+                {                    
+                    options.ApiKey = "";
                 });
             });
         }
