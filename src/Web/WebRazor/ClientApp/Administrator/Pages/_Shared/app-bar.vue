@@ -28,11 +28,11 @@
                             <i class="fa-solid fa-calendar-check me-2" aria-hidden="true"></i>Reservations
                         </a>
                     </li>
-                    <li class="nav-item">
+                    <!--<li class="nav-item">
                         <a class="nav-link" href="/administrator/consumers">
                             <i class="fa-solid fa-users me-2" aria-hidden="true"></i>Consumers
                         </a>
-                    </li>
+                    </li>-->
                     <li class="nav-item">
                         <a class="nav-link" href="/administrator/notifications">
                             <i class="fa-solid fa-bell me-2" aria-hidden="true"></i>Notifications
@@ -45,8 +45,8 @@
                             <i class="fas fa-user me-2" aria-hidden="true"></i>My Account
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="dropdown01">
-                            <li><a class="dropdown-item" href="/account">Information</a></li>
-                            <li><hr class="dropdown-divider"></li>
+                            <!--<li><a class="dropdown-item" href="/account">Information</a></li>
+                            <li><hr class="dropdown-divider"></li>-->
                             <!--<li><a class="dropdown-item" href="#">Another action</a></li>-->
                             <li><a class="dropdown-item" href="#" @click.prevent="logout">Logout</a></li>
                         </ul>

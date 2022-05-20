@@ -20,6 +20,7 @@
 
     import BillingsAdd from '../Billings/add.vue';
     import BillingsIndex from '../Billings/index.vue';
+    import BillingsUpload from '../Billings/upload.vue';
     import BillingsView from '../Billings/view.vue';
 
     import NotificationsIndex from '../Notifications/index.vue';
@@ -49,6 +50,7 @@
 
             BillingsAdd,
             BillingsIndex,
+            BillingsUpload,
             BillingsView,
 
             NotificationsIndex,

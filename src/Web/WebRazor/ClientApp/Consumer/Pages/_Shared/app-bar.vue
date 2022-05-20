@@ -42,8 +42,8 @@
                             <i class="fas fa-user me-2" aria-hidden="true"></i>My Account
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="dropdown01">
-                            <li><a class="dropdown-item" href="/account">Information</a></li>
-                            <li><hr class="dropdown-divider"></li>
+                            <!--<li><a class="dropdown-item" href="/account">Information</a></li>
+                            <li><hr class="dropdown-divider"></li>-->
                             <!--<li><a class="dropdown-item" href="#">Another action</a></li>-->
                             <li><a class="dropdown-item" href="#" @click.prevent="logout">Logout</a></li>
                         </ul>

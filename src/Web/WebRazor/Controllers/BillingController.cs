@@ -15,6 +15,8 @@ using Newtonsoft.Json;
 using Data.Identity.Models.Gcash;
 using Twilio;
 using Twilio.Rest.Api.V2010.Account;
+using CsvHelper;
+using System.Globalization;
 
 namespace WebRazor.Controllers
 {
@@ -289,6 +291,80 @@ namespace WebRazor.Controllers
 
             return Ok(data.BillingId);
         }
+
+        [HttpPost("bulk-upload")]
+        public async Task<IActionResult> BulkUpload(CancellationToken cancellationToken)
+        {
+            var csvFile = HttpContext.Request.Form.Files.FirstOrDefault();
+
+            if (csvFile == null)
+                return BadRequest("No file uploaded.");
+
+            using (var reader = new StreamReader(csvFile.OpenReadStream()))
+            using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
+            {
+                var records = csv.GetRecords<UploadBillingInfo>();
+
+                var data = new List<Billing>();
+
+                foreach (var record in records)
+                {
+                    var account = await _identityWebContext.Accounts.FirstOrDefaultAsync(e => e.AccountNumber == record.AccountNumber, cancellationToken);
+
+                    if (account == null)
+                        continue;
+
+                    //  check if this billing already exists
+                    var existing = await _identityWebContext.Billings.FirstOrDefaultAsync(e => e.Number == record.Number);
+
+                    if (existing != null)
+                    {
+                        existing.Amount = record.Amount;
+                        existing.DateDue = record.DateDue;
+                        existing.DateEnd = record.DateEnd;
+                        existing.DateStart = record.DateStart;
+                        existing.Month = record.Month;
+                        existing.Number = record.Number;
+                        existing.Year = record.Year;
+                        existing.KilloWattHourUsed = record.KiloWattHourUsed;
+                        existing.PresentReading = record.PresentReading;
+                        existing.PreviousReading = record.PreviousReading;
+                        existing.Multiplier = record.Multiplier;
+                        existing.Reader = record.Reader;
+                        existing.ReadingDate = record.ReadingDate;
+                    }
+                    else
+                    {
+                        data.Add(new Billing
+                        {
+                            BillingId = GuidStr(),
+                            AccountId = account.AccountId,
+                            Amount = record.Amount,
+                            DateDue = record.DateDue,
+                            DateEnd = record.DateEnd,
+                            DateStart = record.DateStart,
+                            Month = record.Month,
+                            Number = record.Number,
+                            Year = record.Year,
+                            KilloWattHourUsed = record.KiloWattHourUsed,
+                            PresentReading = record.PresentReading,
+                            PreviousReading = record.PreviousReading,
+                            Multiplier = record.Multiplier,
+                            Reader = record.Reader,
+                            ReadingDate = record.ReadingDate,
+                        });
+                    }
+                }
+
+                await _identityWebContext.AddRangeAsync(data);
+                await _identityWebContext.SaveChangesAsync(cancellationToken);
+            }
+
+
+            return Ok();
+        }
+
+
 
         [HttpPost("add-billing-resource")]
         public async Task<IActionResult> AddBillingResource(AddBillingSourceInfo info)

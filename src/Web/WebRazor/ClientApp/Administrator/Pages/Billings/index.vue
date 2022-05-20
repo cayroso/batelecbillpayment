@@ -9,21 +9,26 @@
             <div class="col-sm-auto">
                 <div class="d-flex flex-row">
                     <div class="">
-                        <a href="/administrator/billings/add" class="btn btn-primary">
+                        <a href="/administrator/billings/upload" class="btn btn-primary">
+                            <i class="fas fa-upload me-1"></i>Upload
+                        </a>
+                    </div>
+                    <div class="">
+                        <a href="/administrator/billings/add" class="btn btn-primary ms-1">
                             <i class="fas fa-plus me-1"></i>Add
                         </a>
                     </div>
 
                     <!--<div v-if="filter.visible" class="mr-1">
-                        <button @click="resetDates" class="btn btn-primary">
-                            <i class="fas fa-sync mr-1"></i>
-                        </button>
-                    </div>
-                    <div class="mr-1">
-                        <button @click="filter.visible = !filter.visible" class="btn btn-secondary">
-                            <span class="fa fas fa-fw fa-filter"></span>
-                        </button>
-                    </div>-->
+        <button @click="resetDates" class="btn btn-primary">
+            <i class="fas fa-sync mr-1"></i>
+        </button>
+    </div>
+    <div class="mr-1">
+        <button @click="filter.visible = !filter.visible" class="btn btn-secondary">
+            <span class="fa fas fa-fw fa-filter"></span>
+        </button>
+    </div>-->
                     <div class="flex-grow-1 ms-1">
                         <div class="input-group">
                             <input type="text" class="form-control" placeholder="Enter criteria..." aria-label="Enter criteria..." aria-describedby="button-addon2" v-model="filter.query.criteria" @keyup.enter="search(1)">

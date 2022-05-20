@@ -1,0 +1,1 @@
+AccountNumber,Amount,Number,Month,Year,ReadingDate,DateStart,DateEnd,PresentReading,PreviousReading,Multiplier,KiloWattHourUsed,DateDue,Reader

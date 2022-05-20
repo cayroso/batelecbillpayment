@@ -1,6 +1,6 @@
 {
   "background_color": "green",
-  "description": "Batelec Billing Payment Description",
+  "description": "Batelec Electric Reader",
   "display": "standalone",
   "icons": [
     {
@@ -12,9 +12,9 @@
       "sizes": "512x512"
     }
   ],
-  "name": "Batelec Billing Payment System",
+  "name": "Batelec Electric Reader",
   "scope": "/",
-  "short_name": "BBPS",
+  "short_name": "BER",
   "start_url": "/",
   "theme_color": "#ffffff"
 }

@@ -349,7 +349,7 @@
                             const url = `${vm.urlView}/${resp.data}`;
 
                             vm.$toast.success('Add New Billing',
-                                `Billing was created. 
+                                `Billing was created.
                                 <br/>Click <a href="${url}">here</a> to view the record.`,
                                 {
                                     async onClose() {
