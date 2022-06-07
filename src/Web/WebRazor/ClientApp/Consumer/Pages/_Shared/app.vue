@@ -24,6 +24,8 @@
     import NotificationsIndex from '../Notifications/index.vue';
     import NotificationsView from '../Notifications/view.vue';
 
+    import ReaderIndex from '../Reader/index.vue';
+
     import ReservationsIndex from '../Reservations/index.vue';
     import ReservationsAdd from '../Reservations/add.vue';
     import ReservationsView from '../Reservations/view.vue';
@@ -52,6 +54,8 @@
 
             NotificationsIndex,
             NotificationsView,
+
+            ReaderIndex,
 
             ReservationsIndex,
             ReservationsAdd,

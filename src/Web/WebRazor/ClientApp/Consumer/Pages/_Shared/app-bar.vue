@@ -25,7 +25,7 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/consumer/reservations">
-                            <i class="fa-solid fa-calendar-check me-2" aria-hidden="true"></i>Reservations
+                            <i class="fa-solid fa-calendar me-2" aria-hidden="true"></i>Reservations
                         </a>
                     </li>
                     <li class="nav-item">
@@ -35,7 +35,7 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/consumer/reader">
-                            <i class="fa-solid fa-bell me-2" aria-hidden="true"></i>Reader
+                            <i class="fa-solid fa-file-upload me-2" aria-hidden="true"></i>Reader1
                         </a>
                     </li>
 
