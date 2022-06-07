@@ -33,7 +33,11 @@
                             <i class="fa-solid fa-bell me-2" aria-hidden="true"></i>Notifications
                         </a>
                     </li>
-
+                    <li class="nav-item">
+                        <a class="nav-link" href="/consumer/reader">
+                            <i class="fa-solid fa-bell me-2" aria-hidden="true"></i>Reader
+                        </a>
+                    </li>
 
                 </ul>
                 <ul class="navbar-nav ms-auto">
