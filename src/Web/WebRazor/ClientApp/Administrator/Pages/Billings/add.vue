@@ -30,7 +30,7 @@
                         <div class="row">
                             <div class="col-sm-6">
                                 <div class="form-floating mb-3">
-                                    <select v-model="item.accountId" class="form-select" id="accountId">
+                                    <select @change="getRead(item.accountId)" v-model="item.accountId" class="form-select" id="accountId">
                                         <option value="">- Select Account -</option>
                                         <option v-for="opt in lookups.accounts" :value="opt.accountId">{{opt.name}}</option>
                                     </select>
@@ -125,6 +125,12 @@
                                     <div v-if="validations.has('presentReading')" class="d-block invalid-feedback">
                                         {{validations.get('presentReading')}}
                                     </div>
+                                    <div>
+                                        <select @change="item.presentReading=$event.target.value" class="form-control form-control-sm">
+                                            <option disabled value="">Please select one</option>
+                                            <option v-for="mr in read.meterReadings" :value="mr.value">{{mr.value}}kWH ({{$moment(mr.dateRead).calendar()}})</option>
+                                        </select>
+                                    </div>
                                 </div>
                                 <div class="form-floating mb-3">
                                     <input v-model="item.previousReading" type="number" min="0" max="99999" class="form-control" id="previousReading" placeholder="Previous Reading">
@@ -212,6 +218,11 @@
                     dateDue: null,
                     reader: null,
 
+                },
+
+                read: {
+                    previousRead: null,
+                    meterReadings: null
                 }
             };
         },
@@ -294,6 +305,7 @@
             const foo = vm.formIsValid;
 
             await vm.getLookups();
+            //await vm.getReads();
         },
 
         methods: {
@@ -316,6 +328,24 @@
                         .then(resp => {
                             vm.lookups.accounts = resp.data;
                             //vm.$emit('event:center-position', { x: vm.item.geoX, y: vm.item.geoY });
+                        });
+                } catch (e) {
+                    vm.$util.handleError(e);
+                }
+            },
+
+            async getRead(accountId) {
+                const vm = this;
+
+                try {
+                    await vm.$util.axios.get(`/api/reader/get-read/${accountId}`)
+                        .then(resp => {
+                            var data = resp.data;
+
+                            vm.read.meterReadings = data.meterReadings;
+                            vm.read.previousRead = data.previousRead > 0 ? data.previousRead : 0;
+
+                            vm.item.previousReading = vm.read.previousRead;
                         });
                 } catch (e) {
                     vm.$util.handleError(e);

@@ -495,6 +495,37 @@ namespace Data.migrations.identity
                     b.ToTable("NotificationReceiver", (string)null);
                 });
 
+            modelBuilder.Entity("Data.Identity.Models.Readings.MeterReading", b =>
+                {
+                    b.Property<string>("MeterReadingId")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(36)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("AccountId")
+                        .IsRequired()
+                        .HasMaxLength(36)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ConcurrencyToken")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .HasMaxLength(36)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("DateRead")
+                        .HasColumnType("TEXT");
+
+                    b.Property<double>("Value")
+                        .HasColumnType("REAL");
+
+                    b.HasKey("MeterReadingId");
+
+                    b.HasIndex("AccountId");
+
+                    b.ToTable("MeterReading", (string)null);
+                });
+
             modelBuilder.Entity("Data.Identity.Models.Reservations.Reservation", b =>
                 {
                     b.Property<string>("ReservationId")
@@ -972,6 +1003,17 @@ namespace Data.migrations.identity
                     b.Navigation("Notification");
 
                     b.Navigation("Receiver");
+                });
+
+            modelBuilder.Entity("Data.Identity.Models.Readings.MeterReading", b =>
+                {
+                    b.HasOne("Data.Identity.Models.Account", "Account")
+                        .WithMany()
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Account");
                 });
 
             modelBuilder.Entity("Data.Identity.Models.Reservations.Reservation", b =>

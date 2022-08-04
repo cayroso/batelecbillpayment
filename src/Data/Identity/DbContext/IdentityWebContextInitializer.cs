@@ -207,7 +207,7 @@ namespace Data.Identity.DbContext
                 AccountNumber = "Account 001",
                 Address = "123 Main Street",
                 ConsumerType = "ConsumerTYpe",
-                MeterNumber = "Meter #001",
+                MeterNumber = "202100090084",
             };
 
             var now = DateTime.UtcNow;
@@ -343,7 +343,7 @@ namespace Data.Identity.DbContext
                 AccountNumber = "Account 001",
                 Address = "123 Main Street",
                 ConsumerType = "ConsumerType",
-                MeterNumber = "Meter #001",
+                MeterNumber = "202100090084",
             };
 
             var now = DateTime.UtcNow;
@@ -363,7 +363,7 @@ namespace Data.Identity.DbContext
                     Year = now.Year.ToString(),
                     Number = Guid.NewGuid().ToString(),
                     KilloWattHourUsed = 102, Multiplier = 1,
-                    PresentReading = 100, PreviousReading = 50,
+                    PresentReading = 300, PreviousReading = 150,
                     Reader = "Reader#001", ReadingDate = now,
                 },
             };
@@ -416,7 +416,7 @@ namespace Data.Identity.DbContext
                 AccountNumber = "Account 002",
                 Address = "123 Main Street",
                 ConsumerType = "ConsumerType",
-                MeterNumber = "Meter #002",
+                MeterNumber = "202100090084",
             };
 
             var now = DateTime.UtcNow;
@@ -436,7 +436,7 @@ namespace Data.Identity.DbContext
                     Year = now.Year.ToString(),
                     Number = Guid.NewGuid().ToString(),
                     KilloWattHourUsed = 102, Multiplier = 1,
-                    PresentReading = 100, PreviousReading = 50,
+                    PresentReading = 200, PreviousReading = 70,
                     Reader = "Reader#021", ReadingDate = now,
                 },
             };
@@ -490,7 +490,7 @@ namespace Data.Identity.DbContext
                 AccountNumber = "Account 003",
                 Address = "123 Main Street",
                 ConsumerType = "ConsumerType",
-                MeterNumber = "Meter #003",
+                MeterNumber = "202100090084",
             };
 
             var now = DateTime.UtcNow;
@@ -510,7 +510,7 @@ namespace Data.Identity.DbContext
                     Year = now.Year.ToString(),
                     Number = Guid.NewGuid().ToString(),
                     KilloWattHourUsed = 102, Multiplier = 1,
-                    PresentReading = 100, PreviousReading = 50,
+                    PresentReading = 100, PreviousReading = 90,
                     Reader = "Reader#1241", ReadingDate = now,
                 },
             };

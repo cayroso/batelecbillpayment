@@ -19,10 +19,12 @@ using CsvHelper;
 using System.Globalization;
 using Microsoft.Azure.CognitiveServices.Vision.ComputerVision;
 using Microsoft.Azure.CognitiveServices.Vision.ComputerVision.Models;
+using Data.Identity.Models.Readings;
 
 namespace WebRazor.Controllers
 {
     [ApiController]
+    [Authorize]
     [Route("api/[controller]")]
     [Produces("application/json")]
     public class ReaderController : BaseController
@@ -52,7 +54,98 @@ namespace WebRazor.Controllers
 
             var items = await GetValues(imgFile.OpenReadStream());
 
-            return Ok(items);
+            var items2 = items.Where(e => e.Length >= 5 || e.Length == 12).ToList();
+
+            var meterNumber = items2.Where(e => e.Length == 12).FirstOrDefault();
+
+            if (string.IsNullOrWhiteSpace(meterNumber))
+            {
+                return BadRequest("Meter Number not found in the uploaded image.");
+            }
+
+            var account = await _identityWebContext
+                .Accounts
+                .Include(e => e.UserInformation)
+                .FirstAsync(e => e.AccountId == UserId);
+            var user = await _identityWebContext.Users.FirstAsync(e => e.Id == UserId);
+
+            if (meterNumber != account.MeterNumber)
+            {
+                return BadRequest("Meter Number is invalid.");
+            }
+
+            var dto = new
+            {
+                Items = items2.Where(e => e != meterNumber),
+                account.AccountNumber,
+                account.MeterNumber,
+                user.PhoneNumber,
+                user.UserName,
+                Customer = $"{account.UserInformation.FirstName} {account.UserInformation.LastName}"
+
+            };
+
+            return Ok(dto);
+        }
+
+        [HttpPost("add-reading/{value}")]
+        public async Task<IActionResult> AddReading(double value,
+            [FromServices] IdentityWebContext dbContext,
+            CancellationToken cancellationToken)
+        {
+            var now = DateTime.UtcNow.Truncate();
+
+            var data = new MeterReading
+            {
+                AccountId = UserId,
+                Value = value,
+                DateRead = now,
+            };
+
+            await dbContext.MeterReadings.AddAsync(data, cancellationToken);
+
+            await dbContext.SaveChangesAsync(cancellationToken);
+
+            return Ok();
+        }
+
+        [HttpGet("get-read/{accountId}")]
+        public async Task<IActionResult> GetMeterReadings(string accountId,
+            [FromServices] IdentityWebContext dbContext,
+            CancellationToken cancellationToken)
+        {
+            var meterReadings = await dbContext
+                .MeterReadings.Where(e => e.AccountId == accountId)
+                .OrderByDescending(e => e.DateRead)
+                .Take(7)
+                .ToListAsync();
+
+            var lastBilling = await dbContext.Billings
+                .Where(e => e.AccountId == accountId)
+                .OrderByDescending(e => e.DateEnd)
+                .FirstOrDefaultAsync();
+
+            var dto = new
+            {
+                PreviousRead = lastBilling?.PresentReading,
+                MeterReadings = meterReadings
+            };
+
+            return Ok(dto);
+        }
+
+        [HttpGet("get-billing-readings/{accountId}")]
+        public async Task<IActionResult> GetPreviousReadings(string accountId,
+            [FromServices] IdentityWebContext dbContext,
+            CancellationToken cancellationToken)
+        {
+            var readings = await dbContext.Billings
+                .Where(e => e.AccountId == accountId)
+                .OrderByDescending(e => e.DateEnd)
+                .Select(e => e.PresentReading)
+                .ToListAsync();
+
+            return Ok(readings);
         }
 
         async Task<IEnumerable<string>> GetValues(Stream fileStream)

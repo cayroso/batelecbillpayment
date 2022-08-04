@@ -5,6 +5,7 @@ using Data.Identity.Models.Billings;
 using Data.Identity.Models.Fileuploads;
 using Data.Identity.Models.Gcash;
 using Data.Identity.Models.Notifications;
+using Data.Identity.Models.Readings;
 using Data.Identity.Models.Reservations;
 using Data.Identity.Models.Users;
 using Microsoft.AspNetCore.Identity;
@@ -54,8 +55,8 @@ namespace Data.Identity.DbContext
 
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<NotificationReceiver> NotificationReceivers { get; set; }
+        public DbSet<MeterReading> MeterReadings { get; set; }
         public DbSet<Reservation> Reservations { get; set; }
-
         public DbSet<GcashWebhook> GcashWebhooks { get; set; }
 
         public IdentityWebContext(DbContextOptions<IdentityWebContext> options, IConfiguration configuration)
@@ -223,6 +224,7 @@ namespace Data.Identity.DbContext
             builder.ApplyConfiguration(new GcashPaymentConfiguration());
             builder.ApplyConfiguration(new NotificationConfiguration());
             builder.ApplyConfiguration(new NotificationReceiverConfiguration());
+            builder.ApplyConfiguration(new MeterReadingConfiguration());
             builder.ApplyConfiguration(new ReservationConfiguration());
             builder.ApplyConfiguration(new GcashWebhookConfiguration());
         }

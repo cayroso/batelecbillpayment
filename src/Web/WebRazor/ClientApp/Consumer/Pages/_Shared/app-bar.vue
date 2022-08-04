@@ -35,7 +35,7 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/consumer/reader">
-                            <i class="fa-solid fa-file-upload me-2" aria-hidden="true"></i>Reader1
+                            <i class="fa-solid fa-file-upload me-2" aria-hidden="true"></i>Reader
                         </a>
                     </li>
 

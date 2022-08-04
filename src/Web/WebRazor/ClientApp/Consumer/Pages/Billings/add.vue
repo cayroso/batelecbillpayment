@@ -125,6 +125,7 @@
                                     <div v-if="validations.has('presentReading')" class="d-block invalid-feedback">
                                         {{validations.get('presentReading')}}
                                     </div>
+                                    xxxxxxxx
                                 </div>
                                 <div class="form-floating mb-3">
                                     <input v-model="item.previousReading" type="number" min="0" max="99999" class="form-control" id="previousReading" placeholder="Previous Reading">
